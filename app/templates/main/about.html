@@ -1,0 +1,147 @@
+{% extends "base.html" %} {% block content %}
+
+<section class="py-md-5" style="margin-top: 50px">
+  <section data-aos="zoom-in" data-aos-delay="200">
+    <div class="col-xxl-8 px-4 py-5 container-fluid">
+      <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+        <div class="col-10 col-sm-8 col-lg-6">
+          <img
+            alt="Image related to the content"
+            class="d-block mx-lg-auto img-fluid"
+            height="1080"
+            loading="lazy"
+            sizes="(max-width: 1080px) 100vw, 1080px"
+            src="{{ url_for('static', filename='img/about/archival_society.jpg') }}"
+            width="1080"
+          />
+        </div>
+        <div class="col-lg-6">
+          <div class="lc-block mb-4">
+            <div editable="rich">
+              <h2 class="fw-bold display-4">
+                Welcome to the Municipal Archives
+              </h2>
+            </div>
+          </div>
+          <div class="lc-block mb-3">
+            <div editable="rich">
+              <p class="lead">
+                The Archives preserves and makes available New York City
+                government's historical records. Explore our collections dating
+                from 1645 to the present including documents, digital
+                collections, still and moving images, ledgers and docket books,
+                cartographic materials, blueprints, and audiovisual materials.
+              </p>
+            </div>
+          </div>
+          <div class="lc-block mb-3">
+            <a class="btn btn-primary btn-lg" href="#mission" role="button"
+              >Learn more</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+<section id="mission">
+  <div class="container-fluid p-0 overflow-hidden">
+    <div class="row g-0" data-aos="zoom-in" data-aos-delay="300">
+      <div
+        class="col-lg-6 order-lg-2"
+        lc-helper="background"
+        style="
+          min-height: 45vh;
+          background-size: cover;
+          background-position: center;
+          background-image: url('../../static/img/about/archival_society_2.jpg');
+        "
+      ></div>
+      <div class="col-lg-6 order-lg-1 my-auto px-5 py-5">
+        <div class="lc-block mb-5">
+          <div editable="rich">
+            <h1 class="fw-bold">WHAT'S OUR MISSION?</h1>
+          </div>
+        </div>
+        <div class="lc-block col-xxl-9">
+          <div editable="rich">
+            <p>
+              To promote the collection and preservation of matters of historic
+              value with special emphasis on the Greater New York area; to help
+              the existing Division of Archives of the City of New York, or its
+              successor in interest to reclaim all records of the City of New
+              York and the various villages and towns within Greater New York
+              wherever they may now be found; to rescue all ancient documents
+              dealing with the life in this region (which are now suffering from
+              deterioration and are in danger of destruction); to resurrect all
+              artifacts or memorabilia dealing with the life of the American
+              Indian as it existed in the Greater New York region prior to
+              European settlement; to aid established institutions which provide
+              access to students, visitors, and scholars who may wish to learn
+              about the history and background of New York.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-0" data-aos="zoom-in" data-aos-delay="300">
+      <div
+        class="col-lg-6"
+        lc-helper="background"
+        style="
+          min-height: 45vh;
+          background-size: cover;
+          background-position: center;
+          background-image: url('../../static/img/about/vintage_photo.jpg');
+        "
+      ></div>
+      <div class="col-lg-6 my-auto px-5 py-5 text-start text-lg-end">
+        <div class="lc-block mb-5">
+          <div editable="rich">
+            <h1 class="fw-bold">PRESERVING MATTERS OF HISTORICAL VALUE</h1>
+          </div>
+        </div>
+        <div class="lc-block col-xxl-9 offset-xxl-3">
+          <div editable="rich">
+            <p>
+              Lorem ipsum dolor sit amet Neque porro quisquam est qui dolorem
+              Lorem int ipsum dolor sit amet when an unknown printer took a
+              galley of type. Vivamus id tempor felis. Cras sagittis mi sit amet
+              malesuada mollis. Mauris porroinit consectetur cursus tortor vel
+              interdum.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section>
+  <div
+    class="d-flex text-center"
+    lc-helper="background"
+    style="
+      min-height: 40vh;
+      background-attachment: fixed;
+      background-size: cover;
+      background-position: center center;
+      background-color: #eee;
+      background-image: url(../../static/img/about/brooklyn_bridge.jpg);
+    "
+  >
+    <div class="lc-block my-3 align-self-center w-100 py-5">
+      <div editable="rich">
+        <h2 class="text-black display-6">DISCOVER MORE ABOUT OUR WORK</h2>
+      </div>
+      <a
+        class="btn btn-success"
+        href="https://www.youtube.com/watch?v=hyj8f-whDZY"
+        role="button"
+        target="_blank"
+        >Click me, I'm a button</a
+      >
+    </div>
+  </div>
+</section>
+
+{% include "components/about/directors.html" %} {% endblock %}
