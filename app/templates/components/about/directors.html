@@ -1,0 +1,55 @@
+<!--Start of directors section-->
+<section class="directors" id="directors">
+  <div class="container" data-aos="fade-up">
+    <div class="section-title">
+      <h2>directors</h2>
+      <p>Our Professional Directors</p>
+    </div>
+    <div class="row directors-row">
+      <!-- Added a specific class here -->
+      <!-- Directors will be inserted here using JavaScript -->
+    </div>
+  </div>
+</section>
+<!--End of directors section-->
+
+{% block script %}
+<script>
+  fetch("{{ url_for('static', filename='json/directors.data.json') }}")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to fetch directors' data");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const directorsContainer = document.querySelector(".directors-row"); // Use the specific class for selection
+      let directorsHTML = "";
+
+      data.forEach((director) => {
+        directorsHTML += `
+        <div class="col-lg-4 col-md-6">
+          <div class="member" data-aos="zoom-in" data-aos-delay="300">
+            <img
+              alt="Director's image"
+              class="img-fluid"
+              src="https://res.cloudinary.com/djozxyart/image/upload/v1692636532/New%20York%20Archival%20Society/About/user_oxosxw.jpg"
+            />
+            <div class="member-info">
+              <div class="member-info-content">
+                <h4>${director.name}</h4>
+                ${director.position ? `<span>${director.position}</span>` : ""}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      });
+
+      directorsContainer.innerHTML = directorsHTML;
+    })
+    .catch((error) => {
+      console.error("Error fetching directors' data:", error);
+    });
+</script>
+{% endblock %}

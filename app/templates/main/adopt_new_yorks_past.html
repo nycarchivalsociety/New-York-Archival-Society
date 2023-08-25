@@ -1,0 +1,119 @@
+{% extends "base.html" %} {% block content %}
+<head>
+  <style>
+    .product-name-container {
+      width: 90%; /* Adjust as needed */
+      display: inline-block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<!-- ======= Hero Section ======= -->
+{% include 'components/adopt_new_yorks_past/hero.html'%}
+<div class="d-flex align-items-center min-vh-50">
+  <div class="container text-center mb-md-5">
+    <div class="lc-block">
+      <div class="lc-block mb-3">
+        <div editable="rich">
+          <h1 class="fw-bold display-3 section-heading">
+            BE A PART OF THE CONSERVATION
+          </h1>
+        </div>
+      </div>
+      <div class="lc-block mb-4 col-xxl-6 mx-auto">
+        <hr />
+      </div>
+      <div class="lc-block">
+        <div editable="rich">
+          <p class="lead">Adopt New York's Past</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="container">
+    <div
+      class="row align-items-center mb-5"
+      data-aos="fade-up"
+      data-aos-delay="300"
+    >
+      <div class="col-md-6 p-xxl-5">
+        <!-- /lc-block -->
+        <div class="lc-block">
+          <div editable="rich">
+            <p>
+              Help preserve New York City's historical treasures by adopting an
+              item from the Municipal Archives and Library to support
+              conservation treatment. Choose from a selection of the city's
+              maps, volumes, drawings, and documents listed below that are in a
+              state of disrepair. Your donation through the "Adopt New York's
+              Past" program will ensure that these materials are well-preserved
+              for the future.
+            </p>
+          </div>
+        </div>
+        <!-- /lc-block -->
+      </div>
+      <!-- /col -->
+      <div class="col-md-6">
+        <div class="lc-block">
+          <img
+            alt="Image related to New York's past"
+            class="img-fluid"
+            height="400"
+            src="{{url_for('static', filename='img/products/valentines_manual_of_the_city_of_new_york_1850.jpg')}}"
+            width="500"
+          />
+        </div>
+        <!-- /lc-block -->
+      </div>
+      <!-- /col -->
+    </div>
+    <div
+      class="row align-items-center mb-5"
+      data-aos="fade-up"
+      data-aos-delay="300"
+    >
+      <div class="col-md-6 p-xxl-5 order-md-2">
+        <!-- /lc-block -->
+        <div class="lc-block">
+          <div editable="rich">
+            <p>
+              Your support will be commemorated by a label with the physical
+              item and a note in the catalog that includes your name and an
+              acknowledgment of your gift. Your name will also appear on our
+              website next to the document you choose to adopt. Requests to
+              remain anonymous will also be honored. You will receive a thank
+              you note with before and after photos of your adopted item once
+              the conservation work is completed. The Municipal Archives'
+              mission is to preserve the City government's history, and we need
+              your help.
+            </p>
+          </div>
+        </div>
+        <!-- /lc-block -->
+      </div>
+      <!-- /col -->
+      <div class="col-md-6">
+        <div class="lc-block">
+          <img
+            alt="Image related to New York's past"
+            class="img-fluid"
+            height="400"
+            src="{{url_for('static', filename='img/products/department_of_public_works_annual_Report_1870.jpg')}}"
+            width="500"
+          />
+        </div>
+        <!-- /lc-block -->
+      </div>
+      <!-- /col -->
+    </div>
+    {% include 'error/ComingSoon.html'%}
+  </div>
+</section>
+
+{% endblock %}

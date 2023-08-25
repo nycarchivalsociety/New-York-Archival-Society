@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>New York Archival Society</title>
+
+    <!-- Libraries CSS Files -->
+    <link
+      href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/aos/aos.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}"
+      rel="stylesheet"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}"
+      rel="stylesheet"
+    />
+
+    <!-- Template Main CSS File -->
+    <link
+      href="{{ url_for('static', filename='css/style.css') }}"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- ======= Header ======= -->
+    <header class="fixed-top d-flex align-items-cente" id="header">
+      <div
+        class="container-fluid container-xl d-flex align-items-center justify-content-lg-between"
+      >
+        <h1 class="logo me-auto me-lg-0">
+          <a href="/">New York Archival Society</a>
+        </h1>
+        <!-- Uncomment below if you prefer to use an image logo -->
+        <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+        <nav class="navbar order-last order-lg-0" id="navbar">
+          <ul>
+            <li>
+              <a
+                class="nav-link scrollto active"
+                href="{{ url_for('main.index') }}"
+                >Home</a
+              >
+            </li>
+            <li>
+              <a class="nav-link scrollto" href="{{ url_for('main.about') }}"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                class="nav-link scrollto"
+                href="{{ url_for('main.new_yorks_past') }}"
+                >Adopt New York's Past</a
+              >
+            </li>
+            <li>
+              <a
+                class="nav-link scrollto"
+                href="{{ url_for('main.koch_congressional_project') }}"
+                >Edward I. Koch Congressional Project</a
+              >
+            </li>
+            <li>
+              <a class="nav-link scrollto" href="/404">1890 Census</a>
+            </li>
+            <li>
+              <a
+                class="nav-link scrollto"
+                href="https://www.archives.nyc/blog"
+                target="_blank"
+                >Blog</a
+              >
+            </li>
+            <li>
+              <a class="nav-link scrollto" href="{{ url_for('main.events') }}"
+                >Events</a
+              >
+            </li>
+            <li>
+              <a class="nav-link scrollto" href="{{ url_for('main.contact') }}"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a
+                class="nav-link scrollto"
+                href="{{ url_for('main.contribute') }}"
+                target="_blank"
+                >Contribute</a
+              >
+            </li>
+          </ul>
+          <i class="bi bi-list mobile-nav-toggle"></i>
+        </nav>
+        <!-- .navbar -->
+      </div>
+    </header>
+    <!-- End Header -->
+    <main>
+      {% block content %}
+      <!-- This is where the content from child templates will be inserted -->
+      {% endblock %}
+    </main>
+    <!-- ======= Footer ======= -->
+    <footer class="mt-5" id="footer">
+      <div class="footer-top">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-3 col-md-6">
+              <div class="footer-info">
+                <h2>NEW YORK ARCHIVAL SOCIETY</h2>
+                <div class="social-links mt-3">
+                  <a
+                    class="twitter"
+                    href="http://www.twitter.com/nycrecords"
+                    target="_blank"
+                    ><i class="bx bxl-twitter"></i
+                  ></a>
+                  <a
+                    class="facebook"
+                    href="http://www.facebook.com/nycrecords"
+                    target="_blank"
+                    ><i class="bx bxl-facebook"></i
+                  ></a>
+                  <a
+                    class="instagram"
+                    href="https://www.instagram.com/nycarchives/"
+                    target="_blank"
+                    ><i class="bx bxl-instagram"></i
+                  ></a>
+                  <a
+                    class="youtube"
+                    href="http://www.youtube.com/nycdeptofrecords"
+                    target="_blank"
+                    ><i class="bi bi-youtube"></i
+                  ></a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-6 footer-links">
+              <ul>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="{{ url_for('main.index') }}">Home</a>
+                </li>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="{{ url_for('main.about') }}">About us</a>
+                </li>
+
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="{{ url_for('main.new_yorks_past') }}"
+                    >Adopt New York's Past</a
+                  >
+                </li>
+
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="{{ url_for('main.koch_congressional_project') }}"
+                    >Edward I. Koch Congressional Project</a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="col-lg-3 col-md-6 footer-links">
+              <ul>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="/1980-Census">1980</a>
+                </li>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="/events">Events</a>
+                </li>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="https://www.archives.nyc/blog" target="_blank"
+                    >Blog</a
+                  >
+                </li>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a href="/contact">Contact</a>
+                </li>
+                <li>
+                  <i class="bx bx-chevron-right"></i>
+                  <a
+                    href="https://web.ovationtix.com/trs/store/34600/alldonations/23831"
+                    target="_blank"
+                    >Contribute</a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- End Footer -->
+    <div id="preloader"></div>
+    <a
+      class="back-to-top d-flex align-items-center justify-content-center"
+      href="#"
+      ><i class="bi bi-arrow-up-short"></i
+    ></a>
+    <!-- Libraries -->
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/aos/aos.js') }}"
+    ></script>
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"
+    ></script>
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"
+    ></script>
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"
+    ></script>
+
+    <!-- Bootstrap might be a dependency for many custom scripts, hence using defer -->
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"
+    ></script>
+
+    <!-- Your Custom Script -->
+    <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Ionicons Script - No change needed -->
+    <script
+      async
+      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
+      type="module"
+    ></script>
+  </body>
+</html>
