@@ -77,7 +77,7 @@
 <script>
   window.onload = function () {
     // Initialize EmailJS service
-    emailjs.init("{{ emailjs_user_id }}");
+    emailjs.init("jYV8y8AwgFM2SI98x");
     // Add event listener for form submission
     document.getElementById("email-form").addEventListener("submit", sendMail);
   
@@ -88,8 +88,8 @@
       const params = getFormData();
   
       // Define EmailJS service and template IDs
-      const serviceID = "{{ emailjs_service_id }}";
-      const templateID = "{{ emailjs_template_id }}"
+      const serviceID = "service_ogwzo2j";
+      const templateID = "template_lqrxlkm"
   
       // Send email using EmailJS
       emailjs.send(serviceID, templateID, params).then(
