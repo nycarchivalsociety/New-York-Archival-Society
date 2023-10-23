@@ -67,16 +67,9 @@ var TrandingSlider = new Swiper(".tranding-slider", {
     );
   };
 
-  const toggleBacktotop = () => {
-    select(".back-to-top").classList[window.scrollY > 100 ? "add" : "remove"](
-      "active"
-    );
-  };
-
   window.addEventListener("load", () => {
     navbarlinksActive();
     headerScrolled();
-    toggleBacktotop();
 
     if (window.location.hash && select(window.location.hash)) {
       scrollto(window.location.hash);
@@ -174,6 +167,5 @@ var TrandingSlider = new Swiper(".tranding-slider", {
   window.addEventListener("scroll", () => {
     navbarlinksActive();
     headerScrolled();
-    toggleBacktotop();
   });
 })();
