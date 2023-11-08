@@ -13,6 +13,7 @@ var TrandingSlider = new Swiper(".tranding-slider", {
   "use strict";
 
   const select = (el, all = false) => {
+    if (!el || typeof el !== "string") return;
     el = el.trim();
     return all
       ? [...document.querySelectorAll(el)]
