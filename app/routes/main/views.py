@@ -47,7 +47,7 @@ def about():
 
 @main.route('/contribute')
 def contribute():
-    return render_template('error/ComingSoon.html')
+    return render_template('main/contact.html')
 
 
 @main.app_errorhandler(404)
