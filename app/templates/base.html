@@ -49,16 +49,17 @@
   </head>
   <body>
     <!-- ======= Header ======= -->
-    <header class="align-items-center" id="header">
+    <header id="header" class="align-items-center">
       <div
         class="container-fluid container-xl d-flex align-items-center justify-content-lg-between"
       >
         <h1 class="logo me-auto me-lg-0">
-          <a href="/">New York Archival Society</a>
+          <a href="{{ url_for('main.index') }}">New Archival Society</a>
         </h1>
         <!-- Uncomment below if you prefer to use an image logo -->
         <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
-        <nav class="navbar order-last order-lg-0" id="navbar">
+
+        <nav id="navbar" class="navbar order-last order-lg-0">
           <ul>
             <li>
               <a
@@ -115,10 +116,18 @@
                 >Contribute</a
               >
             </li>
+            <li>
+              <a
+                class="nav-link scrollto"
+                id="liveToastBtn"
+                style="cursor: pointer"
+              >
+                Google Translate <i class="bi bi-translate"></i
+              ></a>
+            </li>
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
-        <!-- .navbar -->
       </div>
     </header>
     <!-- End Header -->
@@ -212,11 +221,7 @@
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a
-                    href="https://web.ovationtix.com/trs/store/34600/alldonations/23831"
-                    target="_blank"
-                    >Contribute</a
-                  >
+                  <a href="/contact" target="_blank">Contribute</a>
                 </li>
               </ul>
             </div>
@@ -228,16 +233,6 @@
 
     <!-- Libraries -->
 
-    <!-- Translation Button -->
-    <button
-      type="button"
-      class="btn btn-primary"
-      id="liveToastBtn"
-      style="position: fixed; bottom: 10px; right: 10px; z-index: 9999"
-    >
-      Translate
-    </button>
-
     <!-- Toast containing Google Translate Widget -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div
@@ -248,7 +243,7 @@
         aria-atomic="true"
       >
         <div class="toast-header">
-          <strong class="me-auto">Translation</strong>
+          <strong class="me-auto">Google Translate</strong>
           <button
             type="button"
             class="btn-close"
@@ -288,8 +283,6 @@
         toastEl.show();
       };
     </script>
-
-    <!-- (Your existing script tags) -->
 
     <script
       type="text/javascript"
