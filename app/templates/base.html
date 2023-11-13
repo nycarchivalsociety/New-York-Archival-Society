@@ -49,85 +49,40 @@
   </head>
   <body>
     <!-- ======= Header ======= -->
-    <header id="header" class="align-items-center">
+    <header id="header" class="fixed-top d-flex align-items-cente">
       <div
         class="container-fluid container-xl d-flex align-items-center justify-content-lg-between"
       >
         <h1 class="logo me-auto me-lg-0">
-          <a href="{{ url_for('main.index') }}">New Archival Society</a>
+          <a href="index.html">New York Archival Society</a>
         </h1>
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.html" class="logo me-auto me-lg-0"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
 
         <nav id="navbar" class="navbar order-last order-lg-0">
           <ul>
+            <li><a class="nav-link scrollto active" href="/">Home</a></li>
+            <li><a class="nav-link scrollto" href="/about">About</a></li>
             <li>
-              <a
-                class="nav-link scrollto active"
-                href="{{ url_for('main.index') }}"
-                >Home</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.about') }}"
-                >About</a
-              >
-            </li>
-            <li>
-              <a
-                class="nav-link scrollto"
-                href="{{ url_for('main.new_yorks_past') }}"
+              <a class="nav-link scrollto" href="/adopt-new-yorks-past"
                 >Adopt New York's Past</a
               >
             </li>
             <li>
-              <a
-                class="nav-link scrollto"
-                href="{{ url_for('main.koch_congressional_project') }}"
+              <a class="nav-link scrollto" href="/koch-congressional-project"
                 >Edward I. Koch Congressional Project</a
               >
             </li>
             <li>
-              <a class="nav-link scrollto" href="/404">1890 Census</a>
-            </li>
-            <li>
-              <a
-                class="nav-link scrollto"
-                href="https://www.archives.nyc/blog"
-                target="_blank"
+              <a class="nav-link scrollto" href="https://www.archives.nyc/blog"
                 >Blog</a
               >
             </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.events') }}"
-                >Events</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.contact') }}"
-                >Contact</a
-              >
-            </li>
-            <li>
-              <a
-                class="nav-link scrollto"
-                href="{{ url_for('main.contribute') }}"
-                target="_blank"
-                >Contribute</a
-              >
-            </li>
-            <li>
-              <a
-                class="nav-link scrollto"
-                id="liveToastBtn"
-                style="cursor: pointer"
-              >
-                Google Translate <i class="bi bi-translate"></i
-              ></a>
-            </li>
+            <li><a class="nav-link scrollto" href="/events">Events</a></li>
+            <li><a class="nav-link scrollto" href="/contact">Contact</a></li>
+            <li><a class="nav-link scrollto" href="/contact">Contribute</a></li>
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
+        <!-- .navbar -->
       </div>
     </header>
     <!-- End Header -->
@@ -203,10 +158,6 @@
               <ul>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a href="/1980-Census">1980</a>
-                </li>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
                   <a href="/events">Events</a>
                 </li>
                 <li>
@@ -223,6 +174,15 @@
                   <i class="bx bx-chevron-right"></i>
                   <a href="/contact" target="_blank">Contribute</a>
                 </li>
+                <li>
+                  <a
+                    class="nav-link scrollto"
+                    id="liveToastBtn"
+                    style="cursor: pointer"
+                  >
+                    Google Translate <i class="bi bi-translate"></i
+                  ></a>
+                </li>
               </ul>
             </div>
           </div>
@@ -230,8 +190,6 @@
       </div>
     </footer>
     <!-- End Footer -->
-
-    <!-- Libraries -->
 
     <!-- Toast containing Google Translate Widget -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -298,6 +256,7 @@
       }
     </script>
 
+    <!-- Libraries -->
     <script
       defer
       src="{{ url_for('static', filename='vendor/aos/aos.js') }}"
