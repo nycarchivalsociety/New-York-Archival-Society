@@ -119,16 +119,22 @@ h6 {
 # Header
 --------------------------------------------------------------*/
 #header {
-  background: rgba(49, 39, 63, 0.685);
-  border-bottom: 1px solid rgba(41, 30, 10, 0.603);
+  background: rgba(12, 11, 9, 0.6);
+  border-bottom: 1px solid rgba(12, 11, 9, 0.6);
   transition: all 0.5s;
   z-index: 997;
   padding: 15px 0;
   top: 40px;
 }
 
+#header.header-scrolled {
+  top: 0;
+  background: rgba(0, 0, 0, 0.85);
+  border-bottom: 1px solid #37332a;
+}
+
 #header .logo {
-  font-size: 28px;
+  font-size: 26px;
   margin: 0;
   padding: 0;
   line-height: 1;
@@ -177,7 +183,7 @@ h6 {
   color: #fff;
   white-space: nowrap;
   transition: 0.3s;
-  font-size: 14px;
+  font-size: 18px;
 }
 
 .navbar a i,
@@ -1403,4 +1409,30 @@ section {
   -webkit-box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.5);
   -webkit-transform: rotate(-45deg) scale(0.75, 1);
   z-index: 10;
+}
+
+/* Custom styles for Swiper Pagination */
+
+.swiper-pagination {
+  text-align: center; /* Center the pagination horizontally */
+  position: absolute;
+  bottom: 20px; /* Adjust distance from the bottom */
+  width: 100%;
+}
+
+.swiper-pagination-bullet {
+  width: 12px; /* Increased size of dots */
+  height: 12px;
+  background: #fff; /* White color for dots */
+  opacity: 0.6; /* Slightly transparent */
+  margin: 0 6px; /* Spacing between dots */
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1; /* Active dot is fully opaque */
+  background: #007bff; /* Highlight color for active dot */
+}
+
+.swiper-pagination-bullet:hover {
+  background: #0056b3; /* Hover effect color change */
 }
