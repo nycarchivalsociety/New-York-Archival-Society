@@ -127,12 +127,6 @@ h6 {
   top: 40px;
 }
 
-#header.header-scrolled {
-  top: 0;
-  background: rgba(0, 0, 0, 0.85);
-  border-bottom: 1px solid #37332a;
-}
-
 #header .logo {
   font-size: 26px;
   margin: 0;
@@ -1435,4 +1429,51 @@ section {
 
 .swiper-pagination-bullet:hover {
   background: #0056b3; /* Hover effect color change */
+}
+
+.footer-links .dropdown {
+  position: relative;
+}
+
+.footer-links .dropdown ul {
+  display: none; /* Initially hidden */
+  position: absolute;
+  left: 0;
+  top: 100%; /* Position it below the dropdown trigger */
+  margin: 0;
+  padding: 10px 0;
+  z-index: 99;
+  background: #fff;
+  box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.3s;
+}
+
+.footer-links .dropdown ul li {
+  min-width: 200px; /* Consistent width */
+}
+
+.footer-links .dropdown ul a {
+  padding: 10px 20px;
+  color: #444444; /* Text color */
+}
+
+.footer-links .dropdown:hover ul {
+  display: block;
+  opacity: 1;
+  visibility: visible; /* Show dropdown on hover */
+  color: #cda45e;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 1366px) {
+  .footer-links .dropdown .dropdown ul {
+    left: -90%;
+  }
+
+  .footer-links .dropdown .dropdown:hover > ul {
+    left: -100%;
+  }
 }
