@@ -49,7 +49,7 @@
   </head>
   <body>
     <!-- ======= Header ======= -->
-    <header id="header" class="fixed-top d-flex align-items-cente">
+    <header id="header">
       <div
         class="container-fluid container-xl d-flex align-items-center justify-content-lg-between"
       >
@@ -66,10 +66,19 @@
                 >Adopt New York's Past</a
               >
             </li>
-            <li>
-              <a class="nav-link scrollto" href="/koch-congressional-project"
-                >Edward I. Koch Congressional Project</a
-              >
+            <li class="dropdown">
+              <a href="#"
+                ><span>Our Projects</span> <i class="bi bi-chevron-down"></i
+              ></a>
+              <ul>
+                <li>
+                  <a
+                    class="nav-link scrollto"
+                    href="/koch-congressional-project"
+                    >Edward I. Koch Congressional Project</a
+                  >
+                </li>
+              </ul>
             </li>
             <li>
               <a
@@ -148,12 +157,19 @@
                     >Adopt New York's Past</a
                   >
                 </li>
-
-                <li>
+                <li class="dropdown">
                   <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.koch_congressional_project') }}"
-                    >Edward I. Koch Congressional Project</a
-                  >
+                  <a href="#"><span>Our Projects</span> </a>
+                  <ul>
+                    <li>
+                      <a
+                        class="nav-link scrollto"
+                        href="/koch-congressional-project"
+                        >Edward I. Koch Congressional Project</a
+                      >
+                    </li>
+                    <!-- Other dropdown items here -->
+                  </ul>
                 </li>
               </ul>
             </div>
@@ -177,15 +193,6 @@
                   <i class="bx bx-chevron-right"></i>
                   <a href="/contact" target="_blank">Contribute</a>
                 </li>
-                <li>
-                  <a
-                    class="nav-link scrollto"
-                    id="liveToastBtn"
-                    style="cursor: pointer"
-                  >
-                    Google Translate <i class="bi bi-translate"></i
-                  ></a>
-                </li>
               </ul>
             </div>
           </div>
@@ -194,72 +201,24 @@
     </footer>
     <!-- End Footer -->
 
-    <!-- Toast containing Google Translate Widget -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div
-        id="liveToast"
-        class="toast"
-        role="alert"
-        aria-live="assertive"
-        aria-atomic="true"
-      >
-        <div class="toast-header">
-          <strong class="me-auto">Google Translate</strong>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="toast"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="toast-body">
-          <div id="google_translate_element"></div>
-        </div>
-      </div>
-    </div>
-
+    <!-- Libraries -->
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const googleTranslateElement = document.querySelector(
-          ".goog-te-banner-frame"
-        );
-        if (googleTranslateElement) {
-          googleTranslateElement.addEventListener("click", function () {
-            this.style.display = "none";
-          });
-        }
-      });
+        var dropdown = document.querySelector(".footer-links .dropdown");
+        dropdown.addEventListener("click", function (event) {
+          event.stopPropagation();
+          dropdown.querySelector("ul").classList.toggle("show");
+        });
 
-      document.addEventListener("DOMContentLoaded", function () {
-        // Check if the Google Translate frame is present
-        var isTranslated = document.querySelector(
-          "iframe.goog-te-banner-frame"
-        );
+        window.addEventListener("click", function () {
+          var openDropdown = document.querySelector(
+            ".footer-links .dropdown .show"
+          );
+          if (openDropdown) openDropdown.classList.remove("show");
+        });
       });
     </script>
-    <!-- JavaScript to trigger the toast -->
-    <script type="text/javascript">
-      document.getElementById("liveToastBtn").onclick = function () {
-        var toastEl = new bootstrap.Toast(document.getElementById("liveToast"));
-        toastEl.show();
-      };
-    </script>
 
-    <script
-      type="text/javascript"
-      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
-    ></script>
-
-    <script type="text/javascript">
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement(
-          { pageLanguage: "en" },
-          "google_translate_element"
-        );
-      }
-    </script>
-
-    <!-- Libraries -->
     <script
       defer
       src="{{ url_for('static', filename='vendor/aos/aos.js') }}"
