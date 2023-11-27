@@ -3,7 +3,7 @@
 from app.data.products import products
 from app.data.image_urls import image_urls
 from app.data.events import image_urls
-from flask import render_template, redirect
+from flask import render_template
 from . import main
 
 
@@ -49,7 +49,7 @@ def about():
 
 @main.route('/contribute')
 def contribute():
-    return redirect("https://www.paypal.com/donate/?hosted_button_id=R58VMCBZEFTJJ")
+    return render_template('main/contribute.html')
 
 
 @main.app_errorhandler(404)
