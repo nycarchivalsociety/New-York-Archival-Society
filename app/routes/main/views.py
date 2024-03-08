@@ -51,6 +51,14 @@ def about():
 def contribute():
     return render_template('main/contribute.html')
 
+@main.route('/layout')
+def layout():
+    return render_template('main/items.html')
+
+@main.route('/item')
+def view_item():
+    return render_template('main/item.html')
+
 
 @main.app_errorhandler(404)
 def http_error_handler(error):
