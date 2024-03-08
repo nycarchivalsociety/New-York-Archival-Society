@@ -60,6 +60,16 @@ def view_item():
     return render_template('main/item.html')
 
 
+@main.route('/item-2')
+def view_item2():
+    return render_template('main/item_2.html')
+
+
+@main.route('/item-3')
+def view_item3():
+    return render_template('main/item_3.html')
+
+
 @main.app_errorhandler(404)
 def http_error_handler(error):
     return render_template("error/404NotFound.html"), 404
