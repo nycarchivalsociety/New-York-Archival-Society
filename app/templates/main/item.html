@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Item Template</title>
+    <style>
+        .product-template {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
+
+        .product-image {
+            max-width: 600px;
+            margin-right: 2rem;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .product-details {
+            max-width: 400px;
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-price .old-price {
+            text-decoration: line-through;
+            margin-right: 1rem;
+        }
+
+        .btn-add-to-cart {
+            display: flex;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-full">
+        <div class="product-template">
+            <div class="product-image">
+                <img src="https://via.placeholder.com/550x400" alt="Product Image">
+            </div>
+            <div class="product-details">
+                <p class="sku">SKU: BST-498</p>
+                <h1>Shop item template</h1>
+                <div class="product-price">
+                    <span class="old-price">$45.00</span>
+                    <span class="new-price">$40.00</span>
+                </div>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium at dolorem quidem modi. Nam
+                    sequi consequatur obcaecati excepturi alias magni, accusamus eius blanditiis delectus ipsam minima
+                    ea iste laborum vero?</p>
+                <div class="btn-add-to-cart">
+                    <input type="number" class="form-control" value="1" style="width: 60px; margin-right: 1rem;">
+                    <button class="btn btn-dark">Add to cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+{% endblock %}
