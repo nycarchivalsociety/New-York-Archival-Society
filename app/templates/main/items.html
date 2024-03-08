@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Cards</title>
+    <style>
+        .card {
+            border: none;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .card .btn {
+            border-radius: 0;
+        }
+
+        .card-header {
+            background-color: transparent;
+            border-bottom: none;
+            padding: 0.5rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header .sale-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        .price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .price h5 {
+            margin: 0;
+        }
+
+        #items-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .item-card {
+            flex: 0 1 calc(33.333% - 1rem);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        <div id="items-container">
+            <!-- Item Card 1 -->
+            <div class="item-card">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <img src="https://via.placeholder.com/450x300" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Fancy Product</h5>
+                        <p>Lorem ipsum is the text commonly used in graphic design in typeface demonstrations or design
+                            drafts to test the visual design before inserting the final text...</p>
+                        <p class="card-text price">
+                            <span>$40.00</span>
+                        </p>
+                        <a href="#" class="btn btn-outline-dark">View</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Item Card 2 -->
+            <div class="item-card">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <span class="sale-badge">Adopted</span>
+                        <img src="https://via.placeholder.com/450x300" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Special Item</h5>
+                        <p>Lorem ipsum is the text commonly used in graphic design in typeface demonstrations or design
+                            drafts to test the visual design before inserting the final text...</p>
+                        <p class="card-text price">
+                            <span>$18.00</span>
+                        </p>
+                        <a href="#" class="btn btn-outline-dark">View</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Item Card 3 -->
+            <div class="item-card">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <span class="sale-badge">Adopted</span>
+                        <img src="https://via.placeholder.com/450x300" class="card-img-top" alt="...">
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Sale Item</h5>
+                        <p>Lorem ipsum is the text commonly used in graphic design in typeface demonstrations or design
+                            drafts to test the visual
+                            design before inserting the final text...</p>
+                        <p class="card-text price">
+                            <span>$25.00</span>
+                        </p>
+                        <a href="#" class="btn btn-outline-dark">View</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Example API fetch code
+        // Fetch items from an API and dynamically add to the page
+        // fetch('API_ENDPOINT')
+        //   .then(response => response.json())
+        //   .then(items => {
+        //     const container = document.getElementById('items-container');
+        //     items.forEach(item => {
+        //       const itemCard = document.createElement('div');
+        //       itemCard.classList.add('item-card');
+        //       // Add content to itemCard based on item details
+        //       // itemCard.innerHTML = ...
+        //       container.appendChild(itemCard);
+        //     });
+        //   });
+    </script>
+</body>
+
+</html>
+
+
+{% endblock %}
