@@ -1,0 +1,114 @@
+{% block content %}
+
+<head>
+  <style>
+    .card {
+      border: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .card .btn {
+      border-radius: 0;
+    }
+
+    .card-header {
+      background-color: transparent;
+      border-bottom: none;
+      padding: 0.5rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header .sale-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      font-size: 0.8em;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .price h5 {
+      margin: 0;
+    }
+
+    #items-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .item-card {
+      flex: 0 1 calc(33.333% - 1rem);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+    <h1 class="mb-4">Items</h1>
+    <div id="items-container">
+      {% for item in items %}
+      <div class="item-card">
+        <div class="card h-100">
+          <div class="card-header">
+            {% if item.adopted %}
+            <span class="sale-badge">Adopted</span>
+            {% endif %} {% if item.photo %}
+            <!-- If the item has a photo, display it -->
+            <img
+              src="{{ item.item_image_url }}"
+              class="card-img-top"
+              alt="{{ item.item_name }}"
+            />
+            {% else %}
+            <!-- If the item does not have a photo, display a default image -->
+            <img
+              src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
+              class="card-img-top"
+              alt="{{ item.item_name }}"
+            />
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ item.item_name }}</h5>
+            <!-- Truncate the description to 100 characters -->
+            <p>{{ item.item_description | truncate(100) }}</p>
+            <p class="card-text price">${{ item.fee }}</p>
+            {% if item.adopted %} {% for donor in item.donors %}
+            <p class="card-text price fw-bold">
+              Adopted by {{ donor.donor_name }} {{ donor.donor_lastname }}
+            </p>
+            {% endfor %} {% endif %}
+
+            <a
+              href="{{ url_for('items.view_item', item_id=item.item_id) }}"
+              class="btn btn-outline-dark"
+              >View</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</body>
+
+{% endblock %}
