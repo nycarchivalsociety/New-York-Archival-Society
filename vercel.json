@@ -1,37 +1,14 @@
 {
-  "builds": [
-    {
-      "src": "manage.py",
-      "use": "@vercel/python"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "manage.py"
-    },
-
-    {
-      "src": "/register",
-      "dest": "/routes/login/views.py"
-    },
-    {
-      "src": "/donations",
-      "dest": "/routes/login/views.py"
-    },
-    {
-      "src": "/logout",
-      "dest": "/routes/login/views.py"
-    },   
-      
-      {
-      "src": "/login",
-      "dest": "/routes/login/views.py"
-    },
-
-     {
-      "src": "/items",
-      "dest": "/routes/items/views.py"
-    },
-  ]
+    "builds": [
+        {
+            "src": "manage.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "manage.py"
+        }
+    ]
 }
