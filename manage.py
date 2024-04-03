@@ -17,4 +17,4 @@ if __name__ == '__main__':
     app = create_app()
     execute_sql(create_tables_sql, connection_parameters)
     print("Database and tables created successfully.")
-    app.run(debug=True)
+    app.run()
