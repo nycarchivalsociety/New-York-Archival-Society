@@ -1,10 +1,21 @@
 # main_routes.py
 # now you can import the products module
-from app.data.products import products
+from app.data.items import items
 from app.data.image_urls import image_urls
 from app.data.events import image_urls
-from flask import render_template
+from flask import render_template, session, jsonify
 from . import main
+from flask import Flask, jsonify, request, render_template, current_app as app, session
+import psycopg2.extras
+from datetime import datetime
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Database connection parameters
+PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 
 
 @main.route('/')
@@ -22,9 +33,18 @@ def projects():
     return render_template('projects.html')
 
 
+
 @main.route('/adopt-new-yorks-past')
 def new_yorks_past():
-    return render_template('main/adopt_new_yorks_past.html', products=products, image_urls=image_urls)
+    return render_template('main/adopt_new_yorks_past.html', image_urls=image_urls, items=items)
+
+@main.route('/adopt-new-yorks-past/item/<item_id>')
+def new_yorks_past_view_item(item_id):
+    item = next((item for item in items if str(item['id']) == item_id), None)  # Assuming each item has an 'id' key
+    if item is None:
+        return "Item not found", 404
+    PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')  # Assuming you have the PayPal client ID in an environment variable
+    return render_template('items/view_item.html', item=item, PAYPAL_CLIENT_ID=PAYPAL_CLIENT_ID)
 
 
 @main.route('/events')
@@ -50,24 +70,6 @@ def about():
 @main.route('/contribute')
 def contribute():
     return render_template('main/contribute.html')
-
-@main.route('/layout')
-def layout():
-    return render_template('main/items.html')
-
-@main.route('/item')
-def view_item():
-    return render_template('main/item.html')
-
-
-@main.route('/item-2')
-def view_item2():
-    return render_template('main/item_2.html')
-
-
-@main.route('/item-3')
-def view_item3():
-    return render_template('main/item_3.html')
 
 
 @main.app_errorhandler(404)
