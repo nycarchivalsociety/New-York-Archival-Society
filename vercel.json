@@ -1,6 +1,6 @@
 {
   "functions": {
-    "api/index.py": {
+    "./manage.py": {
       "runtime": "python3.9"
     }
   },
