@@ -1,75 +1,85 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-  <style>
-    .product-template {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 2rem;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Item Template</title>
+    <style>
+        .product-template {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
 
-    .product-image {
-      max-width: 600px;
-      margin-right: 2rem;
-    }
+        .product-image {
+            max-width: 600px;
+            margin-right: 2rem;
+        }
 
-    .product-image img {
-      width: 100%;
-      height: auto;
-    }
+        .product-image img {
+            width: 100%;
+            height: auto;
+        }
 
-    .product-details {
-      max-width: 400px;
-    }
+        .product-details {
+            max-width: 400px;
+        }
 
-    .product-price {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
-    }
+        .product-price {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
 
-    .product-price .old-price {
-      text-decoration: line-through;
-      margin-right: 1rem;
-    }
+        .product-price .old-price {
+            text-decoration: line-through;
+            margin-right: 1rem;
+        }
 
-    .btn-add-to-cart {
-      display: flex;
-      align-items: center;
-    }
-  </style>
+        .btn-add-to-cart {
+            display: flex;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body>
-  <div class="container-full">
-    <div class="product-template">
-      <div class="product-image">
-        <img
-          src="https://res-console.cloudinary.com/dakw2jqjp/media_explorer_thumbnails/e8ab5c99f0fe9829fcba89e56d03c31e/detailed"
-          alt="Product Image"
-        />
-      </div>
-      <div class="product-details">
-        <p class="sku">ID: BST-418</p>
-        <h1>Slave Register, Town of Flatlands, 1799</h1>
-        <div class="product-price">
-          <span class="new-price">$282.00</span>
+    <div class="container-full">
+        <div class="product-template">
+            <div class="product-image">
+                <img src="https://res-console.cloudinary.com/dakw2jqjp/media_explorer_thumbnails/e8ab5c99f0fe9829fcba89e56d03c31e/detailed"
+                    alt="Product Image">
+            </div>
+            <div class="product-details">
+                <p class="sku">ID: BST-418</p>
+                <h1>Slave Register, Town of Flatlands, 1799</h1>
+                <div class="product-price">
+                    <span class="new-price">$282.00</span>
+                </div>
+                <p class="text-start fw-normal">This volume, which documents the birth of slaves in the Flatlands area
+                    of Brooklyn, is a unique record of New York
+                    History. Created during the period in which slavery was gradually abolished in the state, the volume
+                    contains the
+                    hand-written birth certificates of children born to enslaved women. The binding of this volume has
+                    been damaged over
+                    time, and requires conservation treatment to make it safer for researchers to handle. Repairing the
+                    binding and creating
+                    a custom enclosure will ensure that the volume is protected both from poor handling and external
+                    environmental
+                    conditions.</p>
+                <p class="fw-bold">
+                    Adopted by Betty Kay
+                </p>
+            </div>
         </div>
-        <p class="text-start fw-normal">
-          This volume, which documents the birth of slaves in the Flatlands area
-          of Brooklyn, is a unique record of New York History. Created during
-          the period in which slavery was gradually abolished in the state, the
-          volume contains the hand-written birth certificates of children born
-          to enslaved women. The binding of this volume has been damaged over
-          time, and requires conservation treatment to make it safer for
-          researchers to handle. Repairing the binding and creating a custom
-          enclosure will ensure that the volume is protected both from poor
-          handling and external environmental conditions.
-        </p>
-        <p class="fw-bold">Adopted by Betty Kay</p>
-      </div>
     </div>
-  </div>
 </body>
+
+</html>
+
 
 {% endblock %}
