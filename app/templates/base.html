@@ -60,11 +60,7 @@
         <nav id="navbar" class="navbar order-last order-lg-0">
           <ul>
             <li><a class="nav-link scrollto active" href="/">Home</a></li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.about') }}"
-                >About</a
-              >
-            </li>
+            <li><a class="nav-link scrollto" href="{{ url_for('main.about') }}">About</a></li>
             <li>
               <a class="nav-link scrollto" href="/adopt-new-yorks-past"
                 >Adopt New York's Past</a
@@ -92,53 +88,11 @@
                 >Blog</a
               >
             </li>
+            <li><a class="nav-link scrollto" href="{{ url_for('main.events') }}">Events</a></li>
+            <li><a class="nav-link scrollto" href="{{ url_for('main.contact') }}">Contact</a></li>
             <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.events') }}"
-                >Events</a
-              >
+         <li><a class="nav-link scrollto" href="{{ url_for('main.contribute') }}">Contribute</a></li>
             </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.contact') }}"
-                >Contact</a
-              >
-            </li>
-            <li></li>
-            <li>
-              <a class="nav-link" href="{{ url_for('main.contribute') }}"
-                >Contribute</a
-              >
-            </li>
-
-            {% if 'username' in session %}
-
-            <li class="nav-item dropdown">
-              <a href="#"
-                ><span>{{ session['username'] }}</span>
-                <i class="bi bi-chevron-down"></i
-              ></a>
-              <ul>
-                <li class="nav-item">
-                  <!-- Correct the link in the navigation bar to not include 'item_id' -->
-                  <a class="nav-link" href="{{ url_for('login.donations') }}"
-                    >View your donations</a
-                  >
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('login.logout') }}"
-                    >Logout</a
-                  >
-                </li>
-                {% else %}
-                <li class="nav-item">
-                  <a class="nav-link" href="{{ url_for('login.login_form') }}"
-                    >Login</a
-                  >
-                </li>
-              </ul>
-            </li>
-
-            {% endif %}
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
@@ -239,9 +193,7 @@
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.contribute') }}" target="_blank"
-                    >Contribute</a
-                  >
+                  <a href="{{ url_for('main.contribute') }}" target="_blank">Contribute</a>
                 </li>
               </ul>
             </div>
