@@ -1,6 +1,6 @@
 {
   "functions": {
-    "./manage.py": {
+    "vercel.py": {
       "runtime": "python3.9"
     }
   },
