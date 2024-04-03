@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %}
+
+{% block content %}
 <head>
   <style>
     .product-template {
@@ -31,7 +33,7 @@
     }
 
     .form-control {
-      color: black; /* This sets the text color inside the inputs to black */
+      color: black;
     }
   </style>
   <!-- Include the PayPal JavaScript SDK -->
@@ -45,231 +47,91 @@
         {% if item.photo %}
         <!-- If the item has a photo, display it -->
         <img
-          src="{{ item.item_image_url }}"
+          src="{{ item.imgURL }}"
           class="card-img-top"
-          alt="{{ item.item_name }}"
+          alt="{{ item.name }}"
         />
         {% else %}
         <!-- If the item does not have a photo, display a default image -->
         <img
           src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
           class="card-img-top"
-          alt="{{ item.item_name }}"
+          alt="{{ item.name }}"
         />
         {% endif %}
       </div>
       <div class="product-details">
-        <h1>{{ item.item_name }}</h1>
+        <h1>{{ item.name }}</h1>
         <div class="product-price">
           <span class="new-price">${{ item.fee }}</span>
         </div>
-        <p class="text-start fw-normal">{{ item.item_description }}</p>
-        {% if item.adopted %} {% for donor in donors %}
-        <p class="fw-bold">
-          Adopted by {{ donor.donor_name }} {{ donor.donor_lastname }}
-        </p>
-        {% endfor %} {% else %}
+        <p class="text-start fw-normal">{{ item.desc }}</p>
+
         <p>This item is available for adoption</p>
-        {% endif %} {% if not item.adopted %}
-        <div class="container px-5 my-5">
-          <form id="contactForm" data-sb-form-api-token="API_TOKEN">
-            <div class="mb-3">
-              <label class="form-label" for="firstName">First Name</label>
-              <input
-                class="form-control"
-                id="firstName"
-                type="text"
-                placeholder="First Name"
-                data-sb-validations="required"
-              />
-              <div
-                class="invalid-feedback"
-                data-sb-feedback="firstName:required"
-              >
-                First Name is required.
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="lastName">Last Name</label>
-              <input
-                class="form-control"
-                id="lastName"
-                type="text"
-                placeholder="Last Name"
-                data-sb-validations="required"
-              />
-              <div
-                class="invalid-feedback"
-                data-sb-feedback="lastName:required"
-              >
-                Last Name is required.
-              </div>
-            </div>
 
-            <div class="mb-3">
-              <label class="form-label" for="phone">Phone Number</label>
-              <input
-                class="form-control"
-                id="phone"
-                type="text"
-                placeholder="Phone"
-                data-sb-validations="required"
-              />
-              <div class="invalid-feedback" data-sb-feedback="phone:required">
-                Phone Number is required.
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="emailAddress">Email Address</label>
-              <input
-                class="form-control"
-                id="emailAddress"
-                type="email"
-                placeholder="Email Address"
-                data-sb-validations="required,email"
-              />
-              <div
-                class="invalid-feedback"
-                data-sb-feedback="emailAddress:required"
-              >
-                Email Address is required.
-              </div>
-              <div
-                class="invalid-feedback"
-                data-sb-feedback="emailAddress:email"
-              >
-                Email Address Email is not valid.
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="zipCode">Zip Code</label>
-              <input
-                class="form-control"
-                id="zipCode"
-                type="text"
-                placeholder="Zip Code"
-                data-sb-validations="required"
-              />
-              <div class="invalid-feedback" data-sb-feedback="zipCode:required">
-                Zip Code is required.
-              </div>
-            </div>
-          </form>
-        </div>
-
+        <div id="payment-status"></div>
         <div id="paypal-button-container"></div>
-        {% endif %}
       </div>
     </div>
   </div>
-  {% if not item.adopted %}
+
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    function redirectToLogin() {
-      window.location.href = "/login";
-    }
+    // Initialize EmailJS
+    emailjs.init("jYV8y8AwgFM2SI98x");
 
-    function submitDonation() {
-      const formData = {
-        firstName: document.getElementById("firstName").value,
-        lastName: document.getElementById("lastName").value,
-        phone: document.getElementById("phone").value,
-        email: document.getElementById("email").value,
-        zipCode: document.getElementById("zipCode").value,
-        item_id: "{{ item.item_id }}",
+    function sendPurchaseNotification(item) {
+      var templateParams = {
+          to_name: "nycarchivalsociety@gmail.com",
+          from_name: "NYAS SITE",
+          subject: "Purchase made!",
+          message: "A purchase has been made for the item '{{ item.name }}' by an amount of ${{ item.fee }}. Please check the PayPal account for more details."
       };
-      fetch("/submit_donation", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(formData),
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          if (data.success) {
-            document.getElementById("donor-info-form").reset();
-            alert("Donation was successful!");
-            window.location.reload(); // This will reload the page
-          }
-        })
-        .catch((error) => {
-          console.error(
-            "There has been a problem with your fetch operation:",
-            error
-          );
-          alert("Error submitting donation: " + error.message);
-        });
 
-      fetch("/check_user_session")
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.isLoggedIn) {
-            // Call renderPaypalButtons if it's defined
-            if (typeof renderPaypalButtons === "function") {
-              renderPaypalButtons();
-            }
-          } else {
-            // Replace PayPal buttons with a login button
-            document.getElementById("paypal-button-container").innerHTML =
-              '<button onclick="redirectToLogin()">Login to Donate</button>';
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          alert("Error checking user session: " + error.message);
+      emailjs.send("service_ogwzo2j", "template_lqrxlkm", templateParams)
+        .then(function(response) {
+           console.log('SUCCESS!', response.status, response.text);
+        }, function(error) {
+           console.log('FAILED...', error);
         });
-
-      // Place the PayPal SDK script after your function definitions
-      if (typeof paypal === "undefined") {
-        const script = document.createElement("script");
-        script.src =
-          "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD";
-        script.onload = function () {
-          // Render PayPal buttons after SDK is loaded
-          renderPaypalButtons();
-        };
-        document.head.appendChild(script);
-      } else {
-        // If paypal is already defined, render the buttons directly
-        renderPaypalButtons();
-      }
     }
 
-    paypal
-      .Buttons({
-        createOrder: function (data, actions) {
-          // Set up the transaction
+    function renderPaypalButtons() {
+      paypal.Buttons({
+        createOrder: function(data, actions) {
           return actions.order.create({
-            purchase_units: [
-              {
-                amount: {
-                  value: "{{ item.fee }}",
-                },
-              },
-            ],
+            purchase_units: [{
+              amount: {
+                value: "{{ item.fee }}"
+              }
+            }],
             application_context: {
-              shipping_preference: "NO_SHIPPING",
-            },
+              shipping_preference: "NO_SHIPPING"
+            }
           });
         },
-        onApprove: function (data, actions) {
-          return actions.order.capture().then(function (details) {
-            submitDonation();
+        onApprove: function(data, actions) {
+          return actions.order.capture().then(function(details) {
+            document.getElementById('payment-status').innerHTML = '<div class="alert alert-success">Payment successful! Thank you for your purchase.</div>';
+            sendPurchaseNotification();
           });
         },
-      })
-      .render("#paypal-button-container");
+        onError: function(err) {
+          document.getElementById('payment-status').innerHTML = '<div class="alert alert-danger">An error occurred during the payment process. Please try again.</div>';
+          console.error('Payment error: ', err);
+        }
+      }).render("#paypal-button-container");
+    }
+  
+    if (typeof paypal === "undefined") {
+      const script = document.createElement("script");
+      script.src = "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD";
+      script.onload = renderPaypalButtons;
+      document.head.appendChild(script);
+    } else {
+      renderPaypalButtons();
+    }
   </script>
-
-  <!-- Include Bootstrap JavaScript and its dependencies -->
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-  {% endif %}
+  
 </body>
 {% endblock %}
