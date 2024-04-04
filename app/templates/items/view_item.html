@@ -37,7 +37,7 @@
     }
   </style>
   <!-- Include the PayPal JavaScript SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id={{ CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
 </head>
 
 <body>
@@ -125,7 +125,7 @@
   
     if (typeof paypal === "undefined") {
       const script = document.createElement("script");
-      script.src = "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit";
+      script.src = "https://www.paypal.com/sdk/js?client-id={{ CLIENT_ID }}&currency=USD&disable-funding=credit";
       script.onload = renderPaypalButtons;
       document.head.appendChild(script);
     } else {
