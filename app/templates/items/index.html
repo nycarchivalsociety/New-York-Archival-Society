@@ -63,34 +63,42 @@
 
 <body>
   <div class="container py-5">
-    <h1 class="mb-4 text-center">Have a look to our valuable items</h1>
     <div id="items-container">
       {% for item in items %}
       <div class="item-card">
         <div class="card h-100">
           <div class="card-header">
-            <span class="sale-badge">Available</span>
             {% if item.photo %}
-            <!-- If the item has a photo, display it -->
             <img
               src="{{ item.imgURL }}"
               class="card-img-top"
               alt="{{ item.name }}"
             />
             {% else %}
-            <!-- If the item does not have a photo, display a default image -->
             <img
               src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
               class="card-img-top"
               alt="{{ item.name }}"
             />
+            {% endif %} {% if item.adopted %}
+            <span class="sale-badge">Adopted</span>
+            {% else %}
+            <span class="sale-badge">Available</span>
             {% endif %}
           </div>
           <div class="card-body">
             <h5 class="card-title mb-3">{{ item.name }}</h5>
-            <!-- Truncate the description to 100 characters -->
-            <p>{{ item.desc | truncate(100) }}</p>
-            <p class="card-text price">${{ item.fee }}</p>
+            <p class="card-text">{{ item.desc | truncate(100) }}</p>
+            <div class="container">
+              {% if item.adopted %}
+              <p>Adopted by:</p>
+              {% for donor_name in item.donors %}
+              <p><b>{{ donor_name }}</b></p>
+              {% endfor %} {% endif %}
+            </div>
+            <div class="price">
+              <h5>${{ item.fee }}</h5>
+            </div>
 
             <a
               href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
