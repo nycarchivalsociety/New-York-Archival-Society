@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container">
+  <h1 class="my-4">Your Latest Donations</h1>
+
+  {% if donations %} {% for donation in donations %}
+  <!-- Your code to display each donation -->
+  <div class="row">
+    <div class="col-md-5">
+      <a href="#">
+        <img
+          class="img-fluid rounded mb-3 mb-md-0"
+          src="{{ donation.item_image_url }}"
+          alt="{{ donation.item_name }}"
+        />
+      </a>
+    </div>
+    <div class="col-md-7">
+      <h3>{{ donation.item_name }}</h3>
+      <p>{{ donation.item_description }}</p>
+      <p>Amount donated: ${{ donation.donated_amount }}</p>
+      <p>Donated date: {{ donation.donation_date.strftime('%d/%m/%Y') }}</p>
+    </div>
+  </div>
+  {% endfor %} {% else %}
+  <p>No donations found.</p>
+  {% endif %}
+
+  <hr />
+</div>
+
+{% endblock %}

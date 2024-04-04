@@ -1,0 +1,141 @@
+{% extends "base.html" %} {% block content %}
+
+<head>
+  <style>
+    .card-img-left {
+      width: 45%;
+      /* Link to your background image using in the property below! */
+      background: scroll center
+        url("http://127.0.0.1:5000/static/img/index/new_york_archival_society.jpg");
+      background-size: cover;
+    }
+
+    .btn-login {
+      font-size: 0.9rem;
+      letter-spacing: 0.05rem;
+      padding: 0.75rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div
+          class="card flex-row my-5 border-0 shadow rounded-3 overflow-hidden"
+        >
+          <div class="card-img-left d-none d-md-flex">
+            <!-- Background image for card set in CSS! -->
+          </div>
+          <div class="card-body p-4 p-sm-5">
+            <h5 class="card-title text-center mb-5 fw-light fs-5">Register</h5>
+            <form action="/register_form" method="post">
+              <div class="form-floating mb-3">
+                <input
+                  type="text"
+                  name="username"
+                  class="form-control"
+                  id="floatingInputUsername"
+                  placeholder="myusername"
+                  required
+                  autofocus
+                />
+                <label for="floatingInputUsername">Username</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input
+                  type="email"
+                  name="email"
+                  class="form-control"
+                  id="floatingInputEmail"
+                  placeholder="name@example.com"
+                  required
+                />
+                <label for="floatingInputEmail">Email address</label>
+              </div>
+
+              <hr />
+
+              <div class="form-floating mb-3">
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  id="floatingPassword"
+                  placeholder="Password"
+                  minlength="11"
+                  required
+                />
+                <label for="floatingPassword">Password</label>
+              </div>
+
+              <div class="form-floating mb-3">
+                <input
+                  type="password"
+                  name="password"
+                  class="form-control"
+                  id="floatingPasswordConfirm"
+                  placeholder="Confirm Password"
+                  minlength="11"
+                  required
+                />
+                <label for="floatingPasswordConfirm">Confirm Password</label>
+              </div>
+
+              <div class="d-grid mb-2">
+                <button
+                  class="btn btn-lg btn-primary btn-login fw-bold text-uppercase"
+                  type="submit"
+                >
+                  Register
+                </button>
+
+                <div class="container">
+                  <!-- Flash messages display -->
+                  {% with messages = get_flashed_messages() %} {% if messages %}
+                  {% for message in messages %}
+                  <div class="alert alert-warning">{{ message }}</div>
+                  {% endfor %} {% endif %} {% endwith %}
+                </div>
+              </div>
+
+              <a class="d-block text-center mt-2 small" href="/login"
+                >Have an account? Sign In</a
+              >
+              <hr class="my-4" />
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  // When the DOM is fully loaded
+  document.addEventListener("DOMContentLoaded", function () {
+    // Get the form and input elements
+    const form = document.querySelector("form");
+    const password = document.getElementById("floatingPassword");
+    const confirmPassword = document.getElementById("floatingPasswordConfirm");
+
+    // Add a 'submit' event listener on the form
+    form.addEventListener("submit", function (event) {
+      // Check if passwords match
+      if (password.value !== confirmPassword.value) {
+        // If they don't match, prevent the form's submission
+        event.preventDefault();
+        // Inform the user that the passwords don't match
+        alert("Passwords do not match, please try again.");
+        // Optionally, clear the password fields
+        password.value = "";
+        confirmPassword.value = "";
+        // Focus on the password field
+        password.focus();
+      }
+    });
+  });
+</script>
+
+{% endblock %}
