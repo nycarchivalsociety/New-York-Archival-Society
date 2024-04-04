@@ -63,9 +63,13 @@
 
 <body>
   <div class="container py-5">
-    <div id="items-container">
-      {% for item in items %}
-      <div class="item-card">
+    <!-- Section for available items -->
+    <div
+      id="available-items-container"
+      style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center"
+    >
+      {% for item in items %} {% if not item.adopted %}
+      <div class="item-card" style="flex: 0 1 calc(33.333% - 1rem)">
         <div class="card h-100">
           <div class="card-header">
             {% if item.photo %}
@@ -80,35 +84,85 @@
               class="card-img-top"
               alt="{{ item.name }}"
             />
-            {% endif %} {% if item.adopted %}
-            <span class="sale-badge">Adopted</span>
-            {% else %}
-            <span class="sale-badge">Available</span>
             {% endif %}
+            <span
+              class="sale-badge"
+              style="font-size: 1rem; background-color: #007bff"
+              >Available to Adopt</span
+            >
           </div>
           <div class="card-body">
             <h5 class="card-title mb-3">{{ item.name }}</h5>
             <p class="card-text">{{ item.desc | truncate(100) }}</p>
-            <div class="container">
-              {% if item.adopted %}
-              <p>Adopted by:</p>
-              {% for donor_name in item.donors %}
-              <p><b>{{ donor_name }}</b></p>
-              {% endfor %} {% endif %}
-            </div>
             <div class="price">
               <h5>${{ item.fee }}</h5>
             </div>
-
             <a
               href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
-              class="btn btn-outline-dark"
+              class="btn btn-outline-dark mt-3 w-100"
               >View</a
             >
           </div>
         </div>
       </div>
-      {% endfor %}
+      {% endif %} {% endfor %}
+    </div>
+
+    <!-- Section for adopted items -->
+    <h2
+      class="section-heading"
+      style="
+        font-size: 2.5rem;
+        margin-top: 3rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      "
+    >
+      Adopted Items
+    </h2>
+    <div
+      id="adopted-items-container"
+      style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center"
+    >
+      {% for item in items %} {% if item.adopted %}
+      <div class="item-card" style="flex: 0 1 calc(33.333% - 1rem)">
+        <div class="card h-100">
+          <div class="card-header">
+            {% if item.photo %}
+            <img
+              src="{{ item.imgURL }}"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% else %}
+            <img
+              src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% endif %}
+            <span class="sale-badge" style="font-size: 1rem">Adopted</span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ item.name }}</h5>
+            <p class="card-text">{{ item.desc | truncate(100) }}</p>
+            <div class="price">
+              <h5>${{ item.fee }}</h5>
+              <p>
+                Adopted by: {% for donor_name in item.donors %}
+                <b>{{ donor_name }}</b>
+                {% endfor %}
+              </p>
+            </div>
+            <a
+              href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
+              class="btn btn-outline-dark mt-3 w-100"
+              >View</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endif %} {% endfor %}
     </div>
   </div>
 </body>
