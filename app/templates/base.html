@@ -60,7 +60,11 @@
         <nav id="navbar" class="navbar order-last order-lg-0">
           <ul>
             <li><a class="nav-link scrollto active" href="/">Home</a></li>
-            <li><a class="nav-link scrollto" href="{{ url_for('main.about') }}">About</a></li>
+            <li>
+              <a class="nav-link scrollto" href="{{ url_for('main.about') }}"
+                >About</a
+              >
+            </li>
             <li>
               <a class="nav-link scrollto" href="/adopt-new-yorks-past"
                 >Adopt New York's Past</a
@@ -88,10 +92,21 @@
                 >Blog</a
               >
             </li>
-            <li><a class="nav-link scrollto" href="{{ url_for('main.events') }}">Events</a></li>
-            <li><a class="nav-link scrollto" href="{{ url_for('main.contact') }}">Contact</a></li>
             <li>
-         <li><a class="nav-link scrollto" href="{{ url_for('main.contribute') }}">Contribute</a></li>
+              <a class="nav-link scrollto" href="{{ url_for('main.events') }}"
+                >Events</a
+              >
+            </li>
+            <li>
+              <a class="nav-link scrollto" href="{{ url_for('main.contact') }}"
+                >Contact</a
+              >
+            </li>
+            <li></li>
+            <li>
+              <a class="nav-link" href="{{ url_for('main.contribute') }}"
+                >Contribute</a
+              >
             </li>
           </ul>
           <i class="bi bi-list mobile-nav-toggle"></i>
@@ -193,7 +208,9 @@
                 </li>
                 <li>
                   <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.contribute') }}" target="_blank">Contribute</a>
+                  <a href="{{ url_for('main.contribute') }}" target="_blank"
+                    >Contribute</a
+                  >
                 </li>
               </ul>
             </div>
