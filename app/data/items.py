@@ -13,7 +13,7 @@ items = [
     
     {
         'id': '5b67e549-5c01-418a-b1cb-9097e7932c2e',
-        'name': 'Brooklyn Bridge Drawing no. 4275, Caisson Construction',
+        'name': 'Brooklyn Bridge Drawing no. 2031, Balance Derrick ca. 1870',
         'fee': 200,
         'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing depicts equipment custom built as part of the underwater caisson to remove rock from beneath the riverbed. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawings closer to their original appearance.",
         'photo': True,
