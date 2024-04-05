@@ -83,7 +83,7 @@ items = [
   {
         'id': '9472695f-d42a-4bd4-be59-d5e2ebc0aa1f',
         'name': 'Annual Report of the Board of Commissioners of the Central Park (1856 - 1870), 12 vols.',
-        'fee': 70.10,
+        'fee': 70,
         'desc': "The Municipal Library's collection of Annual Reports of Central Park document the early development and use of the park in the mid to late 1800s in vivid detail. The volumes also each contain fine lithographic foldout prints throughout. The earliest rare volumes are in need of custom enclosures that will protect the often delicate contents. Adopting one or more of these volumes will support their long term preservation by helping us to build cloth-covered drop-spine boxes to store them in.",
         'photo': True,
         'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710460207/New%20York%20Archival%20Society/Items/Annual_Report_of_the_Board_of_Commissioners_of_the_Central_Park_naoidg.jpg',
@@ -98,7 +98,7 @@ items = [
     {
         'id': '22283ffe-067a-41b7-98f2-2ae037f2e029',
         'name': 'Slave Register, Town of Flatlands, 1799',
-        'fee': 282.00,
+        'fee': 282,
         'desc': "This volume, which documents the birth of slaves in the Flatlands area of Brooklyn, is a unique record of New York History. Created during the period in which slavery was gradually abolished in the state, the volume contains the hand-written birth certificates of children born to enslaved women. The binding of this volume has been damaged over time, and requires conservation treatment to make it safer for researchers to handle. Repairing the binding and creating a custom enclosure will ensure that the volume is protected both from poor handling and external environmental conditions.",
         'photo': True,
         'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449912/New%20York%20Archival%20Society/Items/slave_register__town_of_flatlands__1799_dxxc20.jpg',
@@ -112,8 +112,8 @@ items = [
     {
         'id': 'dfedc014-280b-4005-b400-cce4a137145e',
         'name': 'Central Park Drawing no. 35 Belvedere Castle Front Elevation',
-        'fee': 200.00,
-        'desc': "The Archives’ collection includes roughly 2000 drawings related to the planning and construction of Central Park. These two drawings of the front and west elevations of Belvedere Castle, designed by Frederick Law Olmsted and Calvert Vaux, represent an early rendering of the structure and its detailed finial. Over time the drawings' have become weakened and discolored by acids due to lignin content in the paper. Conservation treatment would reduce the acid and discoloration in the paper, and a new tissue lining on the reverse would add needed strength.",
+        'fee': 200,
+        'desc': "The Archives' collection includes roughly 2000 drawings related to the planning and construction of Central Park. These two drawings of the front and west elevations of Belvedere Castle, designed by Frederick Law Olmsted and Calvert Vaux, represent an early rendering of the structure and its detailed finial. Over time the drawings' have become weakened and discolored by acids due to lignin content in the paper. Conservation treatment would reduce the acid and discoloration in the paper, and a new tissue lining on the reverse would add needed strength.",
         'photo': True,
         'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710459670/New%20York%20Archival%20Society/Items/Central_Park_Drawing_no._35_1_lgxl1d.jpg',
         'adopted': True,
@@ -126,8 +126,8 @@ items = [
      {
         'id': 'cc706ec5-048b-41cf-aa69-dde76d3fa9ba',
         'name': 'Central Park Drawing no. 36 Belvedere Castle West Elevation',
-        'fee': 200.00,
-        'desc': "The Archives’ collection includes roughly 2000 drawings related to the planning and construction of Central Park. These two drawings of the front and west elevations of Belvedere Castle, designed by Frederick Law Olmsted and Calvert Vaux, represent an early rendering of the structure and its detailed finial. Over time the drawings' have become weakened and discolored by acids due to lignin content in the paper. Conservation treatment would reduce the acid and discoloration in the paper, and a new tissue lining on the reverse would add needed strength.",
+        'fee': 200,
+        'desc': "The Archives' collection includes roughly 2000 drawings related to the planning and construction of Central Park. These two drawings of the front and west elevations of Belvedere Castle, designed by Frederick Law Olmsted and Calvert Vaux, represent an early rendering of the structure and its detailed finial. Over time the drawings' have become weakened and discolored by acids due to lignin content in the paper. Conservation treatment would reduce the acid and discoloration in the paper, and a new tissue lining on the reverse would add needed strength.",
         'photo': True,
         'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710460005/New%20York%20Archival%20Society/Items/central_park_drawing_no._35_2_e69ly5.jpg',
         'adopted': True,
