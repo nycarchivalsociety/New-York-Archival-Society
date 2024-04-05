@@ -1,4 +1,5 @@
 {% extends "base.html" %} {% block content %}
+
 <head>
   <style>
     .product-template {
@@ -7,25 +8,31 @@
       align-items: flex-start;
       padding-top: 2rem;
     }
+
     .product-image {
       max-width: 600px;
       margin-right: 2rem;
     }
+
     .product-image img {
       width: 100%;
       height: auto;
     }
+
     .product-details {
       max-width: 400px;
     }
+
     .product-price {
       font-size: 1.25rem;
       margin-bottom: 1rem;
     }
+
     .product-price .old-price {
       text-decoration: line-through;
       margin-right: 1rem;
     }
+
     .user-info {
       margin-bottom: 2rem;
     }
@@ -35,7 +42,8 @@
     }
   </style>
   <!-- Include the PayPal JavaScript SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id={{ CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
+  <script
+    src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
 </head>
 
 <body>
@@ -44,18 +52,12 @@
       <div class="product-image">
         {% if item.photo %}
         <!-- If the item has a photo, display it -->
-        <img
-          src="{{ item.imgURL }}"
-          class="card-img-top"
-          alt="{{ item.name }}"
-        />
+        <img src="{{ item.imgURL }}" class="card-img-top" alt="{{ item.name }}" />
         {% else %}
         <!-- If the item does not have a photo, display a default image -->
         <img
           src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
-          class="card-img-top"
-          alt="{{ item.name }}"
-        />
+          class="card-img-top" alt="{{ item.name }}" />
         {% endif %}
       </div>
       <div class="product-details">
@@ -174,7 +176,7 @@
     if (typeof paypal === "undefined") {
       const script = document.createElement("script");
       script.src =
-        "https://www.paypal.com/sdk/js?client-id={{ CLIENT_ID }}&currency=USD&disable-funding=credit";
+        "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit";
       script.onload = renderPaypalButtons;
       document.head.appendChild(script);
     } else {
