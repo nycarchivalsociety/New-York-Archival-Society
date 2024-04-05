@@ -1,274 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>New York Archival Society</title>
 
-    <!-- Libraries CSS Files -->
-    <link
-      href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/aos/aos.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>New York Archival Society</title>
 
-    <!-- Template Main CSS File -->
-    <link
-      href="{{ url_for('static', filename='css/style.css') }}"
-      rel="stylesheet"
-    />
+  <!-- Libraries CSS Files -->
+  <link href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet" />
+  <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet" />
 
-    <link
-      rel="icon"
-      type="image/x-icon"
-      href="{{ url_for('static', filename='img/favicon.ico') }}"
-    />
-  </head>
-  <body>
-    <!-- ======= Header ======= -->
-    <header id="header">
-      <div
-        class="container-fluid container-xl d-flex align-items-center justify-content-lg-between"
-      >
-        <h1 class="logo me-auto me-lg-0">
-          <a href="/">New York Archival Society</a>
-        </h1>
+  <!-- Template Main CSS File -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
-        <nav id="navbar" class="navbar order-last order-lg-0">
-          <ul>
-            <li><a class="nav-link scrollto active" href="/">Home</a></li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.about') }}"
-                >About</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="/adopt-new-yorks-past"
-                >Adopt New York's Past</a
-              >
-            </li>
-            <li class="dropdown">
-              <a href="#"
-                ><span>Our Projects</span> <i class="bi bi-chevron-down"></i
-              ></a>
-              <ul>
-                <li>
-                  <a
-                    class="nav-link scrollto"
-                    href="/koch-congressional-project"
-                    >Edward I. Koch Congressional Project</a
-                  >
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a
-                class="nav-link scrollto"
-                href="https://www.archives.nyc/blog"
-                target="_blank"
-                >Blog</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.events') }}"
-                >Events</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="{{ url_for('main.contact') }}"
-                >Contact</a
-              >
-            </li>
-            <li></li>
-            <li>
-              <a class="nav-link" href="{{ url_for('main.contribute') }}"
-                >Contribute</a
-              >
-            </li>
-          </ul>
-          <i class="bi bi-list mobile-nav-toggle"></i>
-        </nav>
-        <!-- .navbar -->
-      </div>
-    </header>
-    <!-- End Header -->
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+</head>
 
-    <main>
-      {% block content %}
-      <!-- This is where the content from child templates will be inserted -->
-      {% endblock %}
-    </main>
-    <!-- ======= Footer ======= -->
-    <footer class="mt-5" id="footer">
-      <div class="footer-top">
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-3 col-md-6">
-              <div class="footer-info">
-                <h2>NEW YORK ARCHIVAL SOCIETY</h2>
-                <div class="social-links mt-3">
-                  <a
-                    class="twitter"
-                    href="http://www.twitter.com/nycrecords"
-                    target="_blank"
-                    ><i class="bx bxl-twitter"></i
-                  ></a>
-                  <a
-                    class="facebook"
-                    href="http://www.facebook.com/nycrecords"
-                    target="_blank"
-                    ><i class="bx bxl-facebook"></i
-                  ></a>
-                  <a
-                    class="instagram"
-                    href="https://www.instagram.com/nycarchives/"
-                    target="_blank"
-                    ><i class="bx bxl-instagram"></i
-                  ></a>
-                  <a
-                    class="youtube"
-                    href="http://www.youtube.com/nycdeptofrecords"
-                    target="_blank"
-                    ><i class="bi bi-youtube"></i
-                  ></a>
-                </div>
+<body>
+  <!-- ======= Header ======= -->
+  <header id="header">
+    <div class="container-fluid container-xl d-flex align-items-center justify-content-lg-between">
+      <h1 class="logo me-auto me-lg-0">
+        <a href="/">New York Archival Society</a>
+      </h1>
+
+      <nav id="navbar" class="navbar order-last order-lg-0">
+        <ul>
+          <li><a class="nav-link scrollto active" href="/">Home</a></li>
+          <li>
+            <a class="nav-link scrollto" href="{{ url_for('main.about') }}">About</a>
+          </li>
+          <li>
+            <a class="nav-link scrollto" href="/adopt-new-yorks-past">Adopt New York's Past</a>
+          </li>
+          <li class="dropdown">
+            <a href="#"><span>Our Projects</span> <i class="bi bi-chevron-down"></i></a>
+            <ul>
+              <li>
+                <a class="nav-link scrollto" href="/koch-congressional-project">Edward I. Koch Congressional Project</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a class="nav-link scrollto" href="https://www.archives.nyc/blog" target="_blank">Blog</a>
+          </li>
+          <li>
+            <a class="nav-link scrollto" href="{{ url_for('main.events') }}">Events</a>
+          </li>
+          <li>
+            <a class="nav-link scrollto" href="{{ url_for('main.contact') }}">Contact</a>
+          </li>
+          <li></li>
+          <li>
+            <a class="nav-link" href="{{ url_for('main.contribute') }}">Contribute</a>
+          </li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav>
+      <!-- .navbar -->
+    </div>
+  </header>
+  <!-- End Header -->
+
+  <main>
+    {% block content %}
+    <!-- This is where the content from child templates will be inserted -->
+    {% endblock %}
+  </main>
+  <!-- ======= Footer ======= -->
+  <footer class="mt-5" id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="footer-info">
+              <h2>NEW YORK ARCHIVAL SOCIETY</h2>
+              <div class="social-links mt-3">
+                <a class="twitter" href="http://www.twitter.com/nycrecords" target="_blank"><i
+                    class="bx bxl-twitter"></i></a>
+                <a class="facebook" href="http://www.facebook.com/nycrecords" target="_blank"><i
+                    class="bx bxl-facebook"></i></a>
+                <a class="instagram" href="https://www.instagram.com/nycarchives/" target="_blank"><i
+                    class="bx bxl-instagram"></i></a>
+                <a class="youtube" href="http://www.youtube.com/nycdeptofrecords" target="_blank"><i
+                    class="bi bi-youtube"></i></a>
               </div>
             </div>
-            <div class="col-lg-2 col-md-6 footer-links">
-              <ul>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.index') }}">Home</a>
-                </li>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.about') }}">About us</a>
-                </li>
+          </div>
+          <div class="col-lg-2 col-md-6 footer-links">
+            <ul>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.index') }}">Home</a>
+              </li>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.about') }}">About us</a>
+              </li>
 
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.new_yorks_past') }}"
-                    >Adopt New York's Past</a
-                  >
-                </li>
-                <li class="dropdown">
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="#"><span>Our Projects</span> </a>
-                  <ul>
-                    <li>
-                      <a
-                        class="nav-link scrollto"
-                        href="/koch-congressional-project"
-                        >Edward I. Koch Congressional Project</a
-                      >
-                    </li>
-                    <!-- Other dropdown items here -->
-                  </ul>
-                </li>
-              </ul>
-            </div>
-            <div class="col-lg-3 col-md-6 footer-links">
-              <ul>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.events') }}">Events</a>
-                </li>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="https://www.archives.nyc/blog" target="_blank"
-                    >Blog</a
-                  >
-                </li>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.contact') }}">Contact</a>
-                </li>
-                <li>
-                  <i class="bx bx-chevron-right"></i>
-                  <a href="{{ url_for('main.contribute') }}" target="_blank"
-                    >Contribute</a
-                  >
-                </li>
-              </ul>
-            </div>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.new_yorks_past') }}">Adopt New York's Past</a>
+              </li>
+              <li class="dropdown">
+                <i class="bx bx-chevron-right"></i>
+                <a href="#"><span>Our Projects</span> </a>
+                <ul>
+                  <li>
+                    <a class="nav-link scrollto text-black" href="/koch-congressional-project">Edward I. Koch
+                      Congressional
+                      Project</a>
+                  </li>
+                  <!-- Other dropdown items here -->
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-links">
+            <ul>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.events') }}">Events</a>
+              </li>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="https://www.archives.nyc/blog" target="_blank">Blog</a>
+              </li>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.contact') }}">Contact</a>
+              </li>
+              <li>
+                <i class="bx bx-chevron-right"></i>
+                <a href="{{ url_for('main.contribute') }}" target="_blank">Contribute</a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </footer>
-    <!-- End Footer -->
+    </div>
+  </footer>
+  <!-- End Footer -->
 
-    <!-- Libraries -->
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        var dropdown = document.querySelector(".footer-links .dropdown");
-        dropdown.addEventListener("click", function (event) {
-          event.stopPropagation();
-          dropdown.querySelector("ul").classList.toggle("show");
-        });
-
-        window.addEventListener("click", function () {
-          var openDropdown = document.querySelector(
-            ".footer-links .dropdown .show"
-          );
-          if (openDropdown) openDropdown.classList.remove("show");
-        });
+  <!-- Libraries -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var dropdown = document.querySelector(".footer-links .dropdown");
+      dropdown.addEventListener("click", function (event) {
+        event.stopPropagation();
+        dropdown.querySelector("ul").classList.toggle("show");
       });
-    </script>
 
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/aos/aos.js') }}"
-    ></script>
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"
-    ></script>
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"
-    ></script>
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"
-    ></script>
+      window.addEventListener("click", function () {
+        var openDropdown = document.querySelector(
+          ".footer-links .dropdown .show"
+        );
+        if (openDropdown) openDropdown.classList.remove("show");
+      });
+    });
+  </script>
 
-    <!-- Bootstrap might be a dependency for many custom scripts, hence using defer -->
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"
-    ></script>
+  <script defer src="{{ url_for('static', filename='vendor/aos/aos.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='vendor/isotope-layout/isotope.pkgd.min.js') }}"></script>
+  <script defer src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"></script>
 
-    <!-- Your Custom Script -->
-    <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <!-- Bootstrap might be a dependency for many custom scripts, hence using defer -->
+  <script defer src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 
-    <!-- Ionicons Script - No change needed -->
-    <script
-      async
-      src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"
-      type="module"
-    ></script>
-  </body>
+  <!-- Your Custom Script -->
+  <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <!-- Ionicons Script - No change needed -->
+  <script async src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js" type="module"></script>
+</body>
+
 </html>
