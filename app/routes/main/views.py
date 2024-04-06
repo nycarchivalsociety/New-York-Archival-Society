@@ -24,6 +24,16 @@ load_dotenv()
 # Database connection parameters
 PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
 
+@main.route('/fetch-api')
+def fetch_api():
+    url = 'https://nodejs-railway-1.onrender.com/'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()  # Corrected this line
+        return data  # Return the parsed JSON data directly
+    else:
+        return "Failed to fetch API", response.status_code
+
 
 @main.route('/')
 def index():
