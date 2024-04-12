@@ -1,27 +1,17 @@
-import uuid 
+
 
 items = [
-    # {
-    #     'id': 1,
-    #     'name': 'Brooklyn Bridge Drawing no. 2031, Balance Derrick ca. 1870',
-    #     'fee': 200,
-    #     'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing details the construction of a derrick used for lifting materials during the construction of the towers. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to reduce staining from adhesive damage and remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawing closer to its original appearance.",
-    #     'photo': False,
-    #     'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449964/New%20York%20Archival%20Society/Items/brooklyn_bridge_drawing_no._2031_zfhkns.jpg'
-
-    # },
     
     {
         'id': '5b67e549-5c01-418a-b1cb-9097e7932c2e',
         'name': 'Brooklyn Bridge Drawing no. 2031, Balance Derrick ca. 1870',
         'fee': 200,
-        'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing depicts equipment custom built as part of the underwater caisson to remove rock from beneath the riverbed. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawings closer to their original appearance.",
         'photo': True,
+        'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing details the construction of a derrick used for lifting materials during the construction of the towers. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to reduce staining from adhesive damage and remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawing closer to its original appearance.",
         'adopted': False,
-        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1712109063/New%20York%20Archival%20Society/Items/brooklyn_bridge_drawing_no._4275_syuybo.jpg'
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1712935241/New%20York%20Archival%20Society/Items/Brooklyn_Bridge_Drawing_no._2031_eicz17.jpg'
 
     },
-
 
   {
         'id': '831935d8-4c69-4122-963e-0162d6290360',
@@ -58,7 +48,7 @@ items = [
   
  {
         'id': '2390e83f-70de-4aca-b4b0-4c50b9cd8ff0',
-        'name': 'Code of Health Ordinance 1866',
+        'name': 'Code of Health Ordinances 1866',
         'fee': 175,
         'desc': "Poor sanitary conditions and a massive outbreak of cholera prompted the formation of the Metropolitan Board of Health in New York in 1866. The Municipal Library's original copy of the board's first Code of Health Ordinances possesses some unique features, including handwritten notes on ordinances concerning the protection of animals and an ASPCA book plate depicting an angel preventing the harm of a carriage horse. The volume, however, has been damaged, with detached covers and a missing spine. Adopting this book will support its preservation and custom housing.",
         'photo': True,
@@ -75,7 +65,7 @@ items = [
         'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing by famed draftsman Wilhelm Hildenbrand details specifics of a travelling crane for moving materials in the construction of the Brooklyn Bridge. Drawn in ink and watercolor, the drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawings closer to their original appearance.",
         'photo': True,
         'adopted': False,
-        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710461246/New%20York%20Archival%20Society/Items/land_patent_new_utrecht_ss4ifc.jpg'
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449967/New%20York%20Archival%20Society/Items/brooklyn_bridge_drawing_no._4269_ubguwt.jpg'
 
 },
  
