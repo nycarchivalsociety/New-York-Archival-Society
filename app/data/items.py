@@ -70,6 +70,50 @@ items = [
 },
  
  #adopted items
+  
+  {
+        'id': 'cfe0c92e-c8b8-443b-b0d1-1cc83d844282',
+        'name': 'John Roebling Design drawing for the Brooklyn Bridge',
+        'fee': 5000,
+        'desc': "The 1867 drawing plan for the Brooklyn Bridge, as envisioned by John Roebling, is one of the most iconic images of the structure. Drafted by Wilhelm Hildenbrand, the massive x foot by x foot drawing depicts the full span of the bridge  beautifully rendered in inks and watercolors. The drawing has only been publicly exhibited once, at the Whitney Museum in 1976 shortly after the collection of Brooklyn Bridge drawings was discovered languishing in a carpenters' workshop under the Williamsburg Bridge. A handful of the most spectacular of the drawings was treated by a conservator and put on exhibition by the Whitney. Given its large size and limited storage space, the John Roebling drawing has been stored rolled in the Archives ever since. Over time, condition problems have developed -- vertical cracks have formed along the length of the drawing, and the stiffness of the paper has made it extremely difficult to unroll without causing further damage. Conservation treatment would allow the drawing to be flattened and stablized, as well as fully re-lined to add much needed strength to the paper. A delicate and labor-intensive process on an item of this size, adoption would support the conservation treatment needed to allow the drawing to be made accessible once again.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/dakw2jqjp/image/upload/v1713469983/John_Roebling_Design_drawing_for_the_Brooklyn_Bridge_wptcrd.jpg',
+        'adopted': True,
+        'donors': [
+             'Carol Willis',
+         ]
+
+},
+  
+  
+    {
+        'id': '6335f624-0407-478d-acff-9a6b1f4a2572',
+        'name': 'Map of the Town of Flatbush 1797',
+        'fee': 150,
+        'desc': "This 1797 hand-drawn map of the town of Flatbush and surrounding areas of Brooklyn includes the homes of several early Dutch families that settled in the area, as well as Erasmus Hall (now Erasmus Hall High School) and the Flatbush Reformed Dutch Church, the longest serving religious site in all of New York City. The delicate details of the map, from the church’s spire to the 8-point compass rose, have become discolored over time and embedded with dirt and grime. The cloth-back paper has become brittle and is subject to further damage if the map is handled by researchers. Adopting this item would allow conservators to reduce the acidic discoloration of the paper, remove much of the surface dirt that is obscuring fine details, and prevent further deterioration. Your support will help to extend the life of this important New York record.”",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/dakw2jqjp/image/upload/v1713470611/Map_of_the_town_of_Flatbush_1797_b14cwf.jpg',
+        'adopted': True,
+        'donors': [
+             'Richard Buehring',
+         ]
+
+},
+    
+        {
+        'id': '296c596a-4ed7-4d06-a6c5-309054fef1fc',
+        'name': 'Newtown Criminal Docket, 1659-1688',
+        'fee': 500,
+        'desc': "This 1797 hand-drawn map of the town of Flatbush and surrounding areas of Brooklyn includes the homes of several early Dutch families that settled in the area, as well as Erasmus Hall (now Erasmus Hall High School) and the Flatbush Reformed Dutch Church, the longest serving religious site in all of New York City. The delicate details of the map, from the church’s spire to the 8-point compass rose, have become discolored over time and embedded with dirt and grime. The cloth-back paper has become brittle and is subject to further damage if the map is handled by researchers. Adopting this item would allow conservators to reduce the acidic discoloration of the paper, remove much of the surface dirt that is obscuring fine details, and prevent further deterioration. Your support will help to extend the life of this important New York record.”",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/dakw2jqjp/image/upload/v1713470722/Newtown_Criminal_Docket_1659-1688_rhp1wx.jpg',
+        'adopted': True,
+        'donors': [
+             'Dennis Maika',
+         ]
+
+},
+  
   {
         'id': '9472695f-d42a-4bd4-be59-d5e2ebc0aa1f',
         'name': 'Annual Report of the Board of Commissioners of the Central Park (1856 - 1870), 12 vols.',
