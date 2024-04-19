@@ -1,3 +1,5 @@
+
+
 items = [
     
     {
@@ -191,13 +193,27 @@ items = [
     {
         'id': '22283ffe-067a-41b7-98f2-2ae037f2e029',
         'name': 'Slave Register, Town of Flatlands, 1799',
-        'fee': 282,
+        'fee': 300,
         'desc': "This volume, which documents the birth of slaves in the Flatlands area of Brooklyn, is a unique record of New York History. Created during the period in which slavery was gradually abolished in the state, the volume contains the hand-written birth certificates of children born to enslaved women. The binding of this volume has been damaged over time, and requires conservation treatment to make it safer for researchers to handle. Repairing the binding and creating a custom enclosure will ensure that the volume is protected both from poor handling and external environmental conditions.",
         'photo': True,
-        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449912/New%20York%20Archival%20Society/Items/slave_register__town_of_flatlands__1799_dxxc20.jpg',
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449948/New%20York%20Archival%20Society/Items/slaveholders_in_kings_county__flatbush_1799-1826_2_ypejup.jpg',
         'adopted': True,
         'donors': [
              'Betty Kay',
+         ]
+
+},
+
+{
+        'id': '5edd9ec8-08d7-47e4-9f68-fb9ab55c1ba4',
+        'name': 'Slaveholders in Kings County, Flatbush 1799-1826',
+        'fee': 500,
+        'desc': "When the 'Act for the Gradual Abolition of Slavery' was passed in New York in 1799, careful records were kept to track the births of slaves. The volume for adoption contains hand-written birth certificates of those born into slavery in Flatbush, Brooklyn between 1799 and 1826. Carefully written in iron gall ink, the documents were later bound during the 1940s to keep them together in a single volume. Over time, the binding has caused considerable damage to the certificates. These important documents require conservation treatment to stabilize the paper and provide a new binding to ensure their long-term preservation.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449945/New%20York%20Archival%20Society/Items/slaveholders_in_kings_county__flatbush_1799-1826_h9v9ls.jpg',
+        'adopted': True,
+        'donors': [
+             'Pauline Toole',
          ]
 
 },
