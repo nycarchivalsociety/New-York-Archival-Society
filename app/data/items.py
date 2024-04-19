@@ -1,5 +1,3 @@
-
-
 items = [
     
     {
@@ -84,7 +82,68 @@ items = [
          ]
 
 },
+
+
   
+  {
+        'id': '2964376f-2022-4ab2-a1d4-a78be99a35bd',
+        'name': 'Proceedings of the Board of Aldermen Collection (1831-1853), 39 vols.',
+        'fee': 50,
+        'desc': "The Proceedings of the Board of Aldermen collection at the Municipal Library, which dates from 1831 - 1937, is an important resource for the history of city legislative proceedings. In particular, the volumes from 1831 - 1853, given their age and use, have suffered considerable damage. Adopting these volumes would allow us to give them new bindings, making them safer and easier for researchers to handle.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449907/New%20York%20Archival%20Society/Items/proceedings_of_the_board_of_aldermen_2_ndvwrr.jpg',
+        'adopted': True,
+        'donors': [
+             'Robert Davis',
+             'Lucie Luzzolini',
+             'Miles Freeman',
+             'Brad Reid'
+         ]
+
+},
+
+
+  {
+        'id': 'c2ccfe9a-59b9-41c3-9fb5-bce2ef511c9d',
+        'name': "Valentine's Manual of the City of New York, 1850",
+        'fee': 250,
+        'desc': "One of the earliest illustrated histories of New York City, Valentine's Manuals documented change in the city each year through legislative and historical information as well as original lithographic prints, woodcut illustrations, and maps. Created by David T. Valentine from 1841 – 1866, the 1850 edition contains beautiful lithographic prints of the Croton Aqueduct, “View of the City of New York in 1792”, among others. The binding of the volume has been damaged and the sewing has broken throughout. Adopting this rare volume would allow it to be rebound and appropriately housed to protect this important piece of New York History.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449950/New%20York%20Archival%20Society/Items/valentines_manual_1850_uzjvon.jpg',
+        'adopted': True,
+        'donors': [
+             'Samantha Hightower',
+         ]
+
+},
+
+  {
+        'id': 'feacd206-6050-44fe-b161-5832eaa83551',
+        'name': "Department of Public Works Annual Report, 1870",
+        'fee': 75,
+        'desc': "This 1870 volume from the New York City Department of Public Works is a vital resource for understanding early public works projects, including construction of water mains surrounding the Croton Aqueduct. The report is illustrated with original photographic prints depicting workers on site and the progress of various construction projects. Given the senstive nature of the photographs contained in the volume, adoption would provide funding to create a custom drop-spine box to properly house and store this important book.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710460500/New%20York%20Archival%20Society/Items/department_of_public_works_annual_report_rfwvvs.jpg',
+        'adopted': True,
+        'donors': [
+             'Stephen Weilr',
+         ]
+
+},
+
+ {
+        'id': '300d7d01-24f8-4702-98a3-a13eebc13ae6',
+        'name': "Valentine's Manual of the City of New York, 1855",
+        'fee': 250,
+        'desc': "One of the earliest illustrated histories of New York City, Valentine's Manuals documented change in the city each year through legislative and historical information as well as original lithographic prints, woodcut illustrations, and maps. Created by David T. Valentine from 1841 – 1866, the 1855 edition is leather-bound with edge tooling details and contains beautiful lithographic prints of Central Park and fold-out maps. The covers have become detached from the volume from handling over the years, and the spine is somewhat deteriorated. Adopting this rare volume would allow it to be rebound and appropriately housed to protect this important piece of New York History.",
+        'photo': True,
+        'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449955/New%20York%20Archival%20Society/Items/valentine_s_manual_of_the_city_of_new_york__1855_xn54i0.jpg',
+        'adopted': True,
+        'donors': [
+             'Jacqueline Helt',
+         ]
+
+},
   
     {
         'id': '6335f624-0407-478d-acff-9a6b1f4a2572',
