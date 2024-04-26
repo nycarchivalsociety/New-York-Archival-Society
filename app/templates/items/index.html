@@ -42,10 +42,23 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
 
     .price h5 {
       margin: 0;
+      flex-basis: 100%;
+    }
+
+    .price ul {
+      flex-basis: 100%;
+      padding-left: 0;
+    }
+
+    .price ul li {
+      display: inline-block;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
     }
 
     #items-container {
@@ -57,6 +70,15 @@
 
     .item-card {
       flex: 0 1 calc(33.333% - 1rem);
+      margin-bottom: 2rem;
+      /* Adjust space between cards */
+    }
+
+    .adopted-badge {
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
     }
   </style>
 </head>
@@ -66,7 +88,7 @@
     <!-- Section for available items -->
     <div id="available-items-container" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center">
       {% for item in items %} {% if not item.adopted %}
-      <div class="item-card" style="flex: 0 1 calc(33.333% - 1rem)">
+      <div class="item-card">
         <div class="card h-100">
           <div class="card-header">
             {% if item.photo %}
@@ -76,7 +98,7 @@
               src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
               class="card-img-top" alt="{{ item.name }}" />
             {% endif %}
-            <span class="sale-badge" style="font-size: 1rem; background-color: #007bff">Available to Adopt</span>
+            <span class="sale-badge">Available to Adopt</span>
           </div>
           <div class="card-body">
             <h5 class="card-title mb-3">{{ item.name }}</h5>
@@ -98,7 +120,7 @@
     </h2>
     <div id="adopted-items-container" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center">
       {% for item in items %} {% if item.adopted %}
-      <div class="item-card" style="flex: 0 1 calc(33.333% - 1rem)">
+      <div class="item-card">
         <div class="card h-100">
           <div class="card-header">
             {% if item.photo %}
@@ -113,16 +135,17 @@
           <div class="card-body">
             <h5 class="card-title mb-3">{{ item.name }}</h5>
             <p class="card-text">{{ item.desc | truncate(100) }}</p>
-            <div class="price">
-              <h5>${{ item.fee }}</h5>
-              <p>
-                Adopted by: {% for donor_name in item.donors %}
-                <b>{{ donor_name }}</b>
+            <div class="price text-muted">
+              <h5 class="text-dark mb-2">${{ item.fee }}</h5>
+              <p class="mb-2">Adopted by:</p>
+              <ul>
+                {% for donor_name in item.donors %}
+                <li><b>{{ donor_name }}</b></li>
                 {% endfor %}
-              </p>
+              </ul>
             </div>
             <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
-              class="btn btn-outline-dark mt-3 w-100">View</a>
+              class="btn btn-outline-dark w-100">View</a>
           </div>
         </div>
       </div>
