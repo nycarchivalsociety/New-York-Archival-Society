@@ -1,5 +1,14 @@
 {% extends "base.html" %} {% block content %}
 
+<style>
+  .btn-primary.btn-lg {
+      background-color: #cda45e;
+      color: #111;
+      border: none;
+      font-weight: bold;
+  }
+</style>
+
 <section id="mission">
   <div class="container-fluid p-0 overflow-hidden">
     <div class="row g-0" data-aos="zoom-in" data-aos-delay="300">
@@ -61,8 +70,8 @@
             </p>
             <div class="lc-block mb-3">
               <a class="btn btn-primary btn-lg"
-                href="https://www.nyc.gov/site/records/historical-records/collections.page" target="_blank"
-                role="button">Learn more</a>
+                href="https://www.nyc.gov/site/records/historical-records/collections.page" target="_blank" aria-label="NYC Records"
+                role="button">Learn More</a>
             </div>
           </div>
         </div>
