@@ -1477,3 +1477,55 @@ section {
     left: -100%;
   }
 }
+
+
+/* Buttons Being Updated*/
+.learn_more_btn_about_page {
+  --bs-btn-color: #111;
+  --bs-btn-bg: #cda45e;
+  --bs-btn-border-color: #cda45e;
+  --bs-btn-hover-color: #111;
+  --bs-btn-hover-bg: #cda45e;
+  --bs-btn-hover-border-color: #cda45e;
+  font-weight: bold;
+}
+
+.learn_more_btn_yt_video {
+  --bs-btn-color: #111;
+  --bs-btn-bg: #cda45e;
+  --bs-btn-border-color: #cda45e;
+  --bs-btn-hover-color: #111;
+  --bs-btn-hover-bg: #cda45e;
+  --bs-btn-hover-border-color: #cda45e;
+  font-weight: bold;
+}
+
+.back_to_homepage_btn_contribute_page {
+  --bs-btn-color: #111;
+  --bs-btn-bg: #cda45e;
+  --bs-btn-border-color: #cda45e;
+  --bs-btn-hover-color: #111;
+  --bs-btn-hover-bg: #cda45e;
+  --bs-btn-hover-border-color: #cda45e;
+  font-weight: bold;
+}
+
+.donate_now_link_only {
+  text-align: center;
+  font-weight: bold;
+  font-size: 30px;
+  
+}
+
+.view_all_link_homepage {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+
+
+/*Google Translate Plugin*/
+#google_translate_element {
+  margin-left: 25px;
+  margin-top: 55px;
+}
