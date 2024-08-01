@@ -1500,6 +1500,7 @@ section {
   padding-top: 10px;
   padding-bottom: 10px;
   font-size: 20px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .learn_more_btn_yt_video {
@@ -1514,6 +1515,8 @@ section {
   padding-right: 120px;
   padding-top: 10px;
   padding-bottom: 10px;
+  font-family: 'Open Sans', sans-serif;
+
 }
 
 .back_to_homepage_btn_contribute_page {
@@ -1548,7 +1551,7 @@ section {
   text-align: center;
   font-weight: bold;
   font-size: 40px;
-
+  font-family: 'Open Sans', sans-serif;
 }
 
 .donate_now_link_only a:hover{
@@ -1597,6 +1600,7 @@ section {
   text-decoration: none;
   border-radius: 30px;
   padding: 10px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .vital_records_hyperlink:hover {
@@ -1605,13 +1609,19 @@ section {
   text-decoration: none;
 }
 
+.koch_question {
+  font-family: 'Open Sans', sans-serif;
+}
+
 .koch_question strong {
   color: #111;
   font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .koch_answer {
   color: #111 !important;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .testing_this {
@@ -1630,6 +1640,7 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .koch_donate_button a {
@@ -1637,6 +1648,8 @@ section {
   color: #111;
   background-color: #cda45e;
   border: 2px solid #cda45e;
+  font-family: 'Open Sans', sans-serif;
+
 }
 
 .koch_donate_button:hover {
@@ -1644,6 +1657,20 @@ section {
   color: #111;
   background-color: #cda45e;
   border: 2px solid #cda45e;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.koch_title {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.koch_paragraph {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.lead {
+  font-family: 'Open Sans', sans-serif;
+
 }
 
 
@@ -1658,9 +1685,54 @@ section {
 .send_message_btn {
   color: #111 !important;
   font-weight: bold;
+  font-family: "Open Sans", sans-serif;
 }
 
 .adopted_items_title {
   font-weight: bold;
+}
 
+
+/*Changing Font Family - Home Page*/
+.home_page_about_paragraph {
+  font-family: "Open Sans", sans-serif;
+}
+
+.home_page_about_bulletpoints li {
+  font-family: "Open Sans", sans-serif;
+}
+
+.home_page_about_paragraph2 {
+  font-family: "Open Sans", sans-serif;
+}
+
+.overlay .text p{
+  font-family: "Open Sans", sans-serif;
+}
+
+.faq-list p, .faq-list a, .faq-list .faq_question {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.home_page_projects_paragraph {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.home_page_certs_paragraphs {
+  font-family: 'Open Sans', sans-serif;
+}
+
+
+/*About Page*/
+.about_page_paragraph {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.about_page_in_memory_of_paragraph {
+  font-family: 'Open Sans', sans-serif;
+}
+
+
+.events_page_head {
+  font-family: 'Open Sans', sans-serif;
 }
