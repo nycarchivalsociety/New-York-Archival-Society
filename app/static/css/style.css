@@ -854,13 +854,13 @@ section {
 .faq .faq-list .question {
   display: block;
   position: relative;
-  font-family: #ef6603;
+  color: #cda45e;
   font-size: 18px;
   line-height: 24px;
   font-weight: 400;
   padding-left: 25px;
   cursor: pointer;
-  color: #bd5102;
+  color: #cda45e;
   transition: 0.3s;
 }
 
@@ -881,11 +881,11 @@ section {
 }
 
 .faq .faq-list .collapsed {
-  color: white;
+  color: #cda45e;
 }
 
 .faq .faq-list .collapsed:hover {
-  color: #ef6603;
+  color: #cda45e;
 }
 
 .faq .faq-list .collapsed .icon-show {
@@ -1113,16 +1113,22 @@ section {
   text-decoration: none;
 }
 
+#footer .footer-top .footer-info h2 {
+  white-space: nowrap;
+}
+
 #footer .footer-top h4 {
   font-size: 16px;
   font-weight: 600;
   color: #fff;
   position: relative;
   padding-bottom: 12px;
+  display: inline;
 }
 
 #footer .footer-top .footer-links {
   margin-bottom: 30px;
+  margin-left: 200px;
 }
 
 #footer .footer-top .footer-links ul {
@@ -1418,12 +1424,12 @@ section {
   width: 12px; /* Increased size of dots */
   height: 12px;
   background: #fff; /* White color for dots */
-  opacity: 0.6; /* Slightly transparent */
+  opacity: 2; /* Very transparent, solid white color */
   margin: 0 6px; /* Spacing between dots */
 }
 
 .swiper-pagination-bullet-active {
-  opacity: 1; /* Active dot is fully opaque */
+  opacity: 2; /* Active dot is fully opaque */
   background: #007bff; /* Highlight color for active dot */
 }
 
@@ -1478,6 +1484,8 @@ section {
   }
 }
 
+/*CHANGES BEING MADE ON 7/30*/
+
 
 /* Buttons Being Updated*/
 .learn_more_btn_about_page {
@@ -1488,6 +1496,10 @@ section {
   --bs-btn-hover-bg: #cda45e;
   --bs-btn-hover-border-color: #cda45e;
   font-weight: bold;
+  font-size: 25px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-size: 20px;
 }
 
 .learn_more_btn_yt_video {
@@ -1498,6 +1510,10 @@ section {
   --bs-btn-hover-bg: #cda45e;
   --bs-btn-hover-border-color: #cda45e;
   font-weight: bold;
+  font-size: 20px;
+  padding-right: 120px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .back_to_homepage_btn_contribute_page {
@@ -1508,19 +1524,128 @@ section {
   --bs-btn-hover-bg: #cda45e;
   --bs-btn-hover-border-color: #cda45e;
   font-weight: bold;
+  font-size: 12px;
+}
+
+.button_container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.new_button {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #111;
+  border-radius: 20px;
+  border: 2px solid #cda45e;
+  background-color: #cda45e;
+  padding: 15px;
 }
 
 .donate_now_link_only {
   text-align: center;
   font-weight: bold;
-  font-size: 30px;
-  
+  font-size: 40px;
+
+}
+
+.donate_now_link_only a:hover{
+  text-decoration: none;
+  background-color: #cda45e;
+  color: #111;
+  border: 2px solid #cda45e;
 }
 
 .view_all_link_homepage {
   font-weight: bold;
   font-size: 20px;
+  background-color: #cda45e;
+  color: #111;
+  border: 2px solid #cda45e;
+  box-shadow: none;
+  border-radius: 30px;
+  padding-left: 15px;
+  padding-right: 15px;
+  outline: none;
 }
+
+.view_all_link_homepage a {
+  color: #111;
+  border: 2px solid #cda45e;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: none;
+  border-radius: 30px;
+  outline: none;
+}
+
+.faq_hyperlink {
+  font-weight: bold;
+}
+
+.projects_hyperlink {
+  font-weight: bold;
+}
+
+.vital_records_hyperlink {
+  color: #111 !important; 
+  background-color: #cda45e;
+  font-size: 17px;
+  font-weight: bold !important;
+  text-decoration: none;
+  border-radius: 30px;
+  padding: 10px;
+}
+
+.vital_records_hyperlink:hover {
+  color: #111;
+  background-color: #cda45e;
+  text-decoration: none;
+}
+
+.koch_question strong {
+  color: #111;
+  font-weight: bold;
+}
+
+.koch_answer {
+  color: #111 !important;
+}
+
+.testing_this {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.koch_donate_button {
+  color: #111;
+  font-weight: bold;
+  background-color: #cda45e;
+  border-radius: 20px;
+  padding: 15px;
+  border: 2px solid #cda45e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.koch_donate_button a {
+  text-align: center;
+  color: #111;
+  background-color: #cda45e;
+  border: 2px solid #cda45e;
+}
+
+.koch_donate_button:hover {
+  text-align: center;
+  color: #111;
+  background-color: #cda45e;
+  border: 2px solid #cda45e;
+}
+
 
 
 
@@ -1528,4 +1653,14 @@ section {
 #google_translate_element {
   margin-left: 25px;
   margin-top: 55px;
+}
+
+.send_message_btn {
+  color: #111 !important;
+  font-weight: bold;
+}
+
+.adopted_items_title {
+  font-weight: bold;
+
 }
