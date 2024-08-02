@@ -1723,7 +1723,7 @@ section {
 }
 
 
-/*About Page*/
+/*Changing Font Family - About Page*/
 .about_page_paragraph {
   font-family: 'Open Sans', sans-serif;
 }
@@ -1732,7 +1732,7 @@ section {
   font-family: 'Open Sans', sans-serif;
 }
 
-
+/*Changing Font Family - Events Page*/
 .events_page_head {
   font-family: 'Open Sans', sans-serif;
 }
