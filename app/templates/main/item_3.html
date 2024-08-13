@@ -1,81 +1,83 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shop Item Template</title>
     <style>
-        .product-template {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 2rem;
-        }
+      .product-template {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 2rem;
+      }
 
-        .product-image {
-            max-width: 600px;
-            margin-right: 2rem;
-        }
+      .product-image {
+        max-width: 600px;
+        margin-right: 2rem;
+      }
 
-        .product-image img {
-            width: 100%;
-            height: auto;
-        }
+      .product-image img {
+        width: 100%;
+        height: auto;
+      }
 
-        .product-details {
-            max-width: 400px;
-        }
+      .product-details {
+        max-width: 400px;
+      }
 
-        .product-price {
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
+      .product-price {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
 
-        .product-price .old-price {
-            text-decoration: line-through;
-            margin-right: 1rem;
-        }
+      .product-price .old-price {
+        text-decoration: line-through;
+        margin-right: 1rem;
+      }
 
-        .btn-add-to-cart {
-            display: flex;
-            align-items: center;
-        }
+      .btn-add-to-cart {
+        display: flex;
+        align-items: center;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container-full">
-        <div class="product-template">
-            <div class="product-image">
-                <img src="https://res-console.cloudinary.com/dakw2jqjp/media_explorer_thumbnails/f9d514e75b1423e55b1353730daa8ef7/detailed"
-                    alt="Product Image">
-            </div>
-            <div class="product-details">
-                <p class="sku">ID: BST-492</p>
-                <h1>Proceedings of the Board of Aldermen Collection (1831-1853), 39 vols.</h1>
-                <div class="product-price">
-                    <span class="new-price">$50/volume</span>
-                </div>
-                <p class="text-start fw-normal">The Proceedings of the Board of Aldermen collection at the Municipal
-                    Library, which dates from 1831 - 1937, is an
-                    important resource for the history of city legislative proceedings. In particular, the volumes from
-                    1831 - 1853, given
-                    their age and use, have suffered considerable damage. Adopting these volumes would allow us to give
-                    them new bindings,
-                    making them safer and easier for researchers to handle.</p>
-                <p class="fw-bold">
-                    Adopted by Robert Davis, Lucie Iuzzolini, Miles Freeman, Brad Reid
-                </p>
-            </div>
+      <div class="product-template">
+        <div class="product-image">
+          <img
+            src="https://res-console.cloudinary.com/dakw2jqjp/media_explorer_thumbnails/f9d514e75b1423e55b1353730daa8ef7/detailed"
+            alt="Product Image"
+          />
         </div>
+        <div class="product-details">
+          <p class="sku">ID: BST-492</p>
+          <h1>
+            Proceedings of the Board of Aldermen Collection (1831-1853), 39
+            vols.
+          </h1>
+          <div class="product-price">
+            <span class="new-price">$50/volume</span>
+          </div>
+          <p class="text-start fw-normal">
+            The Proceedings of the Board of Aldermen collection at the Municipal
+            Library, which dates from 1831 - 1937, is an important resource for
+            the history of city legislative proceedings. In particular, the
+            volumes from 1831 - 1853, given their age and use, have suffered
+            considerable damage. Adopting these volumes would allow us to give
+            them new bindings, making them safer and easier for researchers to
+            handle.
+          </p>
+          <p class="fw-bold">
+            Adopted by Robert Davis, Lucie Iuzzolini, Miles Freeman, Brad Reid
+          </p>
+        </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>
-
 
 {% endblock %}

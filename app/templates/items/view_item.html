@@ -68,11 +68,11 @@
         <p class="text-start fw-normal">{{ item.desc }}</p>
 
         {% if not item.adopted %}
-        <p>This item is available for adoption</p>
+        <p>This item is <b style="color: red;">available</b> for adoption</p>
         <div id="payment-status"></div>
         <div id="paypal-button-container"></div>
         {% else %}
-        <p>This item has been adopted.</p>
+        <p>This item <b>has been</b> adopted.</p>
         <!-- Optionally, list the donors -->
         {% if item.donors %}
         <p>Adopted by:</p>
