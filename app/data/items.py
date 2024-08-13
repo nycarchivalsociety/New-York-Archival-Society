@@ -4,7 +4,7 @@ items = [
     
     {
         'id': '5b67e549-5c01-418a-b1cb-9097e7932c2e',
-        'name': 'Brooklyn Bridge Drawing no. 2031, Balance Derrick ca. 1870',
+        'name': 'Brooklyn Bridge Drawing No. 2031, Balance Derrick Ca. 1870',
         'fee': 200,
         'photo': True,
         'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing details the construction of a derrick used for lifting materials during the construction of the towers. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to reduce staining from adhesive damage and remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawing closer to its original appearance.",
@@ -15,7 +15,7 @@ items = [
 
   {
         'id': '831935d8-4c69-4122-963e-0162d6290360',
-        'name': 'Brooklyn Bridge Drawing no. 4275, Caisson Construction',
+        'name': 'Brooklyn Bridge Drawing No. 4275, Caisson Construction',
         'fee': 200,
         'desc': "Among the Archives' more than 10,000 drawing plans for the Brooklyn Bridge, this drawing depicts equipment custom built as part of the underwater caisson to remove rock from beneath the riverbed. The drawing reflects the remarkable detail and artistry that went into each drawing plan for the bridge. Conservation treatment would help to remove some of the discoloration and degradation products from the paper, making the paper more stable, safer to handle, and bringing the drawings closer to their original appearance.",
         'photo': True,
@@ -36,9 +36,9 @@ items = [
  
  {
         'id': 'fdc1319b-0bd2-421d-8cb7-181501285cf5',
-        'name': 'Newtown Town records volume 288',
+        'name': 'Newtown Town Records Volume 288',
         'fee': 450,
-        'desc': "Part of the Archive's 'Old Town' collection, the contents of this volume date from 1714 - 1753 and detail the daily town business of Newtown Queens during colonial era New York. Written in iron gall ink, the paper and binding have suffered considerable damage. Conservation treatment is necessary to stabilize the ink to slow its deterioration and a create a new binding to make the volume safe for researchers to handle.",
+        'desc': "Part of the Archives' 'Old Town' collection, the contents of this volume date from 1714 - 1753 and detail the daily town business of Newtown Queens during colonial era New York. Written in iron gall ink, the paper and binding have suffered considerable damage. Conservation treatment is necessary to stabilize the ink to slow its deterioration and a create a new binding to make the volume safe for researchers to handle.",
         'photo': True,
         'adopted': False,
         'imgURL': 'https://res.cloudinary.com/djozxyart/image/upload/v1710449900/New%20York%20Archival%20Society/Items/newtown_town_records_vol._288_syput3.jpg'
@@ -73,7 +73,7 @@ items = [
   
   {
         'id': 'cfe0c92e-c8b8-443b-b0d1-1cc83d844282',
-        'name': 'John Roebling Design drawing for the Brooklyn Bridge',
+        'name': 'John Roebling Design Drawing for the Brooklyn Bridge',
         'fee': 5000,
         'desc': "The 1867 drawing plan for the Brooklyn Bridge, as envisioned by John Roebling, is one of the most iconic images of the structure. Drafted by Wilhelm Hildenbrand, the massive x foot by x foot drawing depicts the full span of the bridge  beautifully rendered in inks and watercolors. The drawing has only been publicly exhibited once, at the Whitney Museum in 1976 shortly after the collection of Brooklyn Bridge drawings was discovered languishing in a carpenters' workshop under the Williamsburg Bridge. A handful of the most spectacular of the drawings was treated by a conservator and put on exhibition by the Whitney. Given its large size and limited storage space, the John Roebling drawing has been stored rolled in the Archives ever since. Over time, condition problems have developed -- vertical cracks have formed along the length of the drawing, and the stiffness of the paper has made it extremely difficult to unroll without causing further damage. Conservation treatment would allow the drawing to be flattened and stablized, as well as fully re-lined to add much needed strength to the paper. A delicate and labor-intensive process on an item of this size, adoption would support the conservation treatment needed to allow the drawing to be made accessible once again.",
         'photo': True,
