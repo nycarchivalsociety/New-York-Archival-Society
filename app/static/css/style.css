@@ -2,7 +2,6 @@
   --main-color: #cda45e;
 }
 
-
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -32,7 +31,6 @@ h6 {
   font-family: "Open Sans", sans-serif;
   font-weight: bold;
 }
-
 
 /*--------------------------------------------------------------
 # Preloader
@@ -72,7 +70,6 @@ h6 {
   }
 }
 
-
 /*--------------------------------------------------------------
 # Back to top button
 --------------------------------------------------------------*/
@@ -110,7 +107,6 @@ h6 {
   opacity: 1;
 }
 
-
 /*--------------------------------------------------------------
 # Disable aos animation delay on mobile devices
 --------------------------------------------------------------*/
@@ -119,7 +115,6 @@ h6 {
     transition-delay: 0 !important;
   }
 }
-
 
 /*--------------------------------------------------------------
 # Header
@@ -152,7 +147,6 @@ h6 {
 #header .logo img {
   max-height: 40px;
 }
-
 
 /*--------------------------------------------------------------
 # Navigation Menu
@@ -374,15 +368,14 @@ h6 {
   display: block;
 }
 
-
 /*--------------------------------------------------------------
 # Hero Section
 --------------------------------------------------------------*/
 #hero {
   width: 100%;
   height: 100vh;
-  background: url(https://res.cloudinary.com/djozxyart/image/upload/v1692636757/New%20York%20Archival%20Society/Index/hero_gpuhot.jpg)
-    top center;
+  background-image: url(/static/img/index/herohighres.jpg);
+  top: center;
   background-size: cover;
   position: relative;
   padding: 0;
@@ -562,7 +555,6 @@ h6 {
   }
 }
 
-
 /*--------------------------------------------------------------
 # Sections General
 --------------------------------------------------------------*/
@@ -607,7 +599,6 @@ section {
   font-weight: 700;
   color: var(--main-color);
 }
-
 
 /*--------------------------------------------------------------
 # About
@@ -663,16 +654,31 @@ section {
   }
 }
 
-
 /*--------------------------------------------------------------
 # About Continued
 --------------------------------------------------------------*/
 .about {
-  background: url(https://res.cloudinary.com/djozxyart/image/upload/v1692636760/New%20York%20Archival%20Society/Index/twice_towers_fibnt7.jpg)
-    center center;
+  background-image: url(/static/img/index/wtchighres4.jpg);
   background-size: cover;
   position: relative;
   padding: 80px 0;
+}
+
+/* Add a pseudo-element for the overlay */
+.about::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1; 
+}
+
+.about > * {
+  position: relative;
+  z-index: 2;
 }
 
 .about .about-img {
@@ -755,7 +761,6 @@ section {
     background-attachment: fixed;
   }
 }
-
 
 /*--------------------------------------------------------------
 # What We Do Section
@@ -848,7 +853,6 @@ section {
   color: #fff;
 }
 
-
 /*--------------------------------------------------------------
 # F.A.Q
 --------------------------------------------------------------*/
@@ -914,7 +918,6 @@ section {
   transition: 0.6s;
 }
 
-
 /*--------------------------------------------------------------
 # Gallery
 --------------------------------------------------------------*/
@@ -933,7 +936,6 @@ section {
 .gallery .gallery-item:hover img {
   transform: scale(1.1);
 }
-
 
 /*--------------------------------------------------------------
 # directors
@@ -1025,7 +1027,6 @@ section {
   transition: bottom ease-in-out 0.4s;
 }
 
-
 /*--------------------------------------------------------------
 # Contact
 --------------------------------------------------------------*/
@@ -1092,7 +1093,6 @@ section {
 .email-form .text-center {
   margin-top: 3rem;
 }
-
 
 /*--------------------------------------------------------------
 # Footer
@@ -1174,7 +1174,6 @@ section {
   color: var(--main-color);
 }
 
-
 /*--------------------------------------------------------------
 # Adopt nws past
 --------------------------------------------------------------*/
@@ -1183,7 +1182,6 @@ section {
   height: 15vw;
   object-fit: cover;
 }
-
 
 /*--------------------------------------------------------------
 # events cards
@@ -1422,7 +1420,6 @@ section {
   z-index: 10;
 }
 
-
 /*--------------------------------------------------------------
 # Custom Styles for Swiper Pagination
 --------------------------------------------------------------*/
@@ -1436,20 +1433,19 @@ section {
 .swiper-pagination-bullet {
   width: 12px;
   height: 12px;
-  background: #fff; 
-  opacity: 2; 
-  margin: 0 6px; 
+  background: #fff;
+  opacity: 2;
+  margin: 0 6px;
 }
 
 .swiper-pagination-bullet-active {
-  opacity: 2; 
+  opacity: 2;
   background: #007bff;
 }
 
 .swiper-pagination-bullet:hover {
   background: #0056b3;
 }
-
 
 /*--------------------------------------------------------------
 # Footer
@@ -1499,7 +1495,6 @@ section {
     left: -100%;
   }
 }
-
 
 /*--------------------------------------------------------------
 # Buttons Being Updated Throughtout the Site
@@ -1623,7 +1618,6 @@ section {
   text-decoration: none;
 }
 
-
 /*--------------------------------------------------------------
 # Edward I. Koch Project Page
 --------------------------------------------------------------*/
@@ -1704,7 +1698,6 @@ section {
   font-weight: bold;
 }
 
-
 /*--------------------------------------------------------------
 # Changing Font Family - Home Page
 --------------------------------------------------------------*/
@@ -1738,7 +1731,6 @@ section {
   font-family: "Open Sans", sans-serif;
 }
 
-
 /*--------------------------------------------------------------
 # Changing Font Family - About Page
 --------------------------------------------------------------*/
@@ -1750,14 +1742,12 @@ section {
   font-family: "Open Sans", sans-serif;
 }
 
-
 /*--------------------------------------------------------------
 # Changing Font Family - Events Page
 --------------------------------------------------------------*/
 .events_page_head {
   font-family: "Open Sans", sans-serif;
 }
-
 
 /*--------------------------------------------------------------
 # Google Translate - Tab and Dropdown Menu
@@ -1771,7 +1761,7 @@ section {
   left: auto;
   transform: translateX(-70%);
   align-items: center !important;
-  padding-right: 60px; 
+  padding-right: 60px;
 }
 
 #translate-dropdown li {
@@ -1886,7 +1876,6 @@ section {
   }
 }
 
-
 /*--------------------------------------------------------------
 # Home Page - Fixing Gold Checkmarks and Bulletpoints
 --------------------------------------------------------------*/
@@ -1903,7 +1892,6 @@ section {
 .home_page_about_bulletpoints span {
   line-height: 1.5;
 }
-
 
 /*--------------------------------------------------------------
 # Events Page - Adding New Events, Buttons and Hyperlinks
@@ -1978,7 +1966,6 @@ section {
   font-weight: bold;
 }
 
-
 /*--------------------------------------------------------------
 # Contribute Page - Main Paragraph
 --------------------------------------------------------------*/
@@ -1987,11 +1974,11 @@ section {
   font-family: "Open Sans", sans-serif;
 }
 
-
 /*--------------------------------------------------------------
 # iSpeak Widget - On Home Page
 --------------------------------------------------------------*/
-.ispeak_title { /*Title, the thing that says I Speak..."*/
+.ispeak_title {
+  /*Title, the thing that says I Speak..."*/
   color: #fff;
   font-weight: bold;
   text-align: center;
@@ -2010,28 +1997,29 @@ section {
   border-radius: 20px;
 }
 
-.button_lang a { 
+.button_lang a {
   color: #111;
   font-weight: bold;
   font-size: 20px;
   font-family: "Kanit", sans-serif;
 }
 
-.button_lang a:hover { /*This is the individual languages. Regular color and hover color*/
+.button_lang a:hover {
+  /*This is the individual languages. Regular color and hover color*/
   color: #111;
   font-weight: bold;
 }
 
-.container_ispeak { /*This centers the languages*/
+.container_ispeak {
+  /*This centers the languages*/
   text-align: center;
 }
 
 .iw_component {
   margin-right: 20px;
-  margin-left: 20px;   /*For some reason margin: 0 auto didn't work so I did this instead and it worked*/
+  margin-left: 20px; /*For some reason margin: 0 auto didn't work so I did this instead and it worked*/
   padding-bottom: 40px;
 }
-
 
 /*--------------------------------------------------------------
 # Centering Home Page Title
