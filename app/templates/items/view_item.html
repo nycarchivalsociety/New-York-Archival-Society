@@ -42,8 +42,7 @@
     }
   </style>
   <!-- Include the PayPal JavaScript SDK -->
-  <script
-    src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
+  <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
 </head>
 
 <body>
@@ -52,12 +51,18 @@
       <div class="product-image">
         {% if item.photo %}
         <!-- If the item has a photo, display it -->
-        <img src="{{ item.imgURL }}" class="card-img-top" alt="{{ item.name }}" />
+        <img
+          src="{{ item.imgURL }}"
+          class="card-img-top"
+          alt="{{ item.name }}"
+        />
         {% else %}
         <!-- If the item does not have a photo, display a default image -->
         <img
           src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
-          class="card-img-top" alt="{{ item.name }}" />
+          class="card-img-top"
+          alt="{{ item.name }}"
+        />
         {% endif %}
       </div>
       <div class="product-details">
@@ -68,11 +73,11 @@
         <p class="text-start fw-normal">{{ item.desc }}</p>
 
         {% if not item.adopted %}
-        <p>This item is available for adoption</p>
+        <p>This item is <b style="color: red">available</b> for adoption</p>
         <div id="payment-status"></div>
         <div id="paypal-button-container"></div>
         {% else %}
-        <p>This item has been adopted.</p>
+        <p>This item <b>has been</b> adopted.</p>
         <!-- Optionally, list the donors -->
         {% if item.donors %}
         <p>Adopted by:</p>
@@ -81,8 +86,7 @@
           <li>{{ donor }}</li>
           {% endfor %}
         </ul>
-        {% endif %}
-        {% endif %}
+        {% endif %} {% endif %}
       </div>
     </div>
   </div>
