@@ -1,39 +1,29 @@
-# SQL statements to create tables
-create_tables_sql = """
-BEGIN;
+from app.db.db import db
+from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
-CREATE TABLE IF NOT EXISTS donors (
-    donor_id UUID PRIMARY KEY,
-    donor_name VARCHAR(255),
-    donor_lastname VARCHAR(255),
-    donor_email VARCHAR(255),
-    donor_phone VARCHAR(255),
-    created_at TIMESTAMPTZ,
-    donated_amount FLOAT4,
-    donor_zip_code INT
-);
+class Items(db.Model):
+    __tablename__ = 'items'
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    name = db.Column(db.String(256), nullable=False)
+    fee = db.Column(db.Integer, nullable=False)
+    photo = db.Column(db.Boolean, default=False)
+    desc = db.Column(db.Text, nullable=False)
+    adopted = db.Column(db.Boolean, default=False)
+    imgurl = db.Column("imgurl", db.String, nullable=True) 
 
-CREATE TABLE IF NOT EXISTS items (
-    item_id UUID PRIMARY KEY,
-    item_name VARCHAR(255),
-    item_description VARCHAR(255),
-    created_at TIMESTAMPTZ,
-    photo BOOLEAN,
-    item_img_url VARCHAR(255),
-    fee FLOAT4,
-    adopted BOOLEAN,
-    adoption_date TIMESTAMPTZ,
-    total_donated_minus_remaining FLOAT4,
-    remaining_balance FLOAT4,
-    item_img_alt VARCHAR(255)
-);
+    # Define the relationship to Donors
+    donors = db.relationship('Donors', backref='item', lazy=True)
 
-CREATE TABLE IF NOT EXISTS item_donors (
-    item_id UUID REFERENCES items(item_id),
-    donor_id UUID REFERENCES donors(donor_id),
-    adoption_date TIMESTAMPTZ,
-    PRIMARY KEY (item_id, donor_id)
-);
+    def __repr__(self):
+        return f"<Items {self.name}>"
 
-COMMIT;
-"""
+class Donors(db.Model):
+    __tablename__ = 'donors'
+
+    donor_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    donor_name = db.Column(db.String(256), nullable=False)
+    item_id = db.Column(UUID(as_uuid=True), db.ForeignKey('items.id'), nullable=False)
+
+    def __repr__(self):
+        return f"<Donors {self.donor_name}>"
