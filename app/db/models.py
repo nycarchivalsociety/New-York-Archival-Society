@@ -8,7 +8,7 @@ class Items(db.Model):
     name = db.Column(db.String(256), nullable=False)
     fee = db.Column(db.Integer, nullable=False)
     photo = db.Column(db.Boolean, default=False)
-    desc = db.Column(db.Text, nullable=False)
+    description = db.Column(db.Text, nullable=False)
     adopted = db.Column(db.Boolean, default=False)
     imgurl = db.Column("imgurl", db.String, nullable=True) 
 
