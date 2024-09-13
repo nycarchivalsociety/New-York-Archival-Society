@@ -3,7 +3,10 @@ from . import main
 from flask import render_template
 from dotenv import load_dotenv
 import os
-from app.data.items import items
+from app.db.models import Items, Donors 
+from app.db.db import db  
+from flask import request, jsonify
+import uuid
 
 image_urls = [
     "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499865908939-KIXLCIC5P6MX75NTD1DY/image-asset.jpeg?format=750w",
@@ -15,8 +18,6 @@ image_urls = [
     "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500387041163-T3LVK0OLTOL208Y5XD5C/image-asset.jpeg?format=750w",
     "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500394141473-IGOMN7FHRIZYKA0WNF5V/animalsnip3.JPG?format=750w",
 ]
-
-
 
 # Load environment variables
 load_dotenv()
@@ -41,17 +42,47 @@ def projects():
 
 @main.route('/adopt-new-yorks-past')
 def new_yorks_past():
-    print(items)  # Debug: Print items to console
+    # Query all items from the database, including their donors
+    items = Items.query.all()
     return render_template('main/adopt_new_yorks_past.html', image_urls=image_urls, items=items)
-
 
 @main.route('/adopt-new-yorks-past/item/<item_id>')
 def new_yorks_past_view_item(item_id):
-    item = next((item for item in items if item['id'] == item_id), None)
+    # Query the database for an item by its UUID
+    item = Items.query.filter_by(id=item_id).first()
+    
+    # If no item is found, return a 404 error
     if item is None:
         return "Item not found", 404
+
+    # Render the template with the found item
     return render_template('items/view_item.html', item=item, PAYPAL_CLIENT_ID=PAYPAL_CLIENT_ID)
 
+@main.route('/update_adoption_status', methods=['POST'])
+def update_adoption_status():
+    data = request.json
+    item_id = data.get('item_id')
+    donor_name = data.get('donor_name')
+
+    # Find the item by ID
+    item = Items.query.filter_by(id=item_id).first()
+    if not item:
+        return jsonify({"error": "Item not found"}), 404
+
+    # Update the item status to adopted
+    item.adopted = True
+    db.session.commit()
+
+    # Create a new donor record
+    new_donor = Donors(
+        donor_id=uuid.uuid4(),
+        donor_name=donor_name,
+        item_id=item.id
+    )
+    db.session.add(new_donor)
+    db.session.commit()
+
+    return jsonify({"success": True})
 
 @main.route('/events')
 def events():
