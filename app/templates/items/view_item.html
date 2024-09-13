@@ -2,47 +2,93 @@
 
 <head>
   <style>
+    body {
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .container-full {
+      padding: 1rem;
+    }
+
     .product-template {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 2rem;
+      flex-direction: column;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .product-image {
-      max-width: 600px;
-      margin-right: 2rem;
+      width: 100%;
+      max-width: 800px;
+      margin-bottom: 2rem;
     }
 
     .product-image img {
       width: 100%;
       height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     .product-details {
-      max-width: 400px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
     }
 
     .product-price {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
+      font-weight: bold;
       margin-bottom: 1rem;
     }
 
     .product-price .old-price {
       text-decoration: line-through;
       margin-right: 1rem;
+      color: #888;
     }
 
-    .user-info {
-      margin-bottom: 2rem;
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
     }
 
-    .form-control {
-      color: black;
+    #paypal-button-container {
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 768px) {
+      .product-template {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .product-image {
+        flex: 0 0 55%;
+        margin-right: 2rem;
+        margin-bottom: 0;
+      }
+
+      .product-details {
+        flex: 0 0 40%;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+      }
     }
   </style>
   <!-- Include the PayPal JavaScript SDK -->
   <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 </head>
 
 <body>
@@ -70,7 +116,7 @@
         <div class="product-price">
           <span class="new-price">${{ item.fee }}</span>
         </div>
-        <p class="text-start fw-normal">{{ item.desc }}</p>
+        <p class="text-start fw-normal">{{ item.description }}</p>
 
         {% if not item.adopted %}
         <p>This item is <b style="color: red">available</b> for adoption</p>
@@ -83,7 +129,7 @@
         <p>Adopted by:</p>
         <ul>
           {% for donor in item.donors %}
-          <li>{{ donor }}</li>
+          <li>{{ donor.donor_name }}</li>
           {% endfor %}
         </ul>
         {% endif %} {% endif %}
@@ -93,7 +139,7 @@
 
   <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-    // Initialize EmailJS
+     // Initialize EmailJS
     emailjs.init("jYV8y8AwgFM2SI98x");
 
     var item = {
@@ -134,13 +180,6 @@
       });
     }
 
-    // Define your item and recipient emails array as follows:
-    var item = {
-      name: "{{ item.name }}",
-      id: "{{ item.id }}",
-      fee: "{{ item.fee }}",
-    };
-
     // Function to render PayPal buttons
     function renderPaypalButtons() {
       paypal
@@ -163,8 +202,40 @@
             return actions.order.capture().then(function (details) {
               document.getElementById("payment-status").innerHTML =
                 '<div class="alert alert-success">Payment successful! Thank you for your purchase.</div>';
+              
+              // Extract the payer's name from PayPal details
+              var donor_name = details.payer.name.given_name + " " + details.payer.name.surname;
+
               // Call the function with the necessary arguments
               sendPurchaseNotification(item, recipientEmails);
+
+              // Update the adoption status and create a donor record
+              $.ajax({
+                url: "{{ url_for('main.update_adoption_status') }}",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                  item_id: item.id,
+                  donor_name: donor_name
+                }),
+                success: function(response) {
+                  console.log("Item status updated and donor record created.");
+                  // Show SweetAlert2 notification
+                  Swal.fire({
+                    title: "Thank you for your purchase!",
+                    text: "The item has been successfully adopted.",
+                    icon: "success",
+                    confirmButtonText: "OK"
+                  }).then((result) => {
+                    if (result.isConfirmed) {
+                      window.location.href = "/adopt-new-yorks-past";
+                    }
+                  });
+                },
+                error: function(error) {
+                  console.error("Error updating item status and creating donor record:", error);
+                }
+              });
             });
           },
           onError: function (err) {
@@ -180,7 +251,7 @@
     if (typeof paypal === "undefined") {
       const script = document.createElement("script");
       script.src =
-        "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit";
+        "https://www.paypal.com/sdk/js?client-id=AY3_Se-WhIpei-LvhtKEB0SglMxHh_M_SimR4cmnovOgDTpCrDhf-4Ct_Tk_GZrU0xg2bVwX_gjjcbLY&currency=USD&disable-funding=credit";
       script.onload = renderPaypalButtons;
       document.head.appendChild(script);
     } else {
