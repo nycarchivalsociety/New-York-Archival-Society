@@ -1,0 +1,81 @@
+{% extends "base.html" %} {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop Item Template</title>
+    <style>
+      .product-template {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 2rem;
+      }
+
+      .product-image {
+        max-width: 600px;
+        margin-right: 2rem;
+      }
+
+      .product-image img {
+        width: 100%;
+        height: auto;
+      }
+
+      .product-details {
+        max-width: 400px;
+      }
+
+      .product-price {
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+      }
+
+      .product-price .old-price {
+        text-decoration: line-through;
+        margin-right: 1rem;
+      }
+
+      .btn-add-to-cart {
+        display: flex;
+        align-items: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container-full">
+      <div class="product-template">
+        <div class="product-image">
+          <img
+            src="https://res-console.cloudinary.com/dakw2jqjp/media_explorer_thumbnails/0eb5c88c84e63dc5680654be82814134/detailed"
+            alt="Product Image"
+          />
+        </div>
+        <div class="product-details">
+          <p class="sku">ID: BST-498</p>
+          <h1>Slaveholders in Kings County, Flatbush 1799-1826</h1>
+          <div class="product-price">
+            <span class="new-price">$500.00</span>
+          </div>
+          <p class="text-start fw-normal">
+            When the "Act for the Gradual Abolition of Slavery" was passed in
+            New York in 1799, careful records were kept to track the births of
+            slaves. The volume for adoption contains hand-written birth
+            certificates of those born into slavery in Flatbush, Brooklyn
+            between 1799 and 1826. Carefully written in iron gall ink, the
+            documents were later bound during the 1940s to keep them together in
+            a single volume. Over time, the binding has caused considerable
+            damage to the certificates. These important documents require
+            conservation treatment to stabilize the paper and provide a new
+            binding to ensure their long-term preservation.
+          </p>
+          <p class="fw-bold">Adopted by Pauline Toole</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+
+{% endblock %}
