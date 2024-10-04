@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Elegante</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --background-color: #ecf0f1;
+        --text-color: #333;
+        --sidebar-width: 250px;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      /* Estilos para el sidebar */
+      .sidebar {
+        height: 100vh;
+        width: var(--sidebar-width);
+        background-color: var(--secondary-color);
+        position: fixed;
+        top: 0;
+        left: 0;
+        transition: left 0.3s ease-in-out;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar .nav-links {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-top: 20px;
+      }
+
+      .sidebar .nav-link {
+        color: #fff;
+        padding: 12px 20px;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.2s;
+      }
+
+      .sidebar .nav-link:hover,
+      .sidebar .nav-link.active {
+        background-color: var(--primary-color);
+      }
+
+      .sidebar .nav-link i {
+        margin-right: 10px;
+      }
+
+      /* Estilos para la información del usuario y botón de cierre de sesión */
+      .user-info {
+        padding: 20px;
+        color: #fff;
+        background-color: rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .logout-btn {
+        width: 100%;
+        padding: 10px;
+        background-color: var(--primary-color);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 10px;
+        border-radius: 5px;
+      }
+
+      .logout-btn:hover {
+        background-color: #2980b9;
+      }
+
+      /* Estilos para el header móvil */
+      .mobile-header {
+        background-color: var(--secondary-color);
+        color: #fff;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+        display: none;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .mobile-menu-btn {
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Botón de cierre dentro del sidebar (solo visible en móvil) */
+      .sidebar-close-btn {
+        display: none;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+
+      /* Estilos para el contenido principal */
+      .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 40px;
+        transition: margin-left 0.3s ease-in-out;
+      }
+
+      .main-content h1 {
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+      }
+
+      /* Estilos para la tabla */
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .table th,
+      .table td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .table thead {
+        background-color: var(--primary-color);
+        color: #fff;
+      }
+
+      .table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      .table tbody tr:hover {
+        background-color: #e9ecef;
+      }
+
+      /* Estilos para los botones de acción */
+      .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: #fff;
+      }
+
+      .btn-primary:hover {
+        background-color: #2980b9;
+      }
+
+      .btn-danger {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+
+      .btn-danger:hover {
+        background-color: #c0392b;
+      }
+
+      /* Media query para dispositivos móviles */
+      @media (max-width: 991.98px) {
+        .mobile-header {
+          display: block;
+        }
+        .sidebar {
+          left: calc(-1 * var(--sidebar-width));
+        }
+        .sidebar.show {
+          left: 0;
+        }
+        .sidebar-close-btn {
+          display: block;
+        }
+        .main-content {
+          margin-left: 0;
+          padding-top: 60px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header móvil -->
+    <header class="mobile-header" id="mobileHeader">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="bi bi-list"></i> Menú
+      </button>
+    </header>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <button class="sidebar-close-btn" id="sidebarCloseBtn">
+        <i class="bi bi-x"></i>
+      </button>
+      <div class="nav-links">
+        <a class="nav-link" href="/dashboard">
+          <i class="bi bi-house-door"></i> Inicio
+        </a>
+
+        <a class="nav-link" href="/view-donors">
+          <i class="bi bi-people"></i> Ver Donantes
+        </a>
+      </div>
+      <!-- Información del usuario y botón de cerrar sesión -->
+      <div class="user-info">
+        <p>Conectado como: {{ current_user.username }}</p>
+        <form action="{{ url_for('auth.logout') }}" method="POST">
+          <button class="logout-btn" type="submit">
+            <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+          </button>
+        </form>
+      </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="main-content">
+      <!-- Tu contenido aquí -->
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.getElementById("sidebar");
+        const mobileMenuBtn = document.getElementById("mobileMenuBtn");
+        const sidebarCloseBtn = document.getElementById("sidebarCloseBtn");
+        const mobileHeader = document.getElementById("mobileHeader");
+        const mainContent = document.querySelector(".main-content");
+
+        function toggleSidebar() {
+          sidebar.classList.toggle("show");
+          if (window.innerWidth <= 991.98) {
+            mobileHeader.style.opacity = sidebar.classList.contains("show")
+              ? "0"
+              : "1";
+          }
+        }
+
+        function closeSidebar() {
+          if (window.innerWidth <= 991.98) {
+            sidebar.classList.remove("show");
+            mobileHeader.style.opacity = "1";
+          }
+        }
+
+        mobileMenuBtn.addEventListener("click", toggleSidebar);
+        sidebarCloseBtn.addEventListener("click", closeSidebar);
+
+        // Cerrar el sidebar si se hace clic fuera de él en dispositivos móviles
+        document.addEventListener("click", function (event) {
+          if (window.innerWidth <= 991.98) {
+            const isClickInside =
+              sidebar.contains(event.target) ||
+              mobileMenuBtn.contains(event.target);
+            if (!isClickInside && sidebar.classList.contains("show")) {
+              closeSidebar();
+            }
+          }
+        });
+
+        // Marcar el enlace activo
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
+        navLinks.forEach((link) => {
+          if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+          }
+        });
+
+        // Ajustar el layout en la carga y al cambiar el tamaño de la ventana
+        function adjustLayout() {
+          if (window.innerWidth > 991.98) {
+            sidebar.classList.remove("show");
+            mobileHeader.style.opacity = "1";
+            mainContent.style.marginLeft = "250px";
+          } else {
+            mainContent.style.marginLeft = "0";
+          }
+        }
+
+        window.addEventListener("resize", adjustLayout);
+        adjustLayout(); // Llamar al cargar la página
+      });
+    </script>
+  </body>
+</html>
