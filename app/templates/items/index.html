@@ -1,0 +1,181 @@
+{% block content %}
+
+<head>
+  <style>
+    .card {
+      border: none;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .card .btn {
+      border-radius: 0;
+    }
+
+    .card-header {
+      background-color: transparent;
+      border-bottom: none;
+      padding: 0.5rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-header .sale-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: red;
+      color: white;
+      padding: 5px 10px;
+      font-size: 0.8em;
+    }
+
+    .card-body {
+      padding: 1rem;
+    }
+
+    .price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .price h5 {
+      margin: 0;
+      flex-basis: 100%;
+    }
+
+    .price ul {
+      flex-basis: 100%;
+      padding-left: 0;
+    }
+
+    .price ul li {
+      display: inline-block;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    #items-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .item-card {
+      flex: 0 1 calc(33.333% - 1rem);
+      margin-bottom: 2rem;
+      /* Adjust space between cards */
+    }
+
+    .adopted-badge {
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container py-5">
+    <!-- Section for available items -->
+    <div
+      id="available-items-container"
+      style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center"
+    >
+      {% for item in items %} {% if not item.adopted %}
+      <div class="item-card">
+        <div class="card h-100">
+          <div class="card-header">
+            {% if item.photo %}
+            <img
+              src="{{ item.imgURL }}"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% else %}
+            <img
+              src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% endif %}
+            <span class="sale-badge">Available to Adopt</span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ item.name }}</h5>
+            <p class="card-text">{{ item.desc | truncate(100) }}</p>
+            <div class="price">
+              <h5>${{ item.fee }}</h5>
+            </div>
+            <a
+              href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
+              class="btn btn-outline-dark mt-3 w-100"
+              >View</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+
+    <!-- Section for adopted items -->
+    <h2 class="display-6 text-center mt-5 mb-5 adopted_items_title">
+      Adopted Items
+    </h2>
+    <div
+      id="adopted-items-container"
+      style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center"
+    >
+      {% for item in items %} {% if item.adopted %}
+      <div class="item-card">
+        <div class="card h-100">
+          <div class="card-header">
+            {% if item.photo %}
+            <img
+              src="{{ item.imgURL }}"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% else %}
+            <img
+              src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
+              class="card-img-top"
+              alt="{{ item.name }}"
+            />
+            {% endif %}
+            <span class="sale-badge" style="font-size: 1rem">Adopted</span>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ item.name }}</h5>
+            <p class="card-text">{{ item.desc | truncate(100) }}</p>
+            <div class="price text-muted">
+              <h5 class="text-dark mb-2">${{ item.fee }}</h5>
+              <p class="mb-2">Adopted by:</p>
+              <ul>
+                {% for donor_name in item.donors %}
+                <li><b>{{ donor_name }}</b></li>
+                {% endfor %}
+              </ul>
+            </div>
+            <a
+              href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}"
+              class="btn btn-outline-dark w-100"
+              >View</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endif %} {% endfor %}
+    </div>
+  </div>
+</body>
+
+{% endblock %}
