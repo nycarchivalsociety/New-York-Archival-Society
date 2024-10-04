@@ -148,6 +148,11 @@ def new_yorks_past_view_item(item_id):
     if item is None:
         return "Item not found", 404
 
+
+    print(os.getenv('EMAILJS_SERVICE_ID'))
+    print(os.getenv('EMAILJS_TEMPLATE_ID'))
+    print(os.getenv('EMAILJS_API_ID'))
+
     # Render the template with the found item and EmailJS variables
     return render_template(
         'adopt_new_yorks_past/components/items/view_item.html',

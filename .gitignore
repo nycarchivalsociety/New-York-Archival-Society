@@ -1,2 +1,12 @@
-venv
+# Python Bytecode
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+
+# Environment Variables
+.env
+
+# Sensitive Files
 password.py
