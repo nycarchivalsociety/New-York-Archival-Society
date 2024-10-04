@@ -11,8 +11,4 @@ from app import create_app
 app = create_app()
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    app.run(debug=True)
-=======
     app.run()
->>>>>>> abde80176b5c71c88018e77bebbba9b0f228425c
