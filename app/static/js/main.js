@@ -93,18 +93,12 @@ var TrandingSlider = new Swiper(".tranding-slider", {
           menuFilters.forEach((el) => el.classList.remove("filter-active"));
           this.classList.add("filter-active");
           menuIsotope.arrange({ filter: this.getAttribute("data-filter") });
-          menuIsotope.on("arrangeComplete", () => AOS.refresh());
+          // Removed AOS.refresh() call
         },
         true
       );
     }
 
-    AOS.init({
-      duration: 1000,
-      easing: "ease-in-out",
-      once: true,
-      mirror: false,
-    });
   });
 
   on("click", ".mobile-nav-toggle", function () {
