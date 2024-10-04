@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Meta and Title -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Panel with Add and Edit Items</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome CSS for Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --background-color: #ecf0f1;
+        --text-color: #333;
+        --border-color: #ddd;
+      }
+
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      h1 {
+        color: var(--secondary-color);
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        margin-bottom: 30px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      thead {
+        background-color: var(--secondary-color);
+        color: #fff;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 5px;
+      }
+
+      .btn-info {
+        background-color: var(--primary-color);
+        color: #fff;
+      }
+
+      .btn-edit {
+        background-color: #2ecc71;
+        color: #fff;
+      }
+
+      .btn-delete {
+        background-color: #e74c3c;
+        color: #fff;
+      }
+
+      .btn-add {
+        background-color: #48bb78;
+        color: #fff;
+        margin-bottom: 20px;
+      }
+
+      .btn:hover {
+        opacity: 0.8;
+      }
+
+      /* Additional styles for modals */
+      .form-label {
+        font-weight: bold;
+      }
+
+      /* Styles for the drag-and-drop area */
+      .drag-area {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        margin-bottom: 15px;
+      }
+
+      .drag-area.drag-over {
+        border-color: var(--primary-color);
+      }
+
+      .drag-area img {
+        max-width: 100%;
+        height: auto;
+        margin-top: 15px;
+        display: block;
+        margin: 0 auto;
+      }
+
+      .image-preview {
+        max-width: 100%;
+        height: auto;
+        margin-top: 15px;
+      }
+
+      /* Hide the drag-and-drop area by default */
+      .drag-area.hidden {
+        display: none;
+      }
+
+      /* Hide the donor name input by default */
+      #donorNameContainer {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>{% include 'auth/components/sidebar.html' %}</header>
+    <div class="container">
+      <h1>Simple Panel</h1>
+
+      <!-- Button to Add New Item -->
+      <button
+        class="btn btn-add"
+        data-bs-toggle="modal"
+        data-bs-target="#addItemModal"
+      >
+        <i class="fas fa-plus"></i> Add New Item
+      </button>
+
+      <!-- Items Table -->
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Table rows will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Information Modal -->
+    <div
+      class="modal fade"
+      id="itemInfoModal"
+      tabindex="-1"
+      aria-labelledby="itemInfoModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="itemInfoModalLabel">
+              Full Item Information
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body" id="itemInfoModalBody">
+            <!-- Item information will be dynamically added here -->
+          </div>
+          <!-- Modal Footer -->
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div
+      class="modal fade"
+      id="editItemModal"
+      tabindex="-1"
+      aria-labelledby="editItemModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <form id="editItemForm">
+              <!-- Name Field -->
+              <div class="mb-3">
+                <label for="editItemName" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editItemName"
+                  required
+                />
+              </div>
+              <!-- Fee Field -->
+              <div class="mb-3">
+                <label for="editItemFee" class="form-label">Fee</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="editItemFee"
+                  required
+                />
+              </div>
+              <!-- Description Field -->
+              <div class="mb-3">
+                <label for="editItemDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="editItemDescription"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+              <!-- Photo Available Checkbox -->
+              <div class="mb-3 form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="editItemPhoto"
+                />
+                <label for="editItemPhoto" class="form-check-label"
+                  >Photo Available</label
+                >
+              </div>
+              <!-- Drag-and-Drop Area for Image Upload -->
+              <div class="drag-area hidden" id="edit-drag-area">
+                <p>
+                  Drag and drop to upload an image or <br /><strong
+                    >Click here</strong
+                  >
+                </p>
+                <input type="file" id="editFileInput" accept="image/*" hidden />
+                <img
+                  id="editImagePreview"
+                  class="image-preview"
+                  src=""
+                  alt=""
+                  style="display: none"
+                />
+              </div>
+              <!-- Adopted Checkbox -->
+              <div class="mb-3 form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="editItemAdopted"
+                />
+                <label for="editItemAdopted" class="form-check-label"
+                  >Adopted</label
+                >
+              </div>
+              <!-- Donor Name Input -->
+              <div
+                class="mb-3"
+                id="editDonorNameContainer"
+                style="display: none"
+              >
+                <label for="editDonorName" class="form-label"
+                  >Donor's Name</label
+                >
+                <input type="text" class="form-control" id="editDonorName" />
+              </div>
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary">
+                Save changes
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div
+      class="modal fade"
+      id="addItemModal"
+      tabindex="-1"
+      aria-labelledby="addItemModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h5 class="modal-title" id="addItemModalLabel">Add New Item</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <!-- Modal Body -->
+          <div class="modal-body">
+            <form id="addItemForm">
+              <!-- Name Field -->
+              <div class="mb-3">
+                <label for="addItemName" class="form-label">Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="addItemName"
+                  required
+                />
+              </div>
+              <!-- Fee Field -->
+              <div class="mb-3">
+                <label for="addItemFee" class="form-label">Fee</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="addItemFee"
+                  required
+                />
+              </div>
+
+              <!-- Description Field -->
+              <div class="mb-3">
+                <label for="addItemDescription" class="form-label"
+                  >Description</label
+                >
+                <textarea
+                  class="form-control"
+                  id="addItemDescription"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Photo Available Checkbox -->
+              <div class="mb-3 form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="addItemPhoto"
+                />
+                <label for="addItemPhoto" class="form-check-label"
+                  >Photo Available</label
+                >
+              </div>
+
+              <!-- Drag-and-Drop Area for Image Upload -->
+              <div class="drag-area hidden" id="drag-area">
+                <p>
+                  Drag and drop to upload an image or <br />
+                  <strong>Click here</strong>
+                </p>
+                <input type="file" id="fileInput" accept="image/*" hidden />
+                <img
+                  id="imagePreview"
+                  class="image-preview"
+                  src=""
+                  alt=""
+                  style="display: none"
+                />
+              </div>
+
+              <!-- Adopted Checkbox -->
+              <div class="mb-3 form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="addItemAdopted"
+                />
+                <label for="addItemAdopted" class="form-check-label"
+                  >Adopted</label
+                >
+              </div>
+
+              <!-- Donor's Name Field (Initially Hidden) -->
+              <div class="mb-3" id="donorNameContainer" style="display: none">
+                <label for="donorName" class="form-label">Donor's Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="donorName"
+                  placeholder="Enter donor's name"
+                />
+              </div>
+
+              <!-- Submit Button -->
+              <button type="submit" class="btn btn-primary">Add Item</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script to handle the table and actions -->
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const editItemAdopted = document.getElementById("editItemAdopted");
+        const editDonorNameContainer = document.getElementById(
+          "editDonorNameContainer"
+        );
+
+        editItemAdopted.addEventListener("change", function () {
+          if (editItemAdopted.checked) {
+            editDonorNameContainer.style.display = "block";
+          } else {
+            editDonorNameContainer.style.display = "none";
+          }
+        });
+      });
+    </script>
+
+    <script>
+      async function populateTable() {
+        try {
+          const response = await fetch("/api/items");
+          if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+          }
+          const items = await response.json();
+          const tableBody = document.getElementById("tableBody");
+          tableBody.innerHTML = ""; // Clear existing rows
+          items.forEach((item) => {
+            const row = document.createElement("tr");
+
+            const nameCell = document.createElement("td");
+            nameCell.textContent = item.name;
+            row.appendChild(nameCell);
+
+            const actionsCell = document.createElement("td");
+
+            const viewButton = document.createElement("a");
+            viewButton.href = "#";
+            viewButton.className = "btn btn-info";
+            viewButton.textContent = "View Info";
+            viewButton.onclick = () => viewFullInfo(item.id);
+            actionsCell.appendChild(viewButton);
+
+            const editButton = document.createElement("a");
+            editButton.href = "#";
+            editButton.className = "btn btn-edit";
+            editButton.textContent = "Edit";
+            editButton.onclick = () => editItem(item.id);
+            actionsCell.appendChild(editButton);
+
+            const deleteButton = document.createElement("a");
+            deleteButton.href = "#";
+            deleteButton.className = "btn btn-delete";
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = () => deleteItem(item.id);
+            actionsCell.appendChild(deleteButton);
+
+            row.appendChild(actionsCell);
+            tableBody.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error fetching items:", error);
+        }
+      }
+
+      async function deleteItem(itemId) {
+        if (confirm("Are you sure you want to delete this item?")) {
+          try {
+            const response = await fetch(`/api/items/${itemId}`, {
+              method: "DELETE"
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP Error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+            // Refresh the table after deleting the item
+            populateTable();
+          } catch (error) {
+            console.error("Error deleting the item:", error);
+          }
+        }
+      }
+
+      async function viewFullInfo(itemId) {
+        try {
+          const response = await fetch(`/api/items/${itemId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+          }
+          const item = await response.json();
+
+          const modalBody = document.getElementById("itemInfoModalBody");
+          const imgurl = item.photo
+            ? item.imgurl
+            : "https://via.placeholder.com/300x200?text=No+Image";
+
+          modalBody.innerHTML = `
+            <div class="row">
+              <div class="col-md-6">
+                <img src="${imgurl}" alt="${item.name}" class="img-fluid mb-3">
+              </div>
+              <div class="col-md-6">
+                <h3>${item.name}</h3>
+                <p><strong>ID:</strong> ${item.id}</p>
+                <p><strong>Fee:</strong> $${item.fee}</p>
+                <p><strong>Photo Available:</strong> ${
+                  item.photo ? "Yes" : "No"
+                }</p>
+                <p><strong>Adopted:</strong> ${item.adopted ? "Yes" : "No"}</p>
+                <p><strong>Description:</strong> ${item.description_text}</p>
+              </div>
+            </div>
+          `;
+          const modal = new bootstrap.Modal(
+            document.getElementById("itemInfoModal")
+          );
+          modal.show();
+        } catch (error) {
+          console.error("Error fetching item details:", error);
+        }
+      }
+
+      async function editItem(itemId) {
+        try {
+          const response = await fetch(`/api/items/${itemId}`);
+          if (!response.ok) {
+            throw new Error(`HTTP Error! Status: ${response.status}`);
+          }
+          const item = await response.json();
+
+          // Preload data into the form
+          document.getElementById("editItemName").value = item.name;
+          document.getElementById("editItemFee").value = item.fee;
+          document.getElementById("editItemDescription").value =
+            item.description_text;
+          document.getElementById("editItemAdopted").checked = item.adopted;
+          document.getElementById("editItemPhoto").checked = item.photo;
+
+          // Show or hide the drag area based on 'photo' status
+          toggleEditDragArea();
+
+          // If there is an existing image, show it in the preview
+          if (item.photo && item.imgurl) {
+            editImagePreview.src = item.imgurl;
+            editImagePreview.style.display = "block";
+          } else {
+            editImagePreview.style.display = "none";
+          }
+
+          // Store the item ID being edited
+          document.getElementById("editItemForm").dataset.itemId = item.id;
+
+          const modal = new bootstrap.Modal(
+            document.getElementById("editItemModal")
+          );
+          modal.show();
+        } catch (error) {
+          console.error("Error fetching item details:", error);
+        }
+      }
+
+      // Event listener to show/hide donor name input
+      const adoptedCheckbox = document.getElementById("addItemAdopted");
+      adoptedCheckbox.addEventListener("change", () => {
+        const donorNameContainer =
+          document.getElementById("donorNameContainer");
+        if (adoptedCheckbox.checked) {
+          donorNameContainer.style.display = "block";
+        } else {
+          donorNameContainer.style.display = "none";
+          document.getElementById("donorName").value = ""; // Clear donor name
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", populateTable);
+    </script>
+
+    <!-- Scripts to handle the Add Item form and image upload -->
+    <script>
+      // Variables for the add form
+      const photoCheckbox = document.getElementById("addItemPhoto");
+      const dragArea = document.getElementById("drag-area");
+      const fileInput = document.getElementById("fileInput");
+      const imagePreview = document.getElementById("imagePreview");
+      let uploadedImageFile = null;
+
+      // Function to show/hide the drag-and-drop area
+      function toggleDragArea() {
+        if (photoCheckbox.checked) {
+          dragArea.classList.remove("hidden");
+        } else {
+          dragArea.classList.add("hidden");
+          // Clear the uploaded image if the checkbox is unchecked
+          uploadedImageFile = null;
+          imagePreview.src = "";
+          imagePreview.style.display = "none";
+          fileInput.value = "";
+        }
+      }
+
+      // Add event listener to toggle drag area
+      photoCheckbox.addEventListener("change", toggleDragArea);
+
+      // Events for the drag-and-drop area
+      dragArea.addEventListener("click", () => fileInput.click());
+
+      fileInput.addEventListener("change", (event) => {
+        handleFiles(event.target.files);
+      });
+
+      dragArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        dragArea.classList.add("drag-over");
+      });
+
+      dragArea.addEventListener("dragleave", () => {
+        dragArea.classList.remove("drag-over");
+      });
+
+      dragArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        dragArea.classList.remove("drag-over");
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+      });
+
+      function handleFiles(files) {
+        const file = files[0];
+        if (file && file.type.startsWith("image/")) {
+          uploadedImageFile = file;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            imagePreview.src = event.target.result;
+            imagePreview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert("Please select a valid image file.");
+        }
+      }
+
+      // Event for form submission
+      document
+        .getElementById("addItemForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+
+          const formData = new FormData();
+          formData.append("name", document.getElementById("addItemName").value);
+          formData.append("fee", document.getElementById("addItemFee").value);
+          formData.append(
+            "description_text",
+            document.getElementById("addItemDescription").value
+          );
+          formData.append(
+            "adopted",
+            document.getElementById("addItemAdopted").checked.toString()
+          );
+          formData.append("photo", photoCheckbox.checked.toString());
+
+          // Include donor name if provided
+          const donorName = document.getElementById("donorName").value;
+          if (donorName) {
+            formData.append("donor_name", donorName);
+          }
+
+          // Only add the image if the photo checkbox is checked and an image is uploaded
+          if (photoCheckbox.checked && uploadedImageFile) {
+            formData.append("image", uploadedImageFile);
+          }
+
+          try {
+            const response = await fetch("/api/items", {
+              method: "POST",
+              body: formData
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP Error! Status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(
+              document.getElementById("addItemModal")
+            );
+            modal.hide();
+
+            // Clear the form
+            document.getElementById("addItemForm").reset();
+            imagePreview.style.display = "none";
+            uploadedImageFile = null;
+            dragArea.classList.add("hidden"); // Hide the drag-and-drop area
+
+            // Hide donor name input
+            document.getElementById("donorNameContainer").style.display =
+              "none";
+
+            // Refresh the table after adding the new item
+            populateTable();
+          } catch (error) {
+            console.error("Error adding the new item:", error);
+          }
+        });
+
+      // Initialize the drag area state
+      toggleDragArea();
+
+      // Variables for the edit form
+      const editPhotoCheckbox = document.getElementById("editItemPhoto");
+      const editDragArea = document.getElementById("edit-drag-area");
+      const editFileInput = document.getElementById("editFileInput");
+      const editImagePreview = document.getElementById("editImagePreview");
+      let editUploadedImageFile = null;
+
+      // Function to show/hide the drag-and-drop area in the edit form
+      function toggleEditDragArea() {
+        if (editPhotoCheckbox.checked) {
+          editDragArea.classList.remove("hidden");
+        } else {
+          editDragArea.classList.add("hidden");
+          // Clear the uploaded image if the checkbox is unchecked
+          editUploadedImageFile = null;
+          editImagePreview.src = "";
+          editImagePreview.style.display = "none";
+          editFileInput.value = "";
+        }
+      }
+
+      // Add event listener to toggle drag area in the edit form
+      editPhotoCheckbox.addEventListener("change", toggleEditDragArea);
+
+      // Events for the drag-and-drop area in the edit form
+      editDragArea.addEventListener("click", () => editFileInput.click());
+
+      editFileInput.addEventListener("change", (event) => {
+        handleEditFiles(event.target.files);
+      });
+
+      editDragArea.addEventListener("dragover", (event) => {
+        event.preventDefault();
+        editDragArea.classList.add("drag-over");
+      });
+
+      editDragArea.addEventListener("dragleave", () => {
+        editDragArea.classList.remove("drag-over");
+      });
+
+      editDragArea.addEventListener("drop", (event) => {
+        event.preventDefault();
+        editDragArea.classList.remove("drag-over");
+        const files = event.dataTransfer.files;
+        handleEditFiles(files);
+      });
+
+      function handleEditFiles(files) {
+        const file = files[0];
+        if (file && file.type.startsWith("image/")) {
+          editUploadedImageFile = file;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            editImagePreview.src = event.target.result;
+            editImagePreview.style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert("Please select a valid image file.");
+        }
+      }
+
+      // Event for the edit form submission
+      document.addEventListener('DOMContentLoaded', function () {
+    const editItemAdopted = document.getElementById('editItemAdopted');
+    const editDonorNameContainer = document.getElementById('editDonorNameContainer');
+
+    editItemAdopted.addEventListener('change', function () {
+      if (editItemAdopted.checked) {
+        editDonorNameContainer.style.display = 'block';
+      } else {
+        editDonorNameContainer.style.display = 'none';
+      }
+    });
+
+    // Event for the edit form submission
+    document.getElementById('editItemForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+
+      const itemId = this.dataset.itemId;
+      const formData = new FormData();
+      formData.append('name', document.getElementById('editItemName').value);
+      formData.append('fee', document.getElementById('editItemFee').value);
+      formData.append('description_text', document.getElementById('editItemDescription').value);
+      formData.append('adopted', document.getElementById('editItemAdopted').checked.toString());
+      formData.append('photo', document.getElementById('editItemPhoto').checked.toString());
+
+      // Include donor name if provided
+      const donorName = document.getElementById('editDonorName').value;
+      if (donorName) {
+        formData.append('donor_name', donorName);
+      }
+
+      // Only add the image if the photo checkbox is checked and an image is uploaded
+      if (document.getElementById('editItemPhoto').checked && editUploadedImageFile) {
+        formData.append('image', editUploadedImageFile);
+      }
+
+      try {
+        const response = await fetch(`/api/items/${itemId}`, {
+          method: 'PUT',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error! Status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log(result);
+
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editItemModal'));
+        modal.hide();
+
+        // Clear the form
+        document.getElementById('editItemForm').reset();
+        editImagePreview.style.display = 'none';
+        editUploadedImageFile = null;
+        editDragArea.classList.add('hidden'); // Hide the drag-and-drop area
+
+        // Refresh the table after editing the item
+        populateTable();
+      } catch (error) {
+        console.error('Error editing the item:', error);
+      }
+    });
+  });
+    </script>
+    
+  </body>
+</html>

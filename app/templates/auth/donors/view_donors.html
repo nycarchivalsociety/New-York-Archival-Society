@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Donors</title>
+    <!-- Bootstrap 5.3 CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <!-- jQuery CDN (Optional, used for ease of DOM manipulation) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8f9fa;
+      }
+
+      .main-content {
+        padding: 20px;
+      }
+      .table-responsive {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+      }
+      .table th {
+        background-color: #f1f3f5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        {% include 'auth/components/sidebar.html' %}
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+          <div
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+          >
+            <h1 class="h2">View Donors</h1>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Donor ID</th>
+                  <th>Donor Name</th>
+                  <th>Item ID</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="donorsTableBody">
+                <!-- Donor rows will be dynamically added here -->
+              </tbody>
+            </table>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Edit Donor Modal -->
+    <div
+      class="modal fade"
+      id="editDonorModal"
+      tabindex="-1"
+      aria-labelledby="editDonorModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form id="editDonorForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editDonorModalLabel">Edit Donor</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <input type="hidden" id="editDonorId" />
+              <div class="mb-3">
+                <label for="editDonorName" class="form-label">Donor Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="editDonorName"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap 5.3 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const donorsTableBody = document.getElementById("donorsTableBody");
+        const editDonorModal = new bootstrap.Modal(
+          document.getElementById("editDonorModal")
+        );
+        const editDonorForm = document.getElementById("editDonorForm");
+        const editDonorIdInput = document.getElementById("editDonorId");
+        const editDonorNameInput = document.getElementById("editDonorName");
+
+        // Function to fetch and display donors
+        async function fetchDonors() {
+          try {
+            const response = await fetch("/api/donors");
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const donors = await response.json();
+            populateDonorsTable(donors);
+          } catch (error) {
+            console.error("Error fetching donors:", error);
+            alert("Failed to fetch donors data.");
+          }
+        }
+
+        // Function to populate the donors table
+        function populateDonorsTable(donors) {
+          donorsTableBody.innerHTML = "";
+          donors.forEach((donor) => {
+            const row = document.createElement("tr");
+
+            const donorIdCell = document.createElement("td");
+            donorIdCell.textContent = donor.donor_id;
+            row.appendChild(donorIdCell);
+
+            const donorNameCell = document.createElement("td");
+            donorNameCell.textContent = donor.donor_name;
+            row.appendChild(donorNameCell);
+
+            const itemIdCell = document.createElement("td");
+            itemIdCell.textContent = donor.item_id;
+            row.appendChild(itemIdCell);
+
+            const actionsCell = document.createElement("td");
+
+            const editButton = document.createElement("button");
+            editButton.className = "btn btn-sm btn-primary me-2";
+            editButton.innerHTML = '<i class="bi bi-pencil-square"></i> Edit';
+            editButton.onclick = () =>
+              openEditDonorModal(donor.donor_id, donor.donor_name);
+            actionsCell.appendChild(editButton);
+
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "btn btn-sm btn-danger";
+            deleteButton.innerHTML = '<i class="bi bi-trash"></i> Delete';
+            deleteButton.onclick = () => deleteDonor(donor.donor_id);
+            actionsCell.appendChild(deleteButton);
+
+            row.appendChild(actionsCell);
+            donorsTableBody.appendChild(row);
+          });
+        }
+
+        // Function to open the edit donor modal with preloaded data
+        function openEditDonorModal(donorId, donorName) {
+          editDonorIdInput.value = donorId;
+          editDonorNameInput.value = donorName;
+          editDonorModal.show();
+        }
+
+        // Handle edit donor form submission
+        editDonorForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const donorId = editDonorIdInput.value;
+          const donorName = editDonorNameInput.value.trim();
+
+          if (!donorName) {
+            alert("Donor name cannot be empty.");
+            return;
+          }
+
+          try {
+            const response = await fetch(`/api/donors/${donorId}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ donor_name: donorName })
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Failed to update donor.");
+            }
+
+            const result = await response.json();
+            console.log(result);
+            alert("Donor updated successfully.");
+            editDonorModal.hide();
+            fetchDonors(); // Refresh the table
+          } catch (error) {
+            console.error("Error updating donor:", error);
+            alert(`Error updating donor: ${error.message}`);
+          }
+        });
+
+        // Function to delete a donor
+        async function deleteDonor(donorId) {
+          if (!confirm("Are you sure you want to delete this donor?")) {
+            return;
+          }
+
+          try {
+            const response = await fetch(`/api/donors/${donorId}`, {
+              method: "DELETE"
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.error || "Failed to delete donor.");
+            }
+
+            const result = await response.json();
+            console.log(result);
+            alert("Donor deleted successfully.");
+            fetchDonors(); // Refresh the table
+          } catch (error) {
+            console.error("Error deleting donor:", error);
+            alert(`Error deleting donor: ${error.message}`);
+          }
+        }
+
+        // Initial fetch of donors
+        fetchDonors();
+      });
+    </script>
+  </body>
+</html>
