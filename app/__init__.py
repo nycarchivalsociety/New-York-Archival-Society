@@ -1,11 +1,47 @@
 # app/__init__.py
+
 from flask import Flask
+from flask_login import LoginManager
+from app.db.connection import init_db
+from app.db.models import User
+from dotenv import load_dotenv
+import os
+import logging
 
 def create_app():
-    app = Flask(__name__)
-    app.secret_key = b'\xf7\xb1}\xf3T"\x8a\x95\xf3{\x01\x0c\x82\xab\x84\xc4\xac\xfe1\x11\x14\x7f\x8b\xb4'
-    
+    # Load environment variables from .env file
+    load_dotenv()
+
+    app = Flask(__name__, template_folder='templates', static_folder='static')
+
+    # Load configuration settings
+    app.config.from_object('app.config.Config')
+
+    # Initialize extensions
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+
+    # User loader callback
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(user_id)
+
+    # Initialize database
+    init_db(app)
+
+    # Register blueprints
     from .routes.main import main as main_blueprint
+    from .routes.auth import auth as auth_blueprint
     app.register_blueprint(main_blueprint)
+    app.register_blueprint(auth_blueprint)
+
+    # Inject PAYPAL_CLIENT_ID into templates
+    @app.context_processor
+    def inject_paypal_client_id():
+        paypal_client_id = os.getenv('PAYPAL_CLIENT_ID')
+        if not paypal_client_id:
+            logging.warning("PAYPAL_CLIENT_ID is not set.")
+        return {'PAYPAL_CLIENT_ID': paypal_client_id}
 
     return app
