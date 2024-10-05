@@ -117,9 +117,14 @@ def delete_item(item_id):
     try:
         item = Items.query.get(item_id)
         if item:
+            # Delete related donor records
+            Donors.query.filter_by(item_id=item.id).delete()
+            db.session.commit()
+
+            # Delete the item
             db.session.delete(item)
             db.session.commit()
-            return jsonify({"message": "Item deleted successfully"})
+            return jsonify({"message": "Item and related donor records deleted successfully"})
         else:
             return jsonify({"error": "Item not found"}), 404
     except Exception as e:
@@ -228,6 +233,22 @@ def get_donors():
         for donor in donors
     ]
     return jsonify(donors_data), 200
+
+@auth.route('/api/donors/<donor_id>', methods=['DELETE'])
+@login_required
+def delete_donor(donor_id):
+    try:
+        donor = Donors.query.get(donor_id)
+        if donor:
+            db.session.delete(donor)
+            db.session.commit()
+            return jsonify({"message": "Donor deleted successfully"}), 200
+        else:
+            return jsonify({"error": "Donor not found"}), 404
+    except Exception as e:
+        db.session.rollback()
+        logging.error(f"Error deleting donor: {str(e)}")
+        return jsonify({"error": str(e)}), 500
 
 @auth.route('/api/donors/<donor_id>', methods=['PUT'])
 @login_required
