@@ -7,7 +7,6 @@ from app.db.db import db
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-import uuid  
 from . import auth
 import logging
 

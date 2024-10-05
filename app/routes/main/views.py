@@ -206,11 +206,6 @@ def update_adoption_status():
 
     return jsonify({"success": True})
 
-
-@main.route('/projects')
-def projects():
-    return render_template('main/projects.html')
-
 @main.route('/adopt-new-yorks-past')
 def new_yorks_past():
     # Query all items from the database, including their donors
