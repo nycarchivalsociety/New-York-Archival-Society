@@ -1,0 +1,94 @@
+{% extends "layout.html" %} {% block content %}
+
+<section id="mission">
+  <div class="container-fluid p-0 overflow-hidden">
+    <div class="row g-0">
+      <div
+        class="col-lg-6 order-lg-2"
+        lc-helper="background"
+        style="
+          min-height: 45vh;
+          background-size: cover;
+          background-position: center;
+          background-image: url('../../static/img/about/archsochighres2.jpg');
+        "
+      ></div>
+      <div class="col-lg-6 order-lg-1 my-auto px-5 py-5">
+        <div class="lc-block mb-5">
+          <div editable="rich">
+            <h1 class="fw-bold">WHAT'S OUR MISSION?</h1>
+          </div>
+        </div>
+        <div class="lc-block col-xxl-9">
+          <div editable="rich">
+            <p class="about_page_paragraph">
+              The mission of the New York Archival Society is to preserve,
+              support, and promote the collections, services, and programs of
+              the New York City Municipal Archives and Library.<br /><br />The
+              Society advances its mission through public outreach, events, and
+              sponsorship of special projects, especially those that encourage
+              the use of primary source documents by researchers including high
+              school and college students in New York City.<br /><br />New York
+              City is one of the most diverse cities in the world and has been a
+              leader in promoting the social, economic, and political progress
+              of its residents. The Society believes that preserving and making
+              accessible to the public the records that document the history is
+              important for the future progress of New York City.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row g-0">
+      <div
+        class="col-lg-6"
+        lc-helper="background"
+        style="
+          min-height: 45vh;
+          background-size: cover;
+          background-position: center;
+          background-image: url('../../static/img/about/vintage_photo.jpg');
+        "
+      ></div>
+      <div class="col-lg-6 my-auto px-5 py-5 text-start text-lg-start">
+        <div class="lc-block mb-5">
+          <div editable="rich">
+            <h1 class="fw-bold">PRESERVING RECORDS WITH HISTORICAL VALUE</h1>
+          </div>
+        </div>
+        <div class="lc-block col-xxl-9">
+          <div editable="rich">
+            <h3>Welcome to the Municipal Archives</h3>
+            <p class="about_page_paragraph">
+              The Archives preserves and makes available New York City
+              government's historical records. Explore our collections dating
+              from 1645 to the present including documents, digital collections,
+              still and moving images, ledgers and docket books, cartographic
+              materials, blueprints, and audiovisual materials.
+            </p>
+            <div class="lc-block mb-3">
+              <a
+                class="btn btn-primary btn-lg learn_more_btn_about_page"
+                href="https://www.nyc.gov/site/records/historical-records/collections.page"
+                target="_blank"
+                role="button"
+                >Learn More - Records Collection</a
+              >
+              <br />
+              <br />
+              <a
+                class="btn btn-success learn_more_btn_yt_video"
+                href="https://www.youtube.com/watch?v=hyj8f-whDZY"
+                role="button"
+                target="_blank"
+                >Learn More - YouTube</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% include "About/components/directors.html" %} {% endblock %}
