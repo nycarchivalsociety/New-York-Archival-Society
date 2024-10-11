@@ -1,0 +1,14 @@
+import os
+
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI')
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError("DATABASE_URI is not set!")
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SECRET_KEY = os.getenv('FLASK_APP_SECRET_KEY')
+    PAYPAL_CLIENT_ID = os.getenv('PAYPAL_CLIENT_ID')
+    EMAILJS_SERVICE_ID = os.getenv('EMAILJS_SERVICE_ID')
+    EMAILJS_TEMPLATE_ID = os.getenv('EMAILJS_TEMPLATE_ID')
+    EMAILJS_API_ID = os.getenv('EMAILJS_API_ID')
+    RECIPIENT_EMAILS = os.getenv('RECIPIENT_EMAILS')
