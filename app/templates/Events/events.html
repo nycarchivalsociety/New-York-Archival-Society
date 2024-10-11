@@ -1,4 +1,5 @@
-{% extends "layout.html" %} {% block content %}
+{% extends "layout.html" %}
+{% block content %}
 <section id="tranding" class="tranding">
   <div class="container py-5">
     <div class="row">
@@ -20,7 +21,7 @@
                   <a href="https://www.archives.nyc/photoville-2024" target="_blank">Photoville 2024</a>
                 </li>
                 <li>
-                  <a href="https://www.archives.nyc/uniting-the-boroughs-the-triborough-bridge" target="_blank"> Uniting the Boroughs</a>
+                  <a href="https://www.archives.nyc/uniting-the-boroughs-the-triborough-bridge" target="_blank">Uniting the Boroughs</a>
                 </li>
                 <li>
                   <a href="https://www.archives.nyc/ebb-flow" target="_blank">Ebb and Flow</a>
@@ -104,13 +105,22 @@
     <div class="swiper tranding-slider">
       <div class="swiper-wrapper">
         <!-- Slide-start -->
-        {% for image in image_urls %}
+        {% for image_url in [
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499865908939-KIXLCIC5P6MX75NTD1DY/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500315427919-FSR0F60L6LO2VY0DA9LQ/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499869039027-OG3Y2ZDDQ8JXSMC34ZSR/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499952153133-5I3ZF5R57EOHLMXS123B/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499866535035-PPKLZQFWY105YHIOK812/bpb_02227.jpg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499952663011-FPYTNCK8WUA0QZ1T0V4S/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500387041163-T3LVK0OLTOL208Y5XD5C/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500394141473-IGOMN7FHRIZYKA0WNF5V/animalsnip3.JPG?format=750w"
+        ] %}
         <div class="swiper-slide tranding-slide">
           <div class="tranding-slide-img">
             <img
               alt="Event related image"
               class="img-fluid"
-              src="{{ image }}"
+              src="{{ image_url }}"
             />
           </div>
         </div>
