@@ -51,7 +51,7 @@ def new_yorks_past_view_item(item_id):
 
     # Render the view item template with the found item and EmailJS variables
     return render_template(
-        'adopt_new_yorks_past/components/items/view_item.html',
+        'Adopt_New_Yorks_Past/components/items/view_item.html',
         item=item,
         EMAILJS_SERVICE_ID=EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID=EMAILJS_TEMPLATE_ID,
