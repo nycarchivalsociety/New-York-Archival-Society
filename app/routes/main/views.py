@@ -30,7 +30,7 @@ def new_yorks_past():
     page = request.args.get(get_page_parameter(), type=int, default=1)  # Get the current page number from the request
     items = Items.query.paginate(page=page, per_page=20)  # Paginate the items, 20 items per page
     pagination = Pagination(page=page, total=items.total, record_name='items', per_page=20)  # Create pagination object
-    return render_template('adopt_new_yorks_past/adopt_new_yorks_past.html', items=items.items, pagination=pagination)
+    return render_template('Adopt_New_Yorks_Past/adopt_new_yorks_past.html', items=items.items, pagination=pagination)
 
 @main.route('/adopt-new-yorks-past/item/<item_id>')
 def new_yorks_past_view_item(item_id):
