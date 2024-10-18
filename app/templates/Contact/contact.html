@@ -67,41 +67,33 @@
   </div>
 </section>
 {% block script %}
-<!-- EmailJS Library with defer -->
 <script
   src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
   type="text/javascript"
 ></script>
-
-<!-- SweetAlert2 Library with defer -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<!-- Your Custom Email Script with defer -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 <script>
   window.onload = function () {
-    // Initialize EmailJS service
-    emailjs.init("jYV8y8AwgFM2SI98x");
-    // Add event listener for form submission
+    // Initialize EmailJS with the public API ID from environment variables
+    emailjs.init("{{ EMAILJS_API_ID | safe }}"); 
+
     document.getElementById("email-form").addEventListener("submit", sendMail);
 
     function sendMail(e) {
       e.preventDefault();
-
-      // Fetch form data
       const params = getFormData();
 
-      // Define EmailJS service and template IDs
-      const serviceID = "service_ogwzo2j";
-      const templateID = "template_lqrxlkm";
+      // Use service ID and template ID values from environment variables
+      const serviceID = "{{ EMAILJS_SERVICE_ID | safe }}"; 
+      const templateID = "{{ EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM | safe }}";
 
-      // Send email using EmailJS
       emailjs.send(serviceID, templateID, params).then(
         (res) => {
           clearFormData();
-          console.log(res, params);
-          Swal.fire("Success!", "Your message sent successfully!", "success");
+          Swal.fire("Success!", "Your message was sent successfully!", "success");
         },
         (error) => {
+          console.error("EmailJS Error:", error);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -111,18 +103,16 @@
       );
     }
 
-    // Function to get form data
     function getFormData() {
       return {
         from_name: document.getElementById("name").value,
-        to_name: "The name of the recipient",
+        to_name: "{{ RECIPIENT_EMAILS | safe }}",
         subject: document.getElementById("subject").value,
         email: document.getElementById("email").value,
         message: document.getElementById("message").value,
       };
     }
 
-    // Function to clear form data after successful submission
     function clearFormData() {
       document.getElementById("name").value = "";
       document.getElementById("email").value = "";
@@ -131,5 +121,7 @@
     }
   };
 </script>
+
+
 
 {% endblock %} {% endblock %}

@@ -38,7 +38,7 @@ def new_yorks_past_view_item(item_id):
     # Retrieve PayPal and EmailJS credentials from app config
     PAYPAL_CLIENT_ID = current_app.config.get('PAYPAL_CLIENT_ID')
     EMAILJS_SERVICE_ID = current_app.config.get('EMAILJS_SERVICE_ID')
-    EMAILJS_TEMPLATE_ID = current_app.config.get('EMAILJS_TEMPLATE_ID')
+    EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL = current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL')
     EMAILJS_API_ID = current_app.config.get('EMAILJS_API_ID')
     RECIPIENT_EMAILS = current_app.config.get('RECIPIENT_EMAILS')
 
@@ -51,10 +51,10 @@ def new_yorks_past_view_item(item_id):
 
     # Render the view item template with the found item and EmailJS variables
     return render_template(
-        'adopt_new_yorks_past/components/items/view_item.html',
+        'Adopt_New_Yorks_Past/components/items/view_item.html',
         item=item,
         EMAILJS_SERVICE_ID=EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID=EMAILJS_TEMPLATE_ID,
+        EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL=EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL,
         EMAILJS_API_ID=EMAILJS_API_ID,
         PAYPAL_CLIENT_ID=PAYPAL_CLIENT_ID,
         RECIPIENT_EMAILS=RECIPIENT_EMAILS
@@ -128,8 +128,19 @@ def events():
 
 @main.route('/contact')
 def contact():
-    # Render the contact page template
-    return render_template('Contact/contact.html')
+    EMAILJS_SERVICE_ID = current_app.config.get('EMAILJS_SERVICE_ID')
+    EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM = current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM')
+    EMAILJS_API_ID = current_app.config.get('EMAILJS_API_ID')
+    RECIPIENT_EMAILS = current_app.config.get('RECIPIENT_EMAILS')
+    
+    # Render the contact page template with the environment variables passed in
+    return render_template(
+        'Contact/contact.html',
+        EMAILJS_SERVICE_ID=EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM=EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM,
+        EMAILJS_API_ID=EMAILJS_API_ID,
+        RECIPIENT_EMAILS=RECIPIENT_EMAILS
+    )
 
 @main.route('/koch-congressional-project')
 def koch_congressional_project():
