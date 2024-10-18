@@ -142,7 +142,7 @@
             fee: "{{ item.fee }}"
           };
 
-          const recipientEmails = ["nycarchivalsociety@gmail.com"];
+          const recipientEmails = ["{{RECIPIENT_EMAILS}}"];
 
           function sendPurchaseNotification(item, recipientEmails) {
             recipientEmails.forEach((email) => {
@@ -158,7 +158,7 @@
               emailjs
                 .send(
                   "{{ EMAILJS_SERVICE_ID }}",
-                  "{{ EMAILJS_TEMPLATE_ID }}",
+                  "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
                   templateParams
                 )
                 .then((response) => {
