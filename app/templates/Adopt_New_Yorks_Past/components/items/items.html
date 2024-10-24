@@ -177,12 +177,14 @@
             <p class="card-text">{{ item.description | truncate(100) }}</p> <!-- Changed from item.desc to item.description -->
             <div class="price">${{ item.fee }}</div>
             <div class="adopted-by">
-              <p>Adopted by:</p>
-              <ul>
-                {% for donor in item.donors %}
-                <li><b>{{ donor.donor_name }}</b></li>
-                {% endfor %}
-              </ul>
+              <div class="adopted-by">
+                <p>Adopted by:</p>
+                <ul>
+                  {% for donor_item in item.donors %}
+                    <li><b>{{ donor_item.donor.donor_name }}</b></li>
+                  {% endfor %}
+                </ul>
+              </div>
             </div>
             <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}" class="btn-view">View</a>
           </div>

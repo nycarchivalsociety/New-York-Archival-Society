@@ -1,5 +1,16 @@
 {% extends "layout.html" %} {% block content %}
 <head>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <link
+    href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css"
+    rel="stylesheet"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"
+    defer
+  ></script>
+
   <style>
     body {
       font-size: 16px;
@@ -115,114 +126,192 @@
         <p>This item is <b style="color: red">available</b> for adoption</p>
         <div id="payment-status"></div>
         <div id="paypal-button-container"></div>
-        {% endif %}
 
-        <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+        <!-- PayPal SDK will be loaded dynamically -->
         <script>
-          // Initialize EmailJS
-          emailjs.init("{{ EMAILJS_API_ID }}");
-
-          var item = {
-            name: "{{ item.name }}",
-            id: "{{ item.id }}",
-            fee: "{{ item.fee }}"
-          };
-
-          var recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
-
-          // Function to send the purchase notification
-          function sendPurchaseNotification(item, recipientEmails) {
-            recipientEmails.forEach(function (email) {
-              var templateParams = {
-                to_name: email,
-                from_name: "NYAS SITE",
-                subject: "Purchase made!",
-                message:
-                  "A purchase has been made for the item '" +
-                  item.name +
-                  "' (Item ID: " +
-                  item.id +
-                  ") by the amount of $" +
-                  item.fee +
-                  ". Please check the PayPal account for more details."
-              };
-
-              emailjs
-                .send(
-                  "{{ EMAILJS_SERVICE_ID }}",
-                  "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
-                  templateParams
-                )
-                .then(
-                  function (response) {
-                    console.log("SUCCESS!", response.status, response.text);
-                  },
-                  function (error) {
-                    console.log("FAILED...", error);
-                  }
-                );
-            });
-          }
-
-          // Define your item and recipient emails array as follows:
-          var item = {
-            name: "{{ item.name }}",
-            id: "{{ item.id }}",
-            fee: "{{ item.fee }}"
-          };
-
-          // Function to render PayPal buttons
-          function renderPaypalButtons() {
-            paypal
-              .Buttons({
-                createOrder: function (data, actions) {
-                  return actions.order.create({
-                    purchase_units: [
-                      {
-                        amount: {
-                          value: item.fee
-                        }
-                      }
-                    ],
-                    application_context: {
-                      shipping_preference: "NO_SHIPPING"
-                    }
-                  });
-                },
-                onApprove: function (data, actions) {
-                  return actions.order.capture().then(function (details) {
-                    document.getElementById("payment-status").innerHTML =
-                      '<div class="alert alert-success">Payment successful! Thank you for your purchase.</div>';
-                    // Call the function with the necessary arguments
-                    sendPurchaseNotification(item, recipientEmails);
-                  });
-                },
-                onError: function (err) {
-                  document.getElementById("payment-status").innerHTML =
-                    '<div class="alert alert-danger">An error occurred during the payment process. Please try again.</div>';
-                  console.error("Payment error: ", err);
-                }
-              })
-              .render("#paypal-button-container");
-          }
-
-          // Load PayPal buttons
-          if (typeof paypal === "undefined") {
+          document.addEventListener("DOMContentLoaded", function () {
+            // Load the PayPal SDK dynamically
             const script = document.createElement("script");
             script.src =
               "https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit";
-            script.onload = renderPaypalButtons;
+            script.onload = function () {
+              const item = {
+                name: "{{ item.name }}",
+                id: "{{ item.id }}",
+                fee: "{{ item.fee }}"
+              };
+              renderPaypalButtons(item);
+            };
             document.head.appendChild(script);
-          } else {
-            renderPaypalButtons();
-          }
+
+            // Initialize EmailJS
+            emailjs.init("{{ EMAILJS_API_ID }}");
+
+            const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
+
+            function sendPurchaseNotification(item, recipientEmails) {
+              recipientEmails.forEach((email) => {
+                const templateParams = {
+                  to_name: email,
+                  from_name: "NYAS SITE",
+                  subject: "Purchase made!",
+                  item_name: item.name,
+                  item_id: item.id,
+                  item_fee: item.fee
+                };
+
+                emailjs
+                  .send(
+                    "{{ EMAILJS_SERVICE_ID }}",
+                    "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
+                    templateParams
+                  )
+                  .then((response) => {
+                    console.log(
+                      "Email successfully sent!",
+                      response.status,
+                      response.text
+                    );
+                  })
+                  .catch((error) => {
+                    console.error("Email failed to send...", error);
+                  });
+              });
+            }
+
+            function renderPaypalButtons(item) {
+              paypal
+                .Buttons({
+                  createOrder: (data, actions) => {
+                    return actions.order.create({
+                      purchase_units: [
+                        {
+                          amount: {
+                            value: item.fee
+                          }
+                        }
+                      ],
+                      application_context: {
+                        shipping_preference: "NO_SHIPPING"
+                      }
+                    });
+                  },
+                  onApprove: (data, actions) => {
+                    return actions.order.capture().then((details) => {
+                      // Extract payer information
+                      const payer = details.payer;
+                      let paymentMethod = "Unknown";
+
+                      // Determine payment method accurately
+                      if (details.payment_source) {
+                        if (details.payment_source.paypal) {
+                          paymentMethod = "PayPal Account";
+                        } else if (details.payment_source.card) {
+                          paymentMethod = "Credit/Debit Card";
+                        } else {
+                          // Handle other payment sources
+                          paymentMethod = Object.keys(
+                            details.payment_source
+                          )[0]; // Get the payment source key
+                        }
+                      } else if (details.funding_source) {
+                        // In some cases, funding source may be directly available
+                        if (details.funding_source === "paypal") {
+                          paymentMethod = "PayPal Account";
+                        } else if (details.funding_source === "card") {
+                          paymentMethod = "Credit/Debit Card";
+                        } else {
+                          paymentMethod = details.funding_source;
+                        }
+                      }
+
+                      const transaction = {
+                        item_id: item.id,
+                        fee: parseFloat(item.fee), // Ensure fee is a number
+                        payer_id: payer.payer_id,
+                        payer_email: payer.email_address,
+                        payer_name: `${payer.name.given_name} ${payer.name.surname}`,
+                        transaction_id: details.id, // PayPal's transaction ID
+                        payment_status: details.status,
+                        payment_method: paymentMethod
+                      };
+
+                      // Send data to the server
+                      $.ajax({
+                        type: "POST",
+                        url: "/process-transaction",
+                        contentType: "application/json",
+                        data: JSON.stringify(transaction),
+                        success: function (response) {
+                          sendPurchaseNotification(item, recipientEmails);
+
+                          Swal.fire({
+                            title: "Thank you for your purchase!",
+                            text: "The item has been successfully adopted.",
+                            icon: "success",
+                            confirmButtonText: "OK"
+                          }).then((result) => {
+                            if (result.isConfirmed) {
+                              window.location.href = "/adopt-new-yorks-past";
+                            }
+                          });
+                        },
+                        error: function (error) {
+                          console.error(
+                            "Transaction processing failed: ",
+                            error
+                          );
+                          Swal.fire({
+                            title: "Transaction Error",
+                            text: "An error occurred while processing your transaction. Please contact support.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                          });
+                        },
+                        complete: function () {
+                          console.log("AJAX request completed");
+                        },
+                        timeout: 10000
+                      }).fail(function (jqXHR, textStatus) {
+                        if (textStatus === "timeout") {
+                          Swal.fire({
+                            title: "Network Timeout",
+                            text: "The request timed out. Please check your internet connection and try again.",
+                            icon: "warning",
+                            confirmButtonText: "OK"
+                          });
+                        } else {
+                          Swal.fire({
+                            title: "Network Error",
+                            text: "A network error occurred. Please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK"
+                          });
+                        }
+                      });
+                    });
+                  },
+                  onError: (err) => {
+                    console.error("Payment error: ", err);
+                    Swal.fire({
+                      title: "Payment Error",
+                      text: "An error occurred during the payment process. Please try again.",
+                      icon: "error",
+                      confirmButtonText: "OK"
+                    });
+                  }
+                })
+                .render("#paypal-button-container");
+            }
+          });
         </script>
 
-        {% if item.adopted %} {% if item.donors %}
-        <p>This item <b style="color: red">has been</b> adopted by:</p>
+        {% else %}
+        <p>This item <b style="color: red">has been</b> adopted by</p>
+        {% if item.donors %}
         <ul>
-          {% for donor in item.donors %}
-          <li>{{ donor.donor_name }}</li>
+          {% for donor_item in item.donors %}
+          <li><b>{{ donor_item.donor.donor_name }}</b></li>
           {% endfor %}
         </ul>
         {% endif %} {% endif %}
