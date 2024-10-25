@@ -5,8 +5,9 @@ import os
 from app.db.db import db
 
 def create_app():
-    # Load environment variables from the nearest .env file
-    load_dotenv(find_dotenv(), override=True)
+    # Load environment variables from .env.development if it exists, else from .env
+    env_file = find_dotenv('.env.development') or find_dotenv('.env')
+    load_dotenv(env_file, override=True)
 
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
