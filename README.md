@@ -13,6 +13,6 @@
    source venv/bin/activate
 
 2. **Install Dependencies and Run the Server**
-cd api
-pip install -r requirements.txt
-python api.py
+     cd api
+     pip install -r requirements.txt
+     python api.py
