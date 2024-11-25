@@ -1,25 +1,14 @@
 from flask import Flask
 from flask_migrate import Migrate
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 import os
 from app.db.db import db
 
+
 def create_app():
-    # Check for .env.development first, then fall back to .env
-    base_path = os.path.dirname(os.path.dirname(__file__))
-    dev_env_path = os.path.join(base_path, '.env.development')
-    prod_env_path = os.path.join(base_path, '.env')
-    
-    if os.path.exists(dev_env_path):
-        env_path = dev_env_path
-        print("Using development environment variables")
-    elif os.path.exists(prod_env_path):
-        env_path = prod_env_path
-        print("Using production environment variables")
-    else:
-        raise RuntimeError("No .env or .env.development file found!")
-    
-    load_dotenv(env_path, override=True)
+    # Load environment variables from .env.development if it exists, else from .env
+    # env_file = find_dotenv('.env.development') or find_dotenv('.env')
+    # load_dotenv(env_file, override=True)
 
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
