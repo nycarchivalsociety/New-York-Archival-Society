@@ -1,0 +1,5 @@
+.env.development
+.env
+__pycache__/*
+venv/
+api/index.py
