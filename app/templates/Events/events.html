@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+{% block content %}
+<section id="tranding" class="tranding">
+  <div class="container py-5">
+    <div class="row">
+      <div class="col-md-8 offset-md-2 px-4">
+        <div class="lc-block mb-4">
+          <div class="container-cards mt-3">
+            <h1 class="text-center section-heading">
+              Department Of Records Past Exhibits
+            </h1>
+          </div>
+          <div editable="rich">
+            <h2 class="h4 events_page_head">
+              The NYC Department of Records and Information Services (DORIS)
+              hosts rotating exhibits. To learn more about our past exhibits 
+              click below:<br /><br />
+
+              <ul class="events_page_bullet_points">
+                <li>
+                  <a href="https://www.archives.nyc/photoville-2024" target="_blank">Photoville 2024</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/uniting-the-boroughs-the-triborough-bridge" target="_blank">Uniting the Boroughs</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/ebb-flow" target="_blank">Ebb and Flow</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/ordinary-people-extraordinary-lives" target="_blank">Ordinary People - Extraordinary Lives</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/julia-weist" target="_blank">Julia Weist</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/the-lung-block" target="_blank">Immigrant Voices - The Lung Block</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/feeding-the-city" target="_blank">Feeding the City</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/photoville-2018-wpa-work-working" target="_blank">Photoville 2018</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/unlikely-historians-1" target="_blank">Unlikely Historians</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/photoville-2017-living-in-the-city" target="_blank">Photoville 2017</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/little-syria" target="_blank">Little Syria</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/photoville-2016" target="_blank">Photoville 2016</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/lomex-cover" target="_blank">In the Shadow of the Highway: Robert Moses and the Battle for Downtown</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/photoville2015" target="_blank">Photoville 2015</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/women-make-history-1" target="_blank">Women Make History</a>
+                </li>
+                <li>
+                  <a href="https://www.archives.nyc/unbuilt-city" target="_blank">The Unbuilt City</a>
+                </li>
+              </ul>
+              <br>
+              <br>
+
+              <p>
+                The exhibit 'Uniting the Boroughs' which explores the creation
+                the TriBorough bridge is open through August, 2024.
+
+                <br /><br />Open from 9:00AM to 4:00PM, Monday through Friday,
+                except for holidays. <br />31 Chambers Street, Room 109, NY 10007
+                <br>
+                <br>
+                <hr>
+                DORIS also offers programs, tours and activities related to our
+                holdings. Students can work directly with primary sources to build
+                a greater understanding of research and history. Check out our
+                upcoming events here:
+                <div class="button_container_events_page">
+                <button class="events_page_button_new">
+                  <a href="https://bit.ly/DORISEvents" target="_blank">DORIS Events</a>
+                </button>
+                </div>
+                You can also join our mailing list to stay on top of any upcoming events
+                you may be interested in:
+                <div class="button_container2_events_page">
+                  <button class="events_page_button2_new">
+                    <a href="https://www1.nyc.gov/site/records/about/events-mailing-list.page" target="_blank">DORIS Mailing List</a>
+                  </button>
+                  </div>
+              </p>
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-cards">
+    <div class="swiper tranding-slider">
+      <div class="swiper-wrapper">
+        <!-- Slide-start -->
+        {% for image_url in [
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499865908939-KIXLCIC5P6MX75NTD1DY/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500315427919-FSR0F60L6LO2VY0DA9LQ/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499869039027-OG3Y2ZDDQ8JXSMC34ZSR/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499952153133-5I3ZF5R57EOHLMXS123B/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499866535035-PPKLZQFWY105YHIOK812/bpb_02227.jpg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1499952663011-FPYTNCK8WUA0QZ1T0V4S/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500387041163-T3LVK0OLTOL208Y5XD5C/image-asset.jpeg?format=750w",
+          "https://images.squarespace-cdn.com/content/v1/57ade572bebafb370ceb883f/1500394141473-IGOMN7FHRIZYKA0WNF5V/animalsnip3.JPG?format=750w"
+        ] %}
+        <div class="swiper-slide tranding-slide">
+          <div class="tranding-slide-img">
+            <img
+              alt="Event related image"
+              class="img-fluid"
+              src="{{ image_url }}"
+            />
+          </div>
+        </div>
+        <!-- Slide-end -->
+        {% endfor %}
+      </div>
+      <div class="tranding-slider-control mt-3">
+        <div class="swiper-button-prev slider-arrow">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </div>
+        <div class="swiper-button-next slider-arrow">
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
