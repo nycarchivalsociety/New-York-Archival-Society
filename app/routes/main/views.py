@@ -3,13 +3,12 @@ from flask import render_template, jsonify, request, current_app
 import logging
 from app.db.db import db
 from app.db.models import Item, Donor, Transaction, DonorItem
-from dotenv import load_dotenv, find_dotenv
-import os
 import requests
 from flask_paginate import Pagination, get_page_parameter
 from sqlalchemy import text
 from sqlalchemy.orm import joinedload  # Import joinedload for eager loading
-import re
+from sqlalchemy.exc import OperationalError
+import time
 
 # Configurable parameter for pagination
 PER_PAGE = 20
@@ -247,52 +246,63 @@ def new_yorks_past():
     """
     # Get the current page number from the request, default to 1
     page = request.args.get(get_page_parameter(), type=int, default=1)
-    
-    try:
-        # Query the total number of items to correctly set pagination
-        total_items = Item.query.count()
+    retries = 3  # Number of retries
+    delay = 1    # Delay between retries in seconds
 
-        # Calculate offset based on the current page
-        offset = (page - 1) * PER_PAGE
+    for attempt in range(retries):
+        try:
+            # Query the total number of items to correctly set pagination
+            total_items = Item.query.count()
 
-        # Fetch items for the current page with eager loading of donors
-        items_query = Item.query.options(
-            joinedload(Item.donors).joinedload(DonorItem.donor)
-        ).limit(PER_PAGE).offset(offset).all()
+            # Calculate offset based on the current page
+            offset = (page - 1) * PER_PAGE
 
-        # If no items are found on a non-first page, return a 404 error
-        if not items_query and page != 1:
-            return jsonify({"error": "The requested page is out of range. Please try a valid page number."}), 404
+            # Fetch items for the current page with eager loading of donors
+            items_query = Item.query.options(
+                joinedload(Item.donors).joinedload(DonorItem.donor)
+            ).limit(PER_PAGE).offset(offset).all()
 
-        # Initialize the Pagination object with the correct total
-        pagination = Pagination(
-            page=page,
-            total=total_items,
-            record_name='items',
-            per_page=PER_PAGE,
-            css_framework='bootstrap4'  # Adjust based on your frontend framework
-        )
+            # If no items are found on a non-first page, return a 404 error
+            if not items_query and page != 1:
+                return jsonify({"error": "The requested page is out of range. Please try a valid page number."}), 404
 
-        # Render the template with the fetched items and pagination
-        return render_template(
-            'Adopt_New_Yorks_Past/adopt_new_yorks_past.html',
-            items=items_query,
-            pagination=pagination
-        )
-    
-    except db.exc.OperationalError as e:
-        logging.error(
-            "Database operational error while retrieving items for page %s by user %s: %s",
-            page, request.remote_addr, str(e)
-        )
-        return jsonify({"error": "A database error occurred. Please try again later."}), 500
-    
-    except Exception as e:
-        logging.error(
-            "Unexpected error retrieving items for page %s by user %s: %s",
-            page, request.remote_addr, str(e)
-        )
-        return jsonify({"error": "An unexpected error occurred while trying to load items. Please try refreshing the page or come back later."}), 500
+            # Initialize the Pagination object with the correct total
+            pagination = Pagination(
+                page=page,
+                total=total_items,
+                record_name='items',
+                per_page=PER_PAGE,
+                css_framework='bootstrap4'
+            )
+
+            # Render the template with the fetched items and pagination
+            return render_template(
+                'Adopt_New_Yorks_Past/adopt_new_yorks_past.html',
+                items=items_query,
+                pagination=pagination
+            )
+
+        except OperationalError as e:
+            if attempt < retries - 1:
+                logging.warning(
+                    "OperationalError on attempt %d/%d: %s. Retrying in %d seconds...",
+                    attempt + 1, retries, str(e), delay
+                )
+                time.sleep(delay)
+                continue
+            else:
+                logging.error(
+                    "Database operational error after %d attempts while retrieving items for page %s by user %s: %s",
+                    retries, page, request.remote_addr, str(e)
+                )
+                return jsonify({"error": "A database error occurred. Please try again later."}), 500
+
+        except Exception as e:
+            logging.error(
+                "Unexpected error retrieving items for page %s by user %s: %s",
+                page, request.remote_addr, str(e)
+            )
+            return jsonify({"error": "An unexpected error occurred while trying to load items. Please try refreshing the page or come back later."}), 500
 
 @main.route('/adopt-new-yorks-past/item/<item_id>')
 def new_yorks_past_view_item(item_id):
