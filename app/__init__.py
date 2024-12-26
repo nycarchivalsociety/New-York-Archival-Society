@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_migrate import Migrate
-from dotenv import load_dotenv, find_dotenv
 import os
 import logging
 from app.db.db import db
@@ -10,14 +9,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def create_app():
-    # Load environment variables from .env.development if it exists, else from .env
-    env_file = find_dotenv('.env.development') or find_dotenv('.env')
-    if env_file:
-        logger.info(f"Loading environment from: {env_file}")
-        load_dotenv(env_file, override=True)
-    else:
-        logger.info("No .env file found, using system environment variables")
-
     app = Flask(__name__, template_folder='templates', static_folder='static')
 
     # Configuration settings with enhanced error handling
@@ -25,7 +16,6 @@ def create_app():
 
     if not database_uri:
         logger.error("DATABASE_URI environment variable is not set!")
-        logger.debug("Available environment variables: " + ", ".join([k for k in os.environ.keys()]))
         raise ValueError("Database URI is not configured. Please set DATABASE_URI in your environment variables.")
 
     # Update the app configuration before initializing the database

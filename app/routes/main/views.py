@@ -9,6 +9,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import joinedload  # Import joinedload for eager loading
 from sqlalchemy.exc import OperationalError
 import time
+import os
 
 # Configurable parameter for pagination
 PER_PAGE = 20
@@ -345,6 +346,10 @@ def contact():
     # Render the contact page template with the environment variables passed in
     return render_template(
         'Contact/contact.html',
+        EMAILJS_SERVICE_ID=os.getenv('EMAILJS_SERVICE_ID'),
+        EMAILJS_API_ID=os.getenv('EMAILJS_API_ID'),
+        RECIPIENT_EMAILS=os.getenv('RECIPIENT_EMAILS'),
+        EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM=os.getenv('EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM'),
     )
 
 @main.route('/koch-congressional-project')
