@@ -12,7 +12,7 @@ import time
 import os
 
 # Configurable parameter for pagination
-PER_PAGE = 20
+PER_PAGE = 50
 
 def get_paypal_access_token():
     """
