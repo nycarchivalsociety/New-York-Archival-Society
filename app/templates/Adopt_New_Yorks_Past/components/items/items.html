@@ -129,70 +129,102 @@
         grid-template-columns: repeat(4, 1fr);
       }
     }
+
+    .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <!-- Section for available items -->
+    <!-- Available items section -->
     <div id="available-items-container">
-      {% for item in items %}
-        {% if not item.adopted %}
-        <div class="card">
-          <div class="card-header">
-            {% if item.photo %}
-            <img src="{{ item.imgurl }}" class="card-img-top" alt="{{ item.name }}" />
-            {% else %}
-            <img src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg" class="card-img-top" alt="{{ item.name }}" />
-            {% endif %}
-            <span class="sale-badge">Available to Adopt</span>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">{{ item.name }}</h5>
-            <p class="card-text">{{ item.description | truncate(100) }}</p> <!-- Changed from item.desc to item.description -->
-            <div class="price">${{ item.fee }}</div>
-            <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}" class="btn-view">View</a>
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
+        {% for item in pagination.items %}
+            <div class="card">
+                <div class="card-header">
+                    {% if item.photo %}
+                    <img src="{{ item.imgurl }}" class="card-img-top" alt="{{ item.name }}" />
+                    {% else %}
+                    <img src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg" class="card-img-top" alt="{{ item.name }}" />
+                    {% endif %}
+                    <span class="sale-badge">Available to Adopt</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.description | truncate(100) }}</p>
+                    <div class="price">${{ item.fee }}</div>
+                    <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}" class="btn-view">View</a>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 
-    <!-- Section for adopted items -->
-    <h2 class="display-6 text-center mt-5 mb-5 adopted_items_title">Adopted Items</h2>
-    <div id="adopted-items-container">
-      {% for item in items %}
-        {% if item.adopted %}
-        <div class="card">
-          <div class="card-header">
-            {% if item.photo %}
-            <img src="{{ item.imgurl }}" class="card-img-top" alt="{{ item.name }}" />
-            {% else %}
-            <img src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg" class="card-img-top" alt="{{ item.name }}" />
-            {% endif %}
-            <span class="sale-badge">Adopted</span>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">{{ item.name }}</h5>
-            <p class="card-text">{{ item.description | truncate(100) }}</p> <!-- Changed from item.desc to item.description -->
-            <div class="price">${{ item.fee }}</div>
-            <div class="adopted-by">
-              <div class="adopted-by">
-                <p>Adopted by:</p>
-                <ul>
-                  {% for donor_item in item.donors %}
-                    <li><b>{{ donor_item.donor.donor_name }}</b></li>
-                  {% endfor %}
-                </ul>
-              </div>
-            </div>
-            <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}" class="btn-view">View</a>
-          </div>
-        </div>
-        {% endif %}
-      {% endfor %}
+    <!-- Pagination for available items -->
+    {% if pagination.pages > 1 %}
+    <div class="pagination-wrapper mt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if pagination.has_prev %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.new_yorks_past', page=pagination.prev_num) }}">&laquo;</a>
+                    </li>
+                {% endif %}
+
+                {% for page in pagination.iter_pages() %}
+                    {% if page %}
+                        <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                            <a class="page-link" href="{{ url_for('main.new_yorks_past', page=page) }}">{{ page }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('main.new_yorks_past', page=pagination.next_num) }}">&raquo;</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
     </div>
-  </div>
+    {% endif %}
+
+    <!-- Section for adopted items -->
+   <!-- Adopted items section -->
+   <h2 class="display-6 text-center mt-5 mb-5">Adopted Items</h2>
+   <div id="adopted-items-container">
+       {% for item in adopted_items %}
+           <div class="card">
+               <div class="card-header">
+                   {% if item.photo %}
+                   <img src="{{ item.imgurl }}" class="card-img-top" alt="{{ item.name }}" />
+                   {% else %}
+                   <img src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg" class="card-img-top" alt="{{ item.name }}" />
+                   {% endif %}
+                   <span class="sale-badge">Adopted</span>
+               </div>
+               <div class="card-body">
+                   <h5 class="card-title">{{ item.name }}</h5>
+                   <p class="card-text">{{ item.description | truncate(100) }}</p>
+                   <div class="price">${{ item.fee }}</div>
+                   <div class="adopted-by">
+                       <p>Adopted by:</p>
+                       <ul>
+                           {% for donor_item in item.donors %}
+                               <li><b>{{ donor_item.donor.donor_name }}</b></li>
+                           {% endfor %}
+                       </ul>
+                   </div>
+                   <a href="{{ url_for('main.new_yorks_past_view_item', item_id=item.id) }}" class="btn-view">View</a>
+               </div>
+           </div>
+       {% endfor %}
+   </div>
+</div>
 </body>
 
 {% endblock %}
