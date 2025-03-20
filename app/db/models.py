@@ -31,13 +31,7 @@ class Donor(db.Model):
     donor_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     donor_name = db.Column(db.String(256), nullable=False)
     donor_email = db.Column(db.String(256), nullable=True, unique=True)
-    
-    # Billing address (original address fields)
-    street = db.Column(db.String(255), nullable=True)
-    apartment = db.Column(db.String(255), nullable=True)
-    city = db.Column(db.String(100), nullable=True)
-    state = db.Column(db.String(100), nullable=True)
-    zip_code = db.Column(db.String(20), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
     
     # Shipping address fields
     shipping_street = db.Column(db.String(255), nullable=True)
@@ -46,9 +40,6 @@ class Donor(db.Model):
     shipping_state = db.Column(db.String(100), nullable=True)
     shipping_zip_code = db.Column(db.String(20), nullable=True)
     
-    # Flag to indicate if shipping address is same as billing
-    use_billing_for_shipping = db.Column(db.Boolean, default=True)
-
     items = db.relationship('DonorItem', back_populates='donor', cascade="all, delete-orphan")
 
     def __repr__(self):
@@ -101,6 +92,7 @@ class Transaction(db.Model):
     payment_status = db.Column(db.String(50), nullable=False, default="Completed")
     payment_method = db.Column(db.String(50), nullable=True)
     donor_email = db.Column(db.String(256), nullable=True)
+    pickup = db.Column(db.Boolean, nullable=False, default=False)  # New column for in-person pickup
 
     def get_item(self):
         """Returns related item based on item_id format."""
