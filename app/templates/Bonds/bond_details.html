@@ -108,7 +108,7 @@
       <div class="product-details">
         <h1>Bond Number: {{ bond.bond_id }} - {{ bond.type }}</h1>
         <div class="product-price">
-          Purchase Price: ${{ bond.retail_price }} + $5 Mailing Cost
+          Purchase Price: ${{ bond.retail_price }} <span id="handling-text">+ $5 Handling Cost</span>
         </div>
         <p><strong>Purpose of bond:</strong> {{ bond.purpose_of_bond }}</p>
         <p>
@@ -123,6 +123,12 @@
         <p><strong>Size:</strong> {{ bond.size }}</p>
         {% if bond.status == "available" %}
         <div id="payment-status"></div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="pickup-checkbox">
+          <label class="form-check-label" for="pickup-checkbox">
+            In-person pickup 
+          </label>
+        </div>
         <div id="paypal-button-container"></div>
         {% else %}
         <p class="mt-3 text-danger"><strong>This item is sold, please look for others bonds!</strong></p>
@@ -140,8 +146,11 @@
       // Set recipient emails
       const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
 
-      // Email notification function - Updated to include shipping address
-      function sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo) {
+      // Remove the event listener that changes the shipping text display
+      // as handling cost applies regardless of pickup option
+
+      // Email notification function - Updated to include pickup option
+      function sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickup) {
         recipientEmails.forEach((email) => {
           const templateParams = {
             to_name: email,
@@ -153,14 +162,19 @@
             // Include donor info
             donor_name: donorInfo.name,
             donor_email: donorInfo.email,
-            // Include shipping address for delivery
-            street: shippingAddress.street,
-            apartment: shippingAddress.apartment,
-            city: shippingAddress.city, 
-            state: shippingAddress.state,
-            zip_code: shippingAddress.zip_code
+            donor_phone: donorInfo.phone || "Not provided",
+            // Make pickup status more prominent
+            pickup_status: isPickup ? "IN-PERSON PICKUP" : "SHIPPING REQUIRED",
+            pickup: isPickup ? "Yes - In-person pickup" : "No - Ship to address",
+            // Ensure address values are never undefined
+            street: shippingAddress.street || "N/A",
+            apartment: shippingAddress.apartment || "N/A",
+            city: shippingAddress.city || "N/A", 
+            state: shippingAddress.state || "N/A",
+            zip_code: shippingAddress.zip_code || "N/A"
           };
-
+          
+          console.log("Sending email with params:", templateParams);
           emailjs
             .send(
               "{{ EMAILJS_SERVICE_ID }}",
@@ -180,39 +194,49 @@
         paypal
           .Buttons({
             createOrder: (data, actions) => {
+              const isPickup = document.getElementById('pickup-checkbox').checked;
+              // Always add $5 handling fee regardless of pickup status
+              const totalAmount = parseFloat("{{ bond.retail_price }}") + 5;
+              
               return actions.order.create({
                 purchase_units: [
                   {
                     reference_id: "{{ bond.bond_id }}",
                     amount: {
-                      value: "{{ bond.retail_price + 5 }}"
+                      value: totalAmount.toFixed(2)
                     }
                   }
                 ],
                 application_context: {
-                  shipping_preference: "GET_FROM_FILE" // Changed from SET_PROVIDED_ADDRESS
+                  shipping_preference: isPickup ? "NO_SHIPPING" : "GET_FROM_FILE"
                 }
               });
             },
             onApprove: (data, actions) => {
               return actions.order.capture().then((details) => {
                 const payer = details.payer;
-                const shipping = details.purchase_units[0].shipping;
+                const shipping = details.purchase_units[0].shipping || {};
+                const isPickup = document.getElementById('pickup-checkbox').checked;
+                
+                // Always add $5 handling fee regardless of pickup status
+                const fee = parseFloat("{{ bond.retail_price }}") + 5;
 
-                // Create item object for email
-                const item = {
-                  name: "{{ bond.type }} - {{ bond.bond_id }}",
-                  id: "{{ bond.bond_id }}",
-                  fee: "{{ bond.retail_price }}"
-                };
+                // Extract phone from payer info if available
+                const phoneNumber = payer.phone ? payer.phone.phone_number.national_number : null;
 
                 // Get shipping address from PayPal response
-                const shippingAddress = {
+                const shippingAddress = shipping.address ? {
                   street: shipping.address.address_line_1 || "N/A",
                   apartment: shipping.address.address_line_2 || "N/A",
                   city: shipping.address.admin_area_2 || "N/A",
                   state: shipping.address.admin_area_1 || "N/A",
                   zip_code: shipping.address.postal_code || "N/A"
+                } : {
+                  street: "N/A (In-person pickup)",
+                  apartment: "N/A",
+                  city: "N/A",
+                  state: "N/A",
+                  zip_code: "N/A"
                 };
 
                 // Create transaction object with all required data
@@ -221,9 +245,11 @@
                   item_id: "{{ bond.bond_id }}",
                   donor_name: `${payer.name.given_name} ${payer.name.surname}`,
                   donor_email: payer.email_address,
-                  fee: "{{ bond.retail_price + 5 }}",
+                  donor_phone: phoneNumber, // Send phone number to server
+                  fee: fee.toFixed(2),
                   payment_status: details.status,
-                  shipping_address: shippingAddress
+                  shipping_address: shippingAddress,
+                  pickup: isPickup
                 };
 
                 $.ajax({
@@ -232,14 +258,22 @@
                   contentType: "application/json",
                   data: JSON.stringify(transaction),
                   success: function () {
-                    // Send email with complete shipping information
+                    // Send email with complete information
                     const donorInfo = {
                       name: `${payer.name.given_name} ${payer.name.surname}`,
-                      email: payer.email_address
+                      email: payer.email_address,
+                      phone: payer.phone?.phone_number?.national_number || "Not provided"
                     };
                     
-                    // Send email notification with shipping address
-                    sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo);
+                    // Define the item object with bond information
+                    const item = {
+                      name: "{{ bond.type }}",
+                      id: "{{ bond.bond_id }}",
+                      fee: fee.toFixed(2)
+                    };
+                    
+                    // Send email notification with shipping address and pickup status
+                    sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickup);
                     
                     Swal.fire({
                       title: "Thank you for your purchase!",
@@ -259,14 +293,6 @@
                     });
                   }
                 });
-              });
-            },
-            onError: (err) => {
-              Swal.fire({
-                title: "Payment Error",
-                text: "An error occurred during the payment process. Please try again.",
-                icon: "error",
-                confirmButtonText: "OK"
               });
             }
           })
