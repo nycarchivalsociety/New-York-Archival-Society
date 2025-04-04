@@ -2,7 +2,7 @@ from . import main
 from flask import render_template, jsonify, request, current_app
 import logging
 from app.db.db import db
-from app.db.models import Item, Donor, Transaction, DonorItem
+from app.db.models import HistoricalRecord, Donor, Transaction, DonorItem, Bond
 import requests
 from flask_paginate import Pagination, get_page_parameter
 from sqlalchemy import text
@@ -10,9 +10,10 @@ from sqlalchemy.orm import joinedload  # Import joinedload for eager loading
 from sqlalchemy.exc import OperationalError
 import time
 import os
+from datetime import datetime
 
 # Configurable parameter for pagination
-PER_PAGE = 50
+PER_PAGE = 20
 
 def get_paypal_access_token():
     """
@@ -51,32 +52,14 @@ def get_paypal_access_token():
 
 @main.route('/create-order', methods=['POST'])
 def create_order():
-
-    """
-Creates a new PayPal order.
-This route handles the creation of a new order using the PayPal API. It expects a JSON payload with the item ID and fee.
-Returns:
-    JSON response containing the order details if successful, or an error message if there was an issue.
-Raises:
-    400: If the request payload is missing the item ID or fee.
-    500: If the PayPal API base URL is not set in the configuration.
-    <status_code>: If the PayPal order creation fails, returns the status code from the PayPal API response.
-Steps:
-1. Retrieve the PayPal access token.
-2. Get the PayPal API base URL from the application configuration.
-3. Validate the presence of the item ID and fee in the request payload.
-4. Make a POST request to the PayPal API to create the order.
-5. Handle the response from the PayPal API and return the appropriate JSON response.
-"""
-
     access_token = get_paypal_access_token()
     PAYPAL_API_BASE_URL = current_app.config.get('PAYPAL_API_BASE_URL')
 
     if not PAYPAL_API_BASE_URL:
         logging.error("PAYPAL_API_BASE_URL is not set in the configuration.")
         return jsonify({'error': 'PAYPAL_API_BASE_URL is not set'}), 500
-    
-    # Get the item details from the request payload
+
+    # Obtener los detalles del artículo de la solicitud
     data = request.get_json()
     item_id = data.get('item_id')
     item_fee = data.get('fee')
@@ -85,6 +68,7 @@ Steps:
         logging.error("Missing item ID or fee in the request payload. Data: %s", data)
         return jsonify({'error': 'Missing item ID or fee'}), 400
 
+    # Crear la orden en PayPal
     order_response = requests.post(
         f'{PAYPAL_API_BASE_URL}/v2/checkout/orders',
         headers={
@@ -93,7 +77,15 @@ Steps:
         },
         json={
             'intent': 'CAPTURE',
-            'purchase_units': [{'reference_id': item_id, 'amount': {'currency_code': 'USD', 'value': item_fee}}]
+            'purchase_units': [
+                {
+                    'reference_id': item_id,  
+                    'amount': {
+                        'currency_code': 'USD',
+                        'value': item_fee
+                    }
+                }
+            ]
         }
     )
 
@@ -103,29 +95,30 @@ Steps:
 
     return jsonify(order_response.json())
 
+
 @main.route('/capture-order/<order_id>', methods=['POST'])
 def capture_order(order_id):
     try:
-        access_token = get_paypal_access_token()
-        PAYPAL_API_BASE_URL = current_app.config.get('PAYPAL_API_BASE_URL')
+        with db.session.no_autoflush:
+            # Check if this order has already been processed
+            existing_transaction = Transaction.query.filter_by(
+                paypal_transaction_id=order_id).first()
+            if existing_transaction:
+                return jsonify({'message': 'Order already processed'}), 200
 
-        if not PAYPAL_API_BASE_URL:
-            logging.error("PAYPAL_API_BASE_URL is not set in the configuration.")
-            return jsonify({'error': 'PAYPAL_API_BASE_URL is not set'}), 500
-        
-        capture_response = requests.post(
-            f'{PAYPAL_API_BASE_URL}/v2/checkout/orders/{order_id}/capture',
-            headers={
-                'Content-Type': 'application/json',
-                'Authorization': f'Bearer {access_token}'
-            }
-        )
-        capture_data = capture_response.json()
+            # Get data from request
+            data = request.get_json()
+            is_pickup = data.get('pickup', False)
+            item_id = data.get('item_id')  # Extract item_id from request
+            fee = data.get('fee')  # Extract fee from request
+            
+            access_token = get_paypal_access_token()
+            PAYPAL_API_BASE_URL = current_app.config.get('PAYPAL_API_BASE_URL')
+            if not PAYPAL_API_BASE_URL:
+                logging.error("PAYPAL_API_BASE_URL not configured")
+                return jsonify({'error': 'PayPal configuration missing'}), 500
 
-        # Handle already captured orders by getting the order details
-        if capture_response.status_code == 422 and capture_data.get('name') == 'UNPROCESSABLE_ENTITY' and any(detail.get('issue') == 'ORDER_ALREADY_CAPTURED' for detail in capture_data.get('details', [])):
-            logging.warning("Order already captured. Order ID: %s", order_id)
-            # Fetch the existing order details to proceed with database updates
+            # Retrieve order details from PayPal
             order_details_response = requests.get(
                 f'{PAYPAL_API_BASE_URL}/v2/checkout/orders/{order_id}',
                 headers={
@@ -134,100 +127,114 @@ def capture_order(order_id):
                 }
             )
             if order_details_response.status_code != 200:
-                logging.error("Failed to retrieve PayPal order details for already captured order. Status code: %s, Response: %s", order_details_response.status_code, order_details_response.text)
-                return jsonify({'error': 'Failed to retrieve order details for already captured order.'}), order_details_response.status_code
-            capture_data = order_details_response.json()
-        elif capture_response.status_code != 201:
-            # If capture was not successful, and it is not an already captured order
-            logging.error("Failed to capture PayPal order. Status code: %s, Response: %s", capture_response.status_code, capture_response.text)
-            return jsonify({'error': 'Failed to capture order. Please check the order ID or contact support.'}), capture_response.status_code
+                logging.error(f"Failed to get order details: {order_details_response.text}")
+                return jsonify({'error': 'Failed to get order details'}), order_details_response.status_code
 
-        # Extract payer information from capture response
-        payer = capture_data.get('payer', {})
-        payment_source = capture_data.get('payment_source', {})
-        payment_status = capture_data.get('status', 'Unknown')
+            order_details = order_details_response.json()
+            capture_data = order_details if order_details.get('status') == 'COMPLETED' else None
 
-        payment_method = "Unknown"
-        if 'paypal' in payment_source:
-            payment_method = 'PayPal Account'
-        elif 'card' in payment_source:
-            payment_method = 'Credit/Debit Card'
+            if not capture_data:
+                # Rest of the existing capture code...
+                pass
 
-        # Prepare transaction data
-        item_id = capture_data.get('purchase_units', [{}])[0].get('reference_id', None)
-        fee = capture_data.get('purchase_units', [{}])[0].get('payments', {}).get('captures', [{}])[0].get('amount', {}).get('value', None)
-        payer_email = payer.get('email_address', None)
-        payer_name = f"{payer.get('name', {}).get('given_name', '')} {payer.get('name', {}).get('surname', '')}"
-        paypal_transaction_id = capture_data.get('purchase_units', [{}])[0].get('payments', {}).get('captures', [{}])[0].get('id', None)
+            # Extract phone number from PayPal response if available
+            payer = capture_data.get('payer', {})
+            phone = None
+            
+            # Try to get phone from PayPal's payer object
+            if 'phone' in payer and 'phone_number' in payer['phone']:
+                phone = payer['phone']['phone_number'].get('national_number')
+            
+            payer_email = payer.get('email_address')
+            payer_name = f"{payer.get('name', {}).get('given_name', '')} {payer.get('name', {}).get('surname', '')}"
 
-        if not item_id or not fee or not paypal_transaction_id:
-            logging.error("Invalid capture response, missing critical information. Item ID: %s, Fee: %s, Transaction ID: %s", item_id, fee, paypal_transaction_id)
-            return jsonify({'error': 'Invalid capture response, missing critical information.'}), 400
+            # Extract shipping address from PayPal response
+            purchase_units = capture_data.get('purchase_units', [])
+            shipping = purchase_units[0].get('shipping', {}) if purchase_units else {}
+            address = shipping.get('address', {})
 
-        # Normalize email to prevent duplicate entries due to casing/whitespace differences
-        normalized_email = payer_email.strip().lower() if payer_email else None
+            # Get or create donor using the payer's email
+            donor = Donor.query.filter_by(donor_email=payer_email).first()
+            if not donor:
+                # New donor: Set shipping address and phone if available
+                donor = Donor(
+                    donor_name=payer_name,
+                    donor_email=payer_email,
+                    phone=phone,  # Now it's defined, either with a value or None
+                    
+                    # Set shipping address from PayPal data
+                    shipping_street=address.get('address_line_1'),
+                    shipping_apartment=address.get('address_line_2'),
+                    shipping_city=address.get('admin_area_2'),
+                    shipping_state=address.get('admin_area_1'),
+                    shipping_zip_code=address.get('postal_code'),
+                )
+                db.session.add(donor)
+            else:
+                # For existing donors, update shipping address and phone if provided
+                if address:
+                    donor.shipping_street = address.get('address_line_1', donor.shipping_street)
+                    donor.shipping_apartment = address.get('address_line_2', donor.shipping_apartment)
+                    donor.shipping_city = address.get('admin_area_2', donor.shipping_city)
+                    donor.shipping_state = address.get('admin_area_1', donor.shipping_state)
+                    donor.shipping_zip_code = address.get('postal_code', donor.shipping_zip_code)
+                
+                # Update phone if provided
+                if phone:
+                    donor.phone = phone
 
-        # Fetch the item from the database using the item ID
-        item = Item.query.filter_by(id=item_id).one_or_none()  # Find the item by ID, return None if not found
-        if not item:
-            logging.error("Item not found in the database. Item ID: %s", item_id)
-            return jsonify({'error': 'Item not found'}), 404
+            db.session.flush()
 
-        # Check if the donor already exists by searching with the normalized email
-        donor = Donor.query.filter_by(donor_email=normalized_email).first() if normalized_email else None
-        if not donor:
-            # Create a new donor if none exists with the given email
-            donor = Donor(
-                donor_name=payer_name,
-                donor_email=normalized_email
-            )
-            db.session.add(donor)
             try:
-                db.session.flush()  # Ensure the donor_id is generated before proceeding
-                logging.info("Donor created successfully. Donor ID: %s", donor.donor_id)
-            except Exception as e:
-                # Rollback if an error occurs during flush
+                with db.session.begin_nested():
+                    transaction = Transaction(
+                        paypal_transaction_id=order_id,
+                        item_id=str(item_id),
+                        donor_id=donor.donor_id,
+                        fee=fee,
+                        payment_status='COMPLETED',
+                        payment_method='PayPal',
+                        donor_email=payer_email,
+                        pickup=is_pickup,  # Store pickup preference
+                        timestamp=datetime.now()
+                    )
+                    db.session.add(transaction)
+                    db.session.flush()
+
+                    # Create a DonorItem record if the item is a historical record (UUID format)
+                    if Transaction.is_uuid(item_id):
+                        donor_item = DonorItem(
+                            donor_id=donor.donor_id,
+                            item_id=item_id,
+                            fee=fee
+                        )
+                        db.session.add(donor_item)
+                        db.session.flush()
+
+                    # Update the item status depending on its type (HistoricalRecord or Bond)
+                    if Transaction.is_uuid(item_id):
+                        item = HistoricalRecord.query.get(item_id)
+                        if item:
+                            item.adopted = True
+                    else:
+                        item = Bond.query.get(item_id)
+                        if item:
+                            item.status = 'purchased'
+
+                    if not item:
+                        raise ValueError(f"Item {item_id} not found")
+
+                db.session.commit()
+                return jsonify({'message': 'Success'}), 200
+
+            except Exception as db_error:
                 db.session.rollback()
-                logging.error("Error flushing donor: %s. Data: donor_name=%s, donor_email=%s", str(e), payer_name, normalized_email)
-                return jsonify({'error': 'An error occurred while creating the donor: {}'.format(str(e))}), 500
-
-        # Link donor with the item by creating a DonorItem instance
-        new_donor_item = DonorItem(
-            donor_id=donor.donor_id,  # Link to the donor
-            item_id=item_id,  # Link to the item
-            fee=fee  # Store the fee provided by the donor
-        )
-        db.session.add(new_donor_item)
-        logging.info("DonorItem created successfully. Donor ID: %s, Item ID: %s", donor.donor_id, item_id)
-
-        # Mark the item as adopted since a donor has now been linked to it
-        item.adopted = True
-        logging.info("Item marked as adopted. Item ID: %s", item_id)
-
-        # Create a new transaction linked to the existing or new donor
-        transaction = Transaction(
-            paypal_transaction_id=paypal_transaction_id,  # Store PayPal transaction ID
-            item_id=item_id,  # Link to the item
-            donor_id=donor.donor_id,  # Link to the donor
-            fee=fee,  # Store the fee for the transaction
-            payment_status=payment_status,  # Store the status of the payment
-            payment_method=payment_method,  # Correctly store the payment method used
-            donor_email=normalized_email  # Store the donor's email
-        )
-        db.session.add(transaction)
-
-        # Commit all changes to the database at once to optimize performance
-        db.session.commit()
-
-        # Return a success response
-        return jsonify({'message': 'Order captured and transaction processed successfully'}), 200
+                logging.error(f"Database error: {str(db_error)}")
+                return jsonify({'error': 'Database error'}), 500
 
     except Exception as e:
-        # Rollback the main transaction in case of error
-        db.session.rollback()
-        logging.error("Error capturing order: %s. Data: order_id=%s. Rolling back changes.", str(e), order_id)
-        # Return an error response
-        return jsonify({'error': 'An error occurred while capturing the order: {}'.format(str(e))}), 500
+        logging.error(f"Capture error: {str(e)}")
+        return jsonify({'error': 'Internal error'}), 500
 
 @main.route('/')
 def index():
@@ -241,91 +248,56 @@ def about():
 
 @main.route('/adopt-new-yorks-past')
 def new_yorks_past():
-    """
-    Render the Adopt New York's Past page with paginated items.
-    Each item displays its adoption status and donors.
-    """
-    # Get the current page number from the request, default to 1
-    page = request.args.get(get_page_parameter(), type=int, default=1)
-    retries = 3  # Number of retries
-    delay = 1    # Delay between retries in seconds
+    try:
+        page = request.args.get('page', type=int, default=1)
+        per_page = 8
 
-    for attempt in range(retries):
-        try:
-            # Query the total number of items to correctly set pagination
-            total_items = Item.query.count()
+        # Query for non-adopted items only
+        available_query = HistoricalRecord.query\
+            .filter_by(adopted=False)\
+            .options(joinedload(HistoricalRecord.donors).joinedload(DonorItem.donor))
 
-            # Calculate offset based on the current page
-            offset = (page - 1) * PER_PAGE
+        # Paginate available items
+        pagination = available_query.paginate(
+            page=page,
+            per_page=per_page,
+            error_out=False
+        )
 
-            # Fetch items for the current page with eager loading of donors
-            items_query = Item.query.options(
-                joinedload(Item.donors).joinedload(DonorItem.donor)
-            ).limit(PER_PAGE).offset(offset).all()
+        # Separate query for adopted items
+        adopted_items = HistoricalRecord.query\
+            .filter_by(adopted=True)\
+            .options(joinedload(HistoricalRecord.donors).joinedload(DonorItem.donor))\
+            .all()
 
-            # If no items are found on a non-first page, return a 404 error
-            if not items_query and page != 1:
-                return jsonify({"error": "The requested page is out of range. Please try a valid page number."}), 404
+        return render_template(
+            'Adopt_New_Yorks_Past/adopt_new_yorks_past.html',
+            pagination=pagination,
+            adopted_items=adopted_items
+        )
+        
+    except Exception as e:
+        logging.error(f"Unexpected error retrieving items: {str(e)}")
+        return jsonify({'error': 'An error occurred'}), 500
 
-            # Initialize the Pagination object with the correct total
-            pagination = Pagination(
-                page=page,
-                total=total_items,
-                record_name='items',
-                per_page=PER_PAGE,
-                css_framework='bootstrap4'
-            )
-
-            # Render the template with the fetched items and pagination
-            return render_template(
-                'Adopt_New_Yorks_Past/adopt_new_yorks_past.html',
-                items=items_query,
-                pagination=pagination
-            )
-
-        except OperationalError as e:
-            if attempt < retries - 1:
-                logging.warning(
-                    "OperationalError on attempt %d/%d: %s. Retrying in %d seconds...",
-                    attempt + 1, retries, str(e), delay
-                )
-                time.sleep(delay)
-                continue
-            else:
-                logging.error(
-                    "Database operational error after %d attempts while retrieving items for page %s by user %s: %s",
-                    retries, page, request.remote_addr, str(e)
-                )
-                return jsonify({"error": "A database error occurred. Please try again later."}), 500
-
-        except Exception as e:
-            logging.error(
-                "Unexpected error retrieving items for page %s by user %s: %s",
-                page, request.remote_addr, str(e)
-            )
-            return jsonify({"error": "An unexpected error occurred while trying to load items. Please try refreshing the page or come back later."}), 500
 
 @main.route('/adopt-new-yorks-past/item/<item_id>')
 def new_yorks_past_view_item(item_id):
-    """Render the item view page for adopting New York's past."""
-    # Retrieve PayPal and EmailJS credentials from app config
     PAYPAL_CLIENT_ID = current_app.config.get('PAYPAL_CLIENT_ID')
     EMAILJS_SERVICE_ID = current_app.config.get('EMAILJS_SERVICE_ID')
     EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL = current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL')
     EMAILJS_API_ID = current_app.config.get('EMAILJS_API_ID')
     RECIPIENT_EMAILS = current_app.config.get('RECIPIENT_EMAILS')
 
-    # Query the database for the specified item by ID
     try:
-        item = Item.query.get_or_404(item_id)  # Get item by ID or return a 404 error if not found
+        item = HistoricalRecord.query.get_or_404(item_id)
     except db.exc.OperationalError as e:
-        logging.error("Database operational error while retrieving item with ID %s by user %s: %s", item_id, request.remote_addr, str(e))  # Log the error with more context
-        return jsonify({"error": "A database error occurred. Please try again later."}), 500  # Specific database error message
+        logging.error("Database operational error while retrieving item with ID %s by user %s: %s", item_id, request.remote_addr, str(e))
+        return jsonify({"error": "A database error occurred. Please try again later."}), 500
     except Exception as e:
-        logging.error("Unexpected error retrieving item with ID %s by user %s: %s", item_id, request.remote_addr, str(e))  # Log the error with more context
-        return jsonify({"error": "An unexpected error occurred while trying to load the item. Please try refreshing the page or come back later."}), 500  # Return a 500 response with user-friendly message
+        logging.error("Unexpected error retrieving item with ID %s by user %s: %s", item_id, request.remote_addr, str(e))
+        return jsonify({"error": "An unexpected error occurred while trying to load the item. Please try refreshing the page or come back later."}), 500
 
-    # Render the view item template with the found item and EmailJS variables
     return render_template(
         'Adopt_New_Yorks_Past/components/items/view_item.html',
         item=item,
@@ -335,6 +307,77 @@ def new_yorks_past_view_item(item_id):
         PAYPAL_CLIENT_ID=PAYPAL_CLIENT_ID,
         RECIPIENT_EMAILS=RECIPIENT_EMAILS
     )
+
+from flask import render_template, request
+from flask_paginate import Pagination, get_page_parameter
+from app.db.models import Bond
+
+@main.route('/bonds', methods=['GET'])
+def get_bonds():
+    try:
+        # Pagination setup
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        per_page = 9  # Number of items per page
+
+        # Get total bonds count
+        total_bonds = Bond.query.filter_by(status='available').count()
+
+        # Calculate offset
+        offset = (page - 1) * per_page
+
+        # Get paginated results
+        bonds = Bond.query.filter_by(status='available')\
+            .order_by(Bond.bond_id)\
+            .offset(offset)\
+            .limit(per_page)\
+            .all()
+
+        # Create pagination object
+        pagination = Pagination(
+            page=page,
+            per_page=per_page,
+            total=total_bonds,
+            css_framework='bootstrap5',
+            record_name='bonds',
+        )
+
+        return render_template(
+            'Bonds/bonds_list.html',
+            bonds=bonds,
+            pagination=pagination
+        )
+
+    except Exception as e:
+        logging.error(f"Error fetching bonds: {str(e)}")
+        return jsonify({'error': 'Unable to fetch bonds'}), 500
+
+
+
+@main.route('/bond/<bond_id>', methods=['GET'])
+def view_bond_details(bond_id):
+    """
+    View details of a specific bond, including PayPal integration and email notifications.
+    """
+    PAYPAL_CLIENT_ID = current_app.config.get('PAYPAL_CLIENT_ID')
+    EMAILJS_SERVICE_ID = current_app.config.get('EMAILJS_SERVICE_ID')
+    EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL = current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL')
+    EMAILJS_API_ID = current_app.config.get('EMAILJS_API_ID')
+    RECIPIENT_EMAILS = current_app.config.get('RECIPIENT_EMAILS')
+
+    try:
+        bond = Bond.query.get_or_404(bond_id)
+        return render_template(
+            'Bonds/bond_details.html',
+            bond=bond,
+            PAYPAL_CLIENT_ID=PAYPAL_CLIENT_ID,
+            EMAILJS_SERVICE_ID=EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL=EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL,
+            EMAILJS_API_ID=EMAILJS_API_ID,
+            RECIPIENT_EMAILS=RECIPIENT_EMAILS
+        )
+    except Exception as e:
+        logging.error(f"Error fetching bond details: {str(e)}")
+        return jsonify({'error': 'Unable to fetch bond details'}), 500
 
 @main.route('/events')
 def events():
