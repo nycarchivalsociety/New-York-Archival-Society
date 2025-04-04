@@ -11,7 +11,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
-      background-color: #7e8187;
+      background-color: black;
       color: white;
     }
 
@@ -108,7 +108,8 @@
       <div class="product-details">
         <h1>Bond Number: {{ bond.bond_id }} - {{ bond.type }}</h1>
         <div class="product-price">
-          Purchase Price: ${{ bond.retail_price }} <span id="handling-text">+ $5 Handling Cost</span>
+          Purchase Price: ${{ bond.retail_price }}
+          <span id="handling-text">+ $5 Handling Cost</span>
         </div>
         <p><strong>Purpose of bond:</strong> {{ bond.purpose_of_bond }}</p>
         <p>
@@ -124,14 +125,20 @@
         {% if bond.status == "available" %}
         <div id="payment-status"></div>
         <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="pickup-checkbox">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="pickup-checkbox"
+          />
           <label class="form-check-label" for="pickup-checkbox">
-            In-person pickup 
+            In-person pickup
           </label>
         </div>
         <div id="paypal-button-container"></div>
         {% else %}
-        <p class="mt-3 text-danger"><strong>This item is sold, please look for others bonds!</strong></p>
+        <p class="mt-3 text-danger">
+          <strong>This item is sold, please look for others bonds.</strong>
+        </p>
         {% endif %}
       </div>
     </div>
@@ -150,7 +157,13 @@
       // as handling cost applies regardless of pickup option
 
       // Email notification function - Updated to include pickup option
-      function sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickup) {
+      function sendPurchaseNotification(
+        item,
+        recipientEmails,
+        shippingAddress,
+        donorInfo,
+        isPickup
+      ) {
         recipientEmails.forEach((email) => {
           const templateParams = {
             to_name: email,
@@ -165,15 +178,17 @@
             donor_phone: donorInfo.phone || "Not provided",
             // Make pickup status more prominent
             pickup_status: isPickup ? "IN-PERSON PICKUP" : "SHIPPING REQUIRED",
-            pickup: isPickup ? "Yes - In-person pickup" : "No - Ship to address",
+            pickup: isPickup
+              ? "Yes - In-person pickup"
+              : "No - Ship to address",
             // Ensure address values are never undefined
             street: shippingAddress.street || "N/A",
             apartment: shippingAddress.apartment || "N/A",
-            city: shippingAddress.city || "N/A", 
+            city: shippingAddress.city || "N/A",
             state: shippingAddress.state || "N/A",
-            zip_code: shippingAddress.zip_code || "N/A"
+            zip_code: shippingAddress.zip_code || "N/A",
           };
-          
+
           console.log("Sending email with params:", templateParams);
           emailjs
             .send(
@@ -182,7 +197,11 @@
               templateParams
             )
             .then((response) => {
-              console.log("Email successfully sent!", response.status, response.text);
+              console.log(
+                "Email successfully sent!",
+                response.status,
+                response.text
+              );
             })
             .catch((error) => {
               console.error("Email failed to send...", error);
@@ -194,50 +213,58 @@
         paypal
           .Buttons({
             createOrder: (data, actions) => {
-              const isPickup = document.getElementById('pickup-checkbox').checked;
+              const isPickup =
+                document.getElementById("pickup-checkbox").checked;
               // Always add $5 handling fee regardless of pickup status
               const totalAmount = parseFloat("{{ bond.retail_price }}") + 5;
-              
+
               return actions.order.create({
                 purchase_units: [
                   {
                     reference_id: "{{ bond.bond_id }}",
                     amount: {
-                      value: totalAmount.toFixed(2)
-                    }
-                  }
+                      value: totalAmount.toFixed(2),
+                    },
+                  },
                 ],
                 application_context: {
-                  shipping_preference: isPickup ? "NO_SHIPPING" : "GET_FROM_FILE"
-                }
+                  shipping_preference: isPickup
+                    ? "NO_SHIPPING"
+                    : "GET_FROM_FILE",
+                },
               });
             },
             onApprove: (data, actions) => {
               return actions.order.capture().then((details) => {
                 const payer = details.payer;
                 const shipping = details.purchase_units[0].shipping || {};
-                const isPickup = document.getElementById('pickup-checkbox').checked;
-                
+                const isPickup =
+                  document.getElementById("pickup-checkbox").checked;
+
                 // Always add $5 handling fee regardless of pickup status
                 const fee = parseFloat("{{ bond.retail_price }}") + 5;
 
                 // Extract phone from payer info if available
-                const phoneNumber = payer.phone ? payer.phone.phone_number.national_number : null;
+                const phoneNumber = payer.phone
+                  ? payer.phone.phone_number.national_number
+                  : null;
 
                 // Get shipping address from PayPal response
-                const shippingAddress = shipping.address ? {
-                  street: shipping.address.address_line_1 || "N/A",
-                  apartment: shipping.address.address_line_2 || "N/A",
-                  city: shipping.address.admin_area_2 || "N/A",
-                  state: shipping.address.admin_area_1 || "N/A",
-                  zip_code: shipping.address.postal_code || "N/A"
-                } : {
-                  street: "N/A (In-person pickup)",
-                  apartment: "N/A",
-                  city: "N/A",
-                  state: "N/A",
-                  zip_code: "N/A"
-                };
+                const shippingAddress = shipping.address
+                  ? {
+                      street: shipping.address.address_line_1 || "N/A",
+                      apartment: shipping.address.address_line_2 || "N/A",
+                      city: shipping.address.admin_area_2 || "N/A",
+                      state: shipping.address.admin_area_1 || "N/A",
+                      zip_code: shipping.address.postal_code || "N/A",
+                    }
+                  : {
+                      street: "N/A (In-person pickup)",
+                      apartment: "N/A",
+                      city: "N/A",
+                      state: "N/A",
+                      zip_code: "N/A",
+                    };
 
                 // Create transaction object with all required data
                 const transaction = {
@@ -249,7 +276,7 @@
                   fee: fee.toFixed(2),
                   payment_status: details.status,
                   shipping_address: shippingAddress,
-                  pickup: isPickup
+                  pickup: isPickup,
                 };
 
                 $.ajax({
@@ -262,24 +289,32 @@
                     const donorInfo = {
                       name: `${payer.name.given_name} ${payer.name.surname}`,
                       email: payer.email_address,
-                      phone: payer.phone?.phone_number?.national_number || "Not provided"
+                      phone:
+                        payer.phone?.phone_number?.national_number ||
+                        "Not provided",
                     };
-                    
+
                     // Define the item object with bond information
                     const item = {
                       name: "{{ bond.type }}",
                       id: "{{ bond.bond_id }}",
-                      fee: fee.toFixed(2)
+                      fee: fee.toFixed(2),
                     };
-                    
+
                     // Send email notification with shipping address and pickup status
-                    sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickup);
-                    
+                    sendPurchaseNotification(
+                      item,
+                      recipientEmails,
+                      shippingAddress,
+                      donorInfo,
+                      isPickup
+                    );
+
                     Swal.fire({
                       title: "Thank you for your purchase!",
                       text: "The bond has been successfully purchased.",
                       icon: "success",
-                      confirmButtonText: "OK"
+                      confirmButtonText: "OK",
                     }).then(() => {
                       window.location.href = "/bonds";
                     });
@@ -289,12 +324,12 @@
                       title: "Transaction Error",
                       text: "An error occurred while processing your transaction. Please try again.",
                       icon: "error",
-                      confirmButtonText: "OK"
+                      confirmButtonText: "OK",
                     });
-                  }
+                  },
                 });
               });
-            }
+            },
           })
           .render("#paypal-button-container");
       }
