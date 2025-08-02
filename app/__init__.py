@@ -97,10 +97,7 @@ class ProductionConfig(Config):
         # Production-specific optimizations
         'connect_args': {
             **Config.SQLALCHEMY_ENGINE_OPTIONS['connect_args'],
-            'sslmode': 'require',  # Force SSL in production
-            'tcp_keepalives_idle': '600',
-            'tcp_keepalives_interval': '30',
-            'tcp_keepalives_count': '3'
+            'sslmode': 'require'  # Force SSL in production
         }
     }
     
