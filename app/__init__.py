@@ -105,7 +105,8 @@ class ProductionConfig(Config):
     }
     
     # Enhanced cache configuration for production
-    CACHE_TYPE = 'redis'
+    # Use Redis if available, otherwise fall back to simple cache
+    CACHE_TYPE = os.environ.get('CACHE_TYPE', 'simple')
     CACHE_REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
     CACHE_DEFAULT_TIMEOUT = 900  # 15 minutes
     CACHE_KEY_PREFIX = 'nyas:'
@@ -137,7 +138,16 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     # Initialize extensions
     db.init_app(app)
     migrate = Migrate(app, db)
-    cache.init_app(app)
+    
+    # Initialize cache with fallback to simple cache if Redis fails
+    try:
+        cache.init_app(app)
+    except Exception as e:
+        logger.warning(f"Failed to initialize cache with {app.config.get('CACHE_TYPE', 'unknown')} backend: {e}")
+        # Force fallback to simple cache
+        app.config['CACHE_TYPE'] = 'simple'
+        cache.init_app(app)
+        logger.info("Initialized cache with simple backend as fallback")
 
     # Import models within app context
     with app.app_context():
