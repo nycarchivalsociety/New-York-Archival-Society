@@ -476,10 +476,6 @@
                     <span id="international-text" style="display: none; color: #EC994B;">+ $20 International Shipping</span>
                 </div>
 
-                <!-- Stock availability display -->
-                <div class="stock-info" style="margin-bottom: 15px; color: #27ae60; font-weight: 500;">
-                    <i class="fas fa-check-circle"></i> In Stock ({{ book.quantity }} available)
-                </div>
                 
                 <div id="payment-status"></div>
                 <div class="form-check mb-3">
@@ -901,11 +897,15 @@
                         handlingText.style.display = "none";
                         if (internationalText) internationalText.style.display = "none";
                     } else {
-                        // Shipping: show handling fee text
-                        handlingText.style.display = "inline";
-                        // Show international fee if applicable
-                        if (isInternational && internationalText) {
-                            internationalText.style.display = "inline";
+                        // Shipping: show appropriate fee based on international status
+                        if (isInternational) {
+                            // International: show only international fee
+                            handlingText.style.display = "none";
+                            if (internationalText) internationalText.style.display = "inline";
+                        } else {
+                            // USA: show only handling fee
+                            handlingText.style.display = "inline";
+                            if (internationalText) internationalText.style.display = "none";
                         }
                     }
                 });
@@ -915,11 +915,15 @@
             function updateInternationalFeeDisplay(isInternationalShipping) {
                 isInternational = isInternationalShipping;
                 
-                if (!pickupCheckbox.checked && internationalText) {
+                if (!pickupCheckbox.checked) {
                     if (isInternational) {
-                        internationalText.style.display = "inline";
+                        // International shipping: show only international fee, hide USA handling
+                        if (internationalText) internationalText.style.display = "inline";
+                        if (handlingText) handlingText.style.display = "none";
                     } else {
-                        internationalText.style.display = "none";
+                        // USA shipping: show only USA handling, hide international
+                        if (handlingText) handlingText.style.display = "inline";
+                        if (internationalText) internationalText.style.display = "none";
                     }
                 }
             }
@@ -929,9 +933,12 @@
                 let totalAmount = bookFeeOriginal;
                 
                 if (!isPickupSelected) {
-                    totalAmount += handlingFee; // Add $12 handling fee
                     if (isInternationalShipping) {
+                        // International shipping: just add $20 international fee (no handling fee)
                         totalAmount += internationalFee; // Add $20 international fee
+                    } else {
+                        // USA shipping: add $12 handling fee
+                        totalAmount += handlingFee; // Add $12 handling fee for USA only
                     }
                 }
                 
