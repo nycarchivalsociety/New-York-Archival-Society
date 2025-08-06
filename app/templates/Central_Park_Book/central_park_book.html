@@ -485,7 +485,7 @@
                 <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox" id="pickup-checkbox" />
                     <label class="form-check-label" for="pickup-checkbox">
-                        In-person pickup
+                        In-person pickup <small style="color: #6c757d; font-style: italic;">(USA addresses only)</small>
                     </label>
                 </div>
                 <div id="paypal-button-container"></div>
@@ -989,7 +989,9 @@
                         // Calculate initial total (assuming US shipping for initial order)
                         const totalAmount = calculateTotalWithFees(false, isPickup);
 
-                        return actions.order.create({
+                        // Build the order with appropriate shipping configuration
+                        // IMPORTANT: Always collect shipping address to validate country for pickup orders
+                        const orderConfig = {
                             purchase_units: [
                                 {
                                     reference_id: bookId,
@@ -999,9 +1001,15 @@
                                 },
                             ],
                             application_context: {
-                                shipping_preference: isPickup ? "NO_SHIPPING" : "GET_FROM_FILE",
-                            },
-                        });
+                                // Always get shipping address so we can validate the country
+                                shipping_preference: "GET_FROM_FILE",
+                            }
+                        };
+
+                        // Store the pickup state for validation
+                        window.isPickupOrder = isPickup;
+
+                        return actions.order.create(orderConfig);
                     },
                     onShippingChange: function(data, actions) {
                         // Check if country is not US
@@ -1009,6 +1017,25 @@
                         const isPickup = document.getElementById("pickup-checkbox") ? document.getElementById("pickup-checkbox").checked : false;
                         
                         console.log('PayPal shipping change detected:', data.shipping_address.country_code);
+                        console.log('Is pickup selected:', isPickup);
+                        
+                        // VALIDATION: If in-person pickup is selected, only allow USA
+                        if (isPickup && isInternationalShipping) {
+                            // Reject the address and show error message
+                            console.log('Rejecting non-US address for in-person pickup');
+                            
+                            // Show a user-friendly error message
+                            Swal.fire({
+                                title: "Invalid Shipping Country",
+                                text: "In-person pickup is only available for USA addresses. Please uncheck 'In-person pickup' to ship internationally, or change your shipping address to a USA location.",
+                                icon: "warning",
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#EC994B"
+                            });
+                            
+                            // Reject the shipping address change
+                            return actions.reject();
+                        }
                         
                         // Update the international fee display on the page
                         updateInternationalFeeDisplay(isInternationalShipping);
