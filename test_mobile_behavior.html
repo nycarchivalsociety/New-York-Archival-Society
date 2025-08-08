@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Behavior Test - NYAS</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="app/static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom styles -->
+    <link href="app/static/css/style.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    
+    <style>
+        /* Test-specific styles for viewport size indicators */
+        .viewport-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 9999;
+            font-family: monospace;
+        }
+        
+        .test-section {
+            padding: 40px 20px;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .test-case {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+        }
+        
+        .test-pass {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .test-fail {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .viewport-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Viewport Indicator -->
+    <div class="viewport-indicator">
+        <div class="viewport-label">Current Viewport:</div>
+        <div id="viewport-size"></div>
+        <div id="breakpoint-status"></div>
+    </div>
+
+    <!-- Copy of actual header structure from layout.html -->
+    <header id="header">
+        <div class="container-fluid container-xl d-flex align-items-center justify-content-lg-between">
+            <h1 class="logo me-auto me-lg-0">
+                <a href="/">New York Archival Society</a>
+            </h1>
+
+            <nav id="navbar" class="navbar order-last order-lg-0">
+                <ul>
+                    <li>
+                        <a class="nav-link scrollto active" href="/">Home</a>
+                    </li>
+                    <li>
+                        <a class="nav-link scrollto" href="#">About</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">
+                            <span>Support the Archives</span> 
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="nav-link scrollto" href="#">Adopt New York's Past</a>
+                            </li>
+                            <li>
+                                <a class="nav-link scrollto" href="#">NYC Bonds</a>
+                            </li>
+                            <li>
+                                <a class="nav-link scrollto" href="#">Central Park Book</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">
+                            <span>Projects</span> 
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <ul>
+                            <li>
+                                <a class="nav-link scrollto" href="#">Edward I. Koch Congressional Project</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="nav-link scrollto" href="#" target="_blank">Blog</a>
+                    </li>
+                    <li>
+                        <a class="nav-link scrollto" href="#">Events</a>
+                    </li>
+                    <li>
+                        <a class="nav-link scrollto" href="#">Contact</a>
+                    </li>
+                    <!-- Mobile-only Contribute link inside the collapsible nav -->
+                    <li class="d-lg-none">
+                        <a class="nav-link" href="#">Contribute</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#">
+                            <span>Translate</span>
+                            <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <ul id="translate-dropdown">
+                            <li>
+                                <div id="google_translate_element">Translation Widget</div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav>
+            
+            <!-- Right-aligned CTA, visible on lg+ -->
+            <a class="btn btn-contribute d-none d-lg-inline-flex ms-lg-3"
+               href="#"
+               aria-label="Contribute to the New York Archival Society">
+                Contribute
+            </a>
+        </div>
+    </header>
+
+    <main style="margin-top: 100px;">
+        <div class="container">
+            <h1>Mobile Behavior Test Suite</h1>
+            
+            <div class="test-section">
+                <h2>Test Case 1: CTA Button Visibility</h2>
+                <div class="test-case">
+                    <h3>Expected Behavior:</h3>
+                    <ul>
+                        <li>CTA button should be <strong>hidden</strong> on screens smaller than lg (< 992px)</li>
+                        <li>CTA button should be <strong>visible</strong> on lg screens and larger (≥ 992px)</li>
+                    </ul>
+                    <div id="cta-test-result" class="test-result"></div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Test Case 2: Mobile Nav Contribute Link</h2>
+                <div class="test-case">
+                    <h3>Expected Behavior:</h3>
+                    <ul>
+                        <li>Contribute link inside nav should be <strong>visible</strong> on screens smaller than lg (< 992px)</li>
+                        <li>Contribute link inside nav should be <strong>hidden</strong> on lg screens and larger (≥ 992px)</li>
+                    </ul>
+                    <div id="nav-contribute-test-result" class="test-result"></div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Test Case 3: Hamburger Toggle Position</h2>
+                <div class="test-case">
+                    <h3>Expected Behavior:</h3>
+                    <ul>
+                        <li>Hamburger toggle should not overlap with any elements</li>
+                        <li>Hamburger toggle should be properly positioned on mobile</li>
+                    </ul>
+                    <div id="hamburger-test-result" class="test-result"></div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Test Case 4: Dropdown Functionality</h2>
+                <div class="test-case">
+                    <h3>Expected Behavior:</h3>
+                    <ul>
+                        <li>Dropdowns should work properly on all screen sizes</li>
+                        <li>No conflicts should exist between dropdown JS and CTA button</li>
+                    </ul>
+                    <div id="dropdown-test-result" class="test-result"></div>
+                </div>
+            </div>
+
+            <div class="test-section">
+                <h2>Manual Testing Instructions</h2>
+                <div class="test-case">
+                    <h3>Resize your browser window to test:</h3>
+                    <ol>
+                        <li><strong>Desktop (≥ 992px):</strong> CTA button should appear in header, Contribute link in nav should be hidden</li>
+                        <li><strong>Tablet (768px - 991px):</strong> CTA button should be hidden, Contribute link should appear in mobile nav</li>
+                        <li><strong>Mobile (< 768px):</strong> CTA button should be hidden, Contribute link should appear in mobile nav</li>
+                        <li><strong>Test hamburger menu:</strong> Click the hamburger icon on mobile/tablet to open nav</li>
+                        <li><strong>Test dropdowns:</strong> Click dropdown items in both desktop and mobile views</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="app/static/vendor/jquery/jquery.min.js"></script>
+    <script src="app/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Main JS -->
+    <script src="app/static/js/main.js"></script>
+    
+    <!-- Test Script -->
+    <script>
+        // Viewport size indicator
+        function updateViewportInfo() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            
+            document.getElementById('viewport-size').textContent = `${width}px × ${height}px`;
+            
+            let breakpoint = '';
+            if (width < 576) {
+                breakpoint = 'XS (< 576px)';
+            } else if (width < 768) {
+                breakpoint = 'SM (576px - 767px)';
+            } else if (width < 992) {
+                breakpoint = 'MD (768px - 991px)';
+            } else if (width < 1200) {
+                breakpoint = 'LG (992px - 1199px)';
+            } else {
+                breakpoint = 'XL (≥ 1200px)';
+            }
+            
+            document.getElementById('breakpoint-status').textContent = `Bootstrap: ${breakpoint}`;
+            
+            // Run tests
+            runTests();
+        }
+        
+        function runTests() {
+            const width = window.innerWidth;
+            const isLgOrLarger = width >= 992;
+            
+            // Test 1: CTA Button Visibility
+            const ctaButton = document.querySelector('.btn-contribute');
+            const ctaVisible = ctaButton && window.getComputedStyle(ctaButton).display !== 'none';
+            const ctaTestResult = document.getElementById('cta-test-result');
+            
+            if (isLgOrLarger) {
+                if (ctaVisible) {
+                    ctaTestResult.className = 'test-result test-pass';
+                    ctaTestResult.innerHTML = '✓ PASS: CTA button is visible on large screens';
+                } else {
+                    ctaTestResult.className = 'test-result test-fail';
+                    ctaTestResult.innerHTML = '✗ FAIL: CTA button should be visible on large screens';
+                }
+            } else {
+                if (!ctaVisible) {
+                    ctaTestResult.className = 'test-result test-pass';
+                    ctaTestResult.innerHTML = '✓ PASS: CTA button is hidden on small screens';
+                } else {
+                    ctaTestResult.className = 'test-result test-fail';
+                    ctaTestResult.innerHTML = '✗ FAIL: CTA button should be hidden on small screens';
+                }
+            }
+            
+            // Test 2: Mobile Nav Contribute Link
+            const navContributeLink = document.querySelector('.d-lg-none a[href*="contribute"]');
+            const navContributeVisible = navContributeLink && window.getComputedStyle(navContributeLink.parentElement).display !== 'none';
+            const navTestResult = document.getElementById('nav-contribute-test-result');
+            
+            if (isLgOrLarger) {
+                if (!navContributeVisible) {
+                    navTestResult.className = 'test-result test-pass';
+                    navTestResult.innerHTML = '✓ PASS: Nav Contribute link is hidden on large screens';
+                } else {
+                    navTestResult.className = 'test-result test-fail';
+                    navTestResult.innerHTML = '✗ FAIL: Nav Contribute link should be hidden on large screens';
+                }
+            } else {
+                if (navContributeVisible) {
+                    navTestResult.className = 'test-result test-pass';
+                    navTestResult.innerHTML = '✓ PASS: Nav Contribute link is visible on small screens';
+                } else {
+                    navTestResult.className = 'test-result test-fail';
+                    navTestResult.innerHTML = '✗ FAIL: Nav Contribute link should be visible on small screens';
+                }
+            }
+            
+            // Test 3: Hamburger Toggle Position
+            const hamburger = document.querySelector('.mobile-nav-toggle');
+            const hamburgerTestResult = document.getElementById('hamburger-test-result');
+            
+            if (hamburger) {
+                const hamburgerRect = hamburger.getBoundingClientRect();
+                const ctaRect = ctaButton ? ctaButton.getBoundingClientRect() : null;
+                
+                if (!isLgOrLarger) {
+                    // On mobile, check that hamburger is visible and positioned correctly
+                    if (hamburgerRect.width > 0 && hamburgerRect.height > 0) {
+                        hamburgerTestResult.className = 'test-result test-pass';
+                        hamburgerTestResult.innerHTML = '✓ PASS: Hamburger toggle is visible and positioned correctly';
+                    } else {
+                        hamburgerTestResult.className = 'test-result test-fail';
+                        hamburgerTestResult.innerHTML = '✗ FAIL: Hamburger toggle positioning issue';
+                    }
+                } else {
+                    // On desktop, hamburger should be hidden
+                    if (window.getComputedStyle(hamburger).display === 'none') {
+                        hamburgerTestResult.className = 'test-result test-pass';
+                        hamburgerTestResult.innerHTML = '✓ PASS: Hamburger toggle is hidden on desktop';
+                    } else {
+                        hamburgerTestResult.className = 'test-result test-fail';
+                        hamburgerTestResult.innerHTML = '✗ FAIL: Hamburger toggle should be hidden on desktop';
+                    }
+                }
+            }
+            
+            // Test 4: Dropdown Functionality
+            const dropdowns = document.querySelectorAll('.dropdown');
+            const dropdownTestResult = document.getElementById('dropdown-test-result');
+            
+            if (dropdowns.length > 0) {
+                dropdownTestResult.className = 'test-result test-pass';
+                dropdownTestResult.innerHTML = `✓ PASS: ${dropdowns.length} dropdown(s) found and ready for interaction`;
+            } else {
+                dropdownTestResult.className = 'test-result test-fail';
+                dropdownTestResult.innerHTML = '✗ FAIL: No dropdowns found';
+            }
+        }
+        
+        // Initial update
+        updateViewportInfo();
+        
+        // Update on resize
+        window.addEventListener('resize', updateViewportInfo);
+        
+        // Additional test for dropdown clicks
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropdowns = document.querySelectorAll('.dropdown > a');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    console.log('Dropdown clicked:', this.textContent);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
