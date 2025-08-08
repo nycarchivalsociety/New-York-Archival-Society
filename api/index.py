@@ -57,5 +57,5 @@ application = app
 
 if __name__ == '__main__':
     # Development server
-    debug_mode = config_name == 'development'
+    debug_mode = config_name == 'production'
     app.run(debug=debug_mode, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

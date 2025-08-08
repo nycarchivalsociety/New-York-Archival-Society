@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.orm import joinedload
 
 from app.db.db import db
-from app.db.models import Transaction, Donor, HistoricalRecord, Bond, DonorItem
+from app.db.models import Transaction, Donor, HistoricalRecord, Bond, DonorItem, GeneralProduct
 from app.services.paypal_service import paypal_service, PayPalAPIError
 
 logger = logging.getLogger(__name__)
@@ -26,6 +26,7 @@ class TransactionService:
         fee: float,
         payer_data: Dict[str, Any],
         is_pickup: bool = False,
+        item_type: str = 'historical_record',
         batch_mode: bool = False
     ) -> Tuple[Transaction, bool]:
         """
@@ -83,17 +84,21 @@ class TransactionService:
             
             db.session.add(transaction)
             
-            # Create DonorItem for historical records
-            if Transaction.is_uuid(item_id):
+            # Create DonorItem only for historical records (not general products)
+            logger.info(f"Transaction creation debug - item_type: {item_type}, item_id: {item_id}, is_uuid: {Transaction.is_uuid(item_id)}")
+            if item_type == 'historical_record' and Transaction.is_uuid(item_id):
+                logger.info(f"Creating DonorItem for historical record: {item_id}")
                 donor_item = DonorItem(
                     donor_id=donor.donor_id,
                     item_id=item_id,
                     fee=fee
                 )
                 db.session.add(donor_item)
+            else:
+                logger.info(f"Skipping DonorItem creation - item_type: {item_type}, not historical_record")
             
             # Update item status
-            TransactionService._update_item_status(item_id)
+            TransactionService._update_item_status(item_id, item_type)
             
             # Commit all changes
             db.session.commit()
@@ -176,9 +181,18 @@ class TransactionService:
         return donor
     
     @staticmethod
-    def _update_item_status(item_id: str) -> None:
+    def _update_item_status(item_id: str, item_type: str = 'historical_record') -> None:
         """Update item status based on item type"""
-        if Transaction.is_uuid(item_id):
+        if item_type == 'general_product':
+            # General product
+            item = GeneralProduct.query.get(item_id)
+            if item:
+                item.quantity = max(0, item.quantity - 1)
+                if item.quantity == 0:
+                    item.status = 'sold'
+            else:
+                raise TransactionError(f"General product {item_id} not found")
+        elif Transaction.is_uuid(item_id):
             # Historical record
             item = HistoricalRecord.query.get(item_id)
             if item:

@@ -160,3 +160,43 @@ class Transaction(db.Model):
 
     def __repr__(self):
         return f"<Transaction {self.transaction_id}>"
+
+class GeneralProduct(db.Model):
+    __tablename__ = 'general_products'
+    
+    id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    name = db.Column(db.String(256), nullable=False, index=True)
+    description = db.Column(db.Text, nullable=False)
+    fee = db.Column(db.Numeric(10, 2), nullable=False)
+    photo = db.Column(db.Boolean, default=False, nullable=False)
+    imgurl = db.Column(db.String(500), nullable=True)
+    status = db.Column(db.String(20), default="available", nullable=False, index=True)
+    product_type = db.Column(db.String(50), nullable=True, index=True)
+    quantity = db.Column(db.Integer, nullable=False, default=0, index=True)
+    created_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    
+    # Add database constraints and indexes
+    __table_args__ = (
+        Index('idx_general_products_status_type', 'status', 'product_type'),
+        Index('idx_general_products_created_at', 'created_at'),
+        db.CheckConstraint('fee > 0', name='check_positive_product_fee'),
+        db.CheckConstraint('quantity >= 0', name='check_non_negative_quantity'),
+        db.CheckConstraint("status IN ('available', 'sold', 'discontinued')", name='check_valid_product_status'),
+        db.CheckConstraint('char_length(name) > 0', name='check_product_name_not_empty'),
+    )
+    
+    @validates('fee')
+    def validate_fee(self, key, value):
+        if value is None or float(value) < 0:
+            raise ValueError("Fee must be non-negative")
+        return value
+    
+    @validates('quantity')
+    def validate_quantity(self, key, value):
+        if value is None or int(value) < 0:
+            raise ValueError("Quantity must be non-negative")
+        return value
+    
+    def __repr__(self):
+        return f"<GeneralProduct {self.name}>"

@@ -86,19 +86,31 @@
                 >About</a
               >
             </li>
-            <li>
-              <a class="nav-link scrollto" href="/adopt-new-yorks-past"
-                >Adopt New York's Past</a
-              >
-            </li>
-            <li>
-              <a class="nav-link scrollto" href="/bonds"
-                >Bonds</a
-              >
+            <li class="dropdown">
+              <a href="#"
+                ><span>Support the Archives</span> <i class="bi bi-chevron-down"></i
+              ></a>
+              <ul>
+                <li>
+                  <a class="nav-link scrollto" href="/adopt-new-yorks-past"
+                    >Adopt New York's Past</a
+                  >
+                </li>
+                <li>
+                  <a class="nav-link scrollto" href="/bonds"
+                    >NYC Bonds</a
+                  >
+                </li>
+                <li>
+                  <a class="nav-link scrollto" href="/central-park-book"
+                    >Central Park Book</a
+                  >
+                </li>
+              </ul>
             </li>
             <li class="dropdown">
               <a href="#"
-                ><span>Our Projects</span> <i class="bi bi-chevron-down"></i
+                ><span>Projects</span> <i class="bi bi-chevron-down"></i
               ></a>
               <ul>
                 <li>
@@ -129,10 +141,9 @@
               >
             </li>
             <li></li>
-            <li>
-              <a class="nav-link" href="{{ url_for('main.contribute') }}"
-                >Contribute</a
-              >
+            <!-- Mobile-only Contribute link inside the collapsible nav -->
+            <li class="d-lg-none">
+              <a class="nav-link" href="{{ url_for('main.contribute') }}">Contribute</a>
             </li>
             <li class="dropdown">
               <a href="#"
@@ -148,6 +159,13 @@
           <i class="bi bi-list mobile-nav-toggle"></i>
         </nav>
         <!-- .navbar -->
+        
+        <!-- Right-aligned CTA, visible on lg+ -->
+        <a class="btn btn-contribute d-none d-lg-inline-flex ms-lg-3"
+           href="{{ url_for('main.contribute') }}"
+           aria-label="Contribute to the New York Archival Society">
+          Contribute
+        </a>
       </div>
     </header>
     <!-- End Header -->

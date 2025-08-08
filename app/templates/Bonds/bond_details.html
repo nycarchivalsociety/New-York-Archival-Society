@@ -109,7 +109,8 @@
         <h1>Bond Number: {{ bond.bond_id }} - {{ bond.type }}</h1>
         <div class="product-price">
           Purchase Price: ${{ bond.retail_price }}
-          <span id="handling-text">+ $5 Handling Cost</span>
+          <span id="handling-text" style="display: none;">+ $5 Handling Cost</span>
+          <span id="international-text" style="display: none; color: #EC994B;">+ $20 International Shipping</span>
         </div>
         <p><strong>Purpose of bond:</strong> {{ bond.purpose_of_bond }}</p>
         <p>
@@ -131,7 +132,7 @@
             id="pickup-checkbox"
           />
           <label class="form-check-label" for="pickup-checkbox">
-            In-person pickup
+            In-person pickup <small style="color: #6c757d; font-style: italic;">(USA addresses only)</small>
           </label>
         </div>
         <div id="paypal-button-container"></div>
@@ -149,21 +150,46 @@
     document.addEventListener("DOMContentLoaded", function () {
       // Initialize EmailJS
       emailjs.init("{{ EMAILJS_API_ID }}");
-
-      // Set recipient emails
       const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
 
-      // Remove the event listener that changes the shipping text display
-      // as handling cost applies regardless of pickup option
+      const pickupEl = document.getElementById("pickup-checkbox");
+      const handlingEl = document.getElementById("handling-text");
+      const intlEl = document.getElementById("international-text");
 
-      // Email notification function - Updated to include pickup option
-      function sendPurchaseNotification(
-        item,
-        recipientEmails,
-        shippingAddress,
-        donorInfo,
-        isPickup
-      ) {
+      const ITEM_PRICE = parseFloat("{{ bond.retail_price }}");
+      const HANDLING_FEE = 5.00;
+      const INTL_SHIPPING_FEE = 20.00;
+
+      let lastCountry = "US"; // default assumption until onShippingChange fires
+
+      function isPickup() {
+        return !!pickupEl.checked;
+      }
+
+      function computeFees(country, pickup) {
+        // For pickup: no fees
+        // For USA: $5 handling fee only
+        // For International: $20 international shipping fee only (includes handling)
+        const handling = pickup ? 0.00 : (country === "US" ? HANDLING_FEE : 0.00);
+        const shipping = pickup ? 0.00 : (country === "US" ? 0.00 : INTL_SHIPPING_FEE);
+        const total = (ITEM_PRICE + handling + shipping).toFixed(2);
+        return { handling, shipping, total };
+      }
+
+      function updatePricingUI({ handling, shipping, pickup, country }) {
+        if (handlingEl) handlingEl.style.display = pickup ? "none" : (handling > 0 ? "inline" : "none");
+        if (intlEl) intlEl.style.display = (!pickup && country !== "US" && shipping > 0) ? "inline" : "none";
+      }
+
+      // Update UI immediately if user toggles pickup before opening PayPal
+      if (pickupEl) {
+        pickupEl.addEventListener("change", function () {
+          const fees = computeFees(lastCountry, isPickup());
+          updatePricingUI({ ...fees, pickup: isPickup(), country: lastCountry });
+        });
+      }
+
+      function sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickup, breakdown) {
         recipientEmails.forEach((email) => {
           const templateParams = {
             to_name: email,
@@ -171,167 +197,201 @@
             subject: "Bond Purchase!",
             item_name: item.name,
             item_id: item.id,
-            item_fee: item.fee,
-            // Include donor info
+            item_fee: breakdown.total,
             donor_name: donorInfo.name,
             donor_email: donorInfo.email,
             donor_phone: donorInfo.phone || "Not provided",
-            // Make pickup status more prominent
             pickup_status: isPickup ? "IN-PERSON PICKUP" : "SHIPPING REQUIRED",
-            pickup: isPickup
-              ? "Yes - In-person pickup"
-              : "No - Ship to address",
-            // Ensure address values are never undefined
+            pickup: isPickup ? "Yes - In-person pickup" : "No - Ship to address",
             street: shippingAddress.street || "N/A",
             apartment: shippingAddress.apartment || "N/A",
             city: shippingAddress.city || "N/A",
             state: shippingAddress.state || "N/A",
             zip_code: shippingAddress.zip_code || "N/A",
+            // Optional: include breakdown in the email template (update template if desired)
+            base_price: ITEM_PRICE.toFixed(2),
+            handling_fee: breakdown.handling.toFixed(2),
+            shipping_fee: breakdown.shipping.toFixed(2),
+            total_paid: breakdown.total
           };
 
-          console.log("Sending email with params:", templateParams);
           emailjs
             .send(
               "{{ EMAILJS_SERVICE_ID }}",
               "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
               templateParams
             )
-            .then((response) => {
-              console.log(
-                "Email successfully sent!",
-                response.status,
-                response.text
-              );
-            })
-            .catch((error) => {
-              console.error("Email failed to send...", error);
-            });
+            .catch((error) => console.error("Email failed to send...", error));
         });
       }
 
       if ("{{ bond.status }}" === "available") {
-        paypal
-          .Buttons({
-            createOrder: (data, actions) => {
-              const isPickup =
-                document.getElementById("pickup-checkbox").checked;
-              // Always add $5 handling fee regardless of pickup status
-              const totalAmount = parseFloat("{{ bond.retail_price }}") + 5;
+        paypal.Buttons({
+          createOrder: (data, actions) => {
+            // Always request shipping address so onShippingChange can run
+            const fees = computeFees("US", isPickup()); // assume US initially
+            const breakdown = {
+              item_total: { currency_code: "USD", value: ITEM_PRICE.toFixed(2) },
+              handling: { currency_code: "USD", value: fees.handling.toFixed(2) },
+              shipping: { currency_code: "USD", value: fees.shipping.toFixed(2) }
+            };
 
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    reference_id: "{{ bond.bond_id }}",
-                    amount: {
-                      value: totalAmount.toFixed(2),
-                    },
-                  },
-                ],
-                application_context: {
-                  shipping_preference: isPickup
-                    ? "NO_SHIPPING"
-                    : "GET_FROM_FILE",
+            return actions.order.create({
+              purchase_units: [{
+                reference_id: "{{ bond.bond_id }}",
+                amount: {
+                  currency_code: "USD",
+                  value: fees.total,
+                  breakdown
+                }
+              }],
+              application_context: {
+                shipping_preference: "GET_FROM_FILE"
+              }
+            });
+          },
+
+          onShippingChange: function(data, actions) {
+            const country = data.shipping_address.country_code || "US";
+            lastCountry = country;
+            const pickup = isPickup();
+
+            // Enforce USA-only for pickup
+            if (pickup && country !== "US") {
+              Swal.fire({
+                icon: "error",
+                title: "In-person pickup restricted",
+                text: "In-person pickup is only available for USA addresses. Please uncheck the pickup option or use a U.S. shipping address."
+              });
+              return actions.reject();
+            }
+
+            const fees = computeFees(country, pickup);
+
+            // Patch the order with the new totals and breakdown
+            const patches = [{
+              op: "replace",
+              path: "/purchase_units/@reference_id=='{{ bond.bond_id }}'/amount",
+              value: {
+                currency_code: "USD",
+                value: fees.total,
+                breakdown: {
+                  item_total: { currency_code: "USD", value: ITEM_PRICE.toFixed(2) },
+                  handling: { currency_code: "USD", value: fees.handling.toFixed(2) },
+                  shipping: { currency_code: "USD", value: fees.shipping.toFixed(2) }
+                }
+              }
+            }];
+
+            return actions.order.patch(patches).then(function() {
+              updatePricingUI({ ...fees, pickup, country });
+              return actions.resolve();
+            }).catch(function(err) {
+              console.error("Patch error:", err);
+              Swal.fire({
+                icon: "error",
+                title: "Unable to update total",
+                text: "We could not update the total based on your address. Please try again."
+              });
+              return actions.reject();
+            });
+          },
+
+          onApprove: (data, actions) => {
+            return actions.order.capture().then((details) => {
+              const payer = details.payer;
+              const purchaseUnit = details.purchase_units && details.purchase_units[0];
+              const shipping = purchaseUnit && purchaseUnit.shipping ? purchaseUnit.shipping : {};
+              const isPickupSelected = isPickup();
+
+              const shippingAddress = shipping.address ? {
+                street: shipping.address.address_line_1 || "N/A",
+                apartment: shipping.address.address_line_2 || "N/A",
+                city: shipping.address.admin_area_2 || "N/A",
+                state: shipping.address.admin_area_1 || "N/A",
+                zip_code: shipping.address.postal_code || "N/A"
+              } : {
+                street: isPickupSelected ? "N/A (In-person pickup)" : "N/A",
+                apartment: "N/A",
+                city: "N/A",
+                state: "N/A",
+                zip_code: "N/A"
+              };
+
+              // Derive actual paid amounts from the captured order
+              const paidAmount = purchaseUnit && purchaseUnit.amount ? parseFloat(purchaseUnit.amount.value) : (ITEM_PRICE + (isPickupSelected ? 0 : HANDLING_FEE));
+              const breakdown = {
+                handling: purchaseUnit?.amount?.breakdown?.handling?.value ? parseFloat(purchaseUnit.amount.breakdown.handling.value) : (isPickupSelected ? 0 : HANDLING_FEE),
+                shipping: purchaseUnit?.amount?.breakdown?.shipping?.value ? parseFloat(purchaseUnit.amount.breakdown.shipping.value) : 0,
+                total: paidAmount.toFixed(2)
+              };
+
+              // Prepare transaction for server-side capture logging
+              const transaction = {
+                paypal_transaction_id: details.id,
+                item_id: "{{ bond.bond_id }}",
+                donor_name: `${payer.name.given_name} ${payer.name.surname}`,
+                donor_email: payer.email_address,
+                donor_phone: payer.phone?.phone_number?.national_number || null,
+                fee: breakdown.total, // total paid
+                payment_status: details.status,
+                shipping_address: shippingAddress,
+                pickup: isPickupSelected
+              };
+
+              // Persist and notify
+              $.ajax({
+                type: "POST",
+                url: `/capture-order/${details.id}`,
+                contentType: "application/json",
+                data: JSON.stringify(transaction),
+                success: function () {
+                  const donorInfo = {
+                    name: `${payer.name.given_name} ${payer.name.surname}`,
+                    email: payer.email_address,
+                    phone: payer.phone?.phone_number?.national_number || "Not provided"
+                  };
+
+                  const item = {
+                    name: "{{ bond.type }}",
+                    id: "{{ bond.bond_id }}"
+                  };
+
+                  sendPurchaseNotification(item, recipientEmails, shippingAddress, donorInfo, isPickupSelected, breakdown);
+
+                  Swal.fire({
+                    icon: "success",
+                    title: "Thank you!",
+                    text: "Your purchase was successful."
+                  }).then(() => {
+                    window.location.reload();
+                  });
                 },
+                error: function (err) {
+                  console.error(err);
+                  Swal.fire({
+                    icon: "warning",
+                    title: "Payment captured but logging failed",
+                    text: "We received your payment, but had trouble saving your order. Please contact support with your PayPal Transaction ID."
+                  });
+                }
               });
-            },
-            onApprove: (data, actions) => {
-              return actions.order.capture().then((details) => {
-                const payer = details.payer;
-                const shipping = details.purchase_units[0].shipping || {};
-                const isPickup =
-                  document.getElementById("pickup-checkbox").checked;
+            });
+          },
 
-                // Always add $5 handling fee regardless of pickup status
-                const fee = parseFloat("{{ bond.retail_price }}") + 5;
+          onError: (err) => {
+            console.error("PayPal error:", err);
+            Swal.fire({
+              icon: "error",
+              title: "Payment error",
+              text: "There was a problem processing the payment. Please try again."
+            });
+          }
+        }).render("#paypal-button-container");
 
-                // Extract phone from payer info if available
-                const phoneNumber = payer.phone
-                  ? payer.phone.phone_number.national_number
-                  : null;
-
-                // Get shipping address from PayPal response
-                const shippingAddress = shipping.address
-                  ? {
-                      street: shipping.address.address_line_1 || "N/A",
-                      apartment: shipping.address.address_line_2 || "N/A",
-                      city: shipping.address.admin_area_2 || "N/A",
-                      state: shipping.address.admin_area_1 || "N/A",
-                      zip_code: shipping.address.postal_code || "N/A",
-                    }
-                  : {
-                      street: "N/A (In-person pickup)",
-                      apartment: "N/A",
-                      city: "N/A",
-                      state: "N/A",
-                      zip_code: "N/A",
-                    };
-
-                // Create transaction object with all required data
-                const transaction = {
-                  paypal_transaction_id: details.id,
-                  item_id: "{{ bond.bond_id }}",
-                  donor_name: `${payer.name.given_name} ${payer.name.surname}`,
-                  donor_email: payer.email_address,
-                  donor_phone: phoneNumber, // Send phone number to server
-                  fee: fee.toFixed(2),
-                  payment_status: details.status,
-                  shipping_address: shippingAddress,
-                  pickup: isPickup,
-                };
-
-                $.ajax({
-                  type: "POST",
-                  url: `/capture-order/${details.id}`,
-                  contentType: "application/json",
-                  data: JSON.stringify(transaction),
-                  success: function () {
-                    // Send email with complete information
-                    const donorInfo = {
-                      name: `${payer.name.given_name} ${payer.name.surname}`,
-                      email: payer.email_address,
-                      phone:
-                        payer.phone?.phone_number?.national_number ||
-                        "Not provided",
-                    };
-
-                    // Define the item object with bond information
-                    const item = {
-                      name: "{{ bond.type }}",
-                      id: "{{ bond.bond_id }}",
-                      fee: fee.toFixed(2),
-                    };
-
-                    // Send email notification with shipping address and pickup status
-                    sendPurchaseNotification(
-                      item,
-                      recipientEmails,
-                      shippingAddress,
-                      donorInfo,
-                      isPickup
-                    );
-
-                    Swal.fire({
-                      title: "Thank you for your purchase!",
-                      text: "The bond has been successfully purchased.",
-                      icon: "success",
-                      confirmButtonText: "OK",
-                    }).then(() => {
-                      window.location.href = "/bonds";
-                    });
-                  },
-                  error: function () {
-                    Swal.fire({
-                      title: "Transaction Error",
-                      text: "An error occurred while processing your transaction. Please try again.",
-                      icon: "error",
-                      confirmButtonText: "OK",
-                    });
-                  },
-                });
-              });
-            },
-          })
-          .render("#paypal-button-container");
+        // Initialize the UI flags based on defaults
+        const initialFees = computeFees(lastCountry, isPickup());
+        updatePricingUI({ ...initialFees, pickup: isPickup(), country: lastCountry });
       }
     });
   </script>

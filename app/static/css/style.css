@@ -2034,3 +2034,89 @@ section {
   text-align: center;
   margin: 0 auto;
 }
+
+/*--------------------------------------------------------------
+# Navbar refinements (scoped to header only)
+--------------------------------------------------------------*/
+#header .container-xl {
+  padding-left: 5px;  /* Move brand even further left */
+  padding-right: 5px;
+}
+
+/* Make navbar background thicker by extending vertical padding */
+#header {
+  padding: 22px 0 28px 0; /* Increase bottom padding to create a thicker black band */
+}
+
+/* Increase title and nav link sizes for readability */
+#header .logo {
+  font-size: 34px; /* was 26px */
+  margin-left: -10px; /* Push logo more to the left */
+}
+
+#header .logo a {
+  letter-spacing: 1.2px;
+}
+
+/* Slightly tighten link padding to free space for more links */
+.navbar a,
+.navbar a:focus {
+  font-size: 20px; /* was 18px */
+  padding: 10px 0 10px 22px; /* was 30px left */
+}
+
+/* Contribute CTA styling (matches site golden theme) - bigger and more right */
+#header .btn-contribute {
+  background-color: var(--main-color); /* #cda45e */
+  color: #0c0b09;
+  border: none;
+  border-radius: 20px;
+  padding: 12px 30px; /* Increased padding for bigger button */
+  font-weight: 700;
+  font-size: 18px; /* Bigger font size */
+  line-height: 1;
+  transition: all 0.2s ease;
+  text-transform: none;
+  margin-right: -10px; /* Push button more to the right */
+}
+
+#header .btn-contribute:hover,
+#header .btn-contribute:focus {
+  filter: brightness(1.05);
+  color: #0c0b09;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1199.98px) {
+  #header .logo { font-size: 30px; }
+  .navbar a, .navbar a:focus { font-size: 18px; padding-left: 18px; }
+}
+
+@media (max-width: 991.98px) {
+  /* CTA is hidden in CSS via .d-none .d-lg-inline-flex; mobile link shows inside nav */
+  #header { padding: 18px 0 22px 0; }
+  #header .logo { font-size: 26px; }
+  .navbar a, .navbar a:focus { font-size: 17px; padding-left: 16px; }
+  
+  /* Ensure CTA button is completely hidden on mobile (redundant with Bootstrap classes, but safe) */
+  #header .btn-contribute {
+    display: none !important;
+  }
+  
+  /* Ensure mobile nav toggle doesn't conflict with other elements */
+  .mobile-nav-toggle {
+    position: relative;
+    z-index: 999;
+  }
+}
+
+/* Additional safeguard for mobile nav dropdown behavior */
+.navbar-mobile .dropdown > .dropdown-active {
+  display: block;
+  position: static;
+  float: none;
+  width: auto;
+  margin-top: 0;
+  background-color: transparent;
+  box-shadow: none;
+}
