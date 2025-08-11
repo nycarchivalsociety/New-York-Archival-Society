@@ -469,6 +469,21 @@
                     Support the Archives by purchasing this unique book
                 </div>
                 {% if book.status == 'available' and book.quantity > 0 %}
+                <!-- Shipping Information Label -->
+                <div class="shipping-info-label">
+                    <div class="info-header">
+                        <span class="info-icon">ℹ️</span>
+                        Shipping Information
+                    </div>
+                    <div class="info-content">
+                        <ul>
+                            <li>USA Orders: <span class="highlight-price">${{ book.fee }} + $12 handling fee = ${{ book.fee + 12 }} total</span></li>
+                            <li>International Orders: <span class="highlight-price">${{ book.fee }} + $20 international shipping = ${{ book.fee + 20 }} total</span></li>
+                            <li>In-Person Pickup <span class="usa-only">(USA only)</span>: <span class="highlight-price">${{ book.fee }}</span> - no additional fees</li>
+                        </ul>
+                    </div>
+                </div>
+                
                 <!-- Show price when available -->
                 <div class="product-price">
                     <span class="new-price">${{ book.fee }}</span>

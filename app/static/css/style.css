@@ -2120,3 +2120,113 @@ section {
   background-color: transparent;
   box-shadow: none;
 }
+
+/*--------------------------------------------------------------
+# Shipping Information Label Component
+--------------------------------------------------------------*/
+.shipping-info-label {
+  background: linear-gradient(135deg, rgba(205, 164, 94, 0.08) 0%, rgba(205, 164, 94, 0.04) 100%);
+  border: 1px solid rgba(205, 164, 94, 0.2);
+  border-left: 4px solid var(--main-color);
+  border-radius: 8px;
+  padding: 20px 25px;
+  margin: 25px 0;
+  font-family: "Open Sans", sans-serif;
+  color: #fff;
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.shipping-info-label:hover {
+  border-color: rgba(205, 164, 94, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(205, 164, 94, 0.15);
+}
+
+.shipping-info-label .info-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--main-color);
+}
+
+.shipping-info-label .info-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: var(--main-color);
+}
+
+.shipping-info-label .info-content {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.shipping-info-label ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.shipping-info-label li {
+  margin: 8px 0;
+  padding-left: 20px;
+  position: relative;
+}
+
+.shipping-info-label li:before {
+  content: "•";
+  color: var(--main-color);
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+  font-size: 16px;
+}
+
+.shipping-info-label .highlight-price {
+  color: var(--main-color);
+  font-weight: 600;
+}
+
+.shipping-info-label .usa-only {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .shipping-info-label {
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  
+  .shipping-info-label .info-header {
+    font-size: 15px;
+  }
+  
+  .shipping-info-label .info-content {
+    font-size: 13px;
+  }
+  
+  .shipping-info-label li {
+    margin: 6px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .shipping-info-label {
+    padding: 14px 16px;
+    margin: 16px 0;
+  }
+  
+  .shipping-info-label .info-header {
+    font-size: 14px;
+  }
+  
+  .shipping-info-label .info-content {
+    font-size: 12px;
+  }
+}

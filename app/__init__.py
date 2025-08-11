@@ -34,7 +34,6 @@ class Config:
         # Connection Management  
         'pool_reset_on_return': 'commit',  # Reset connections properly
         'connect_args': {
-            'connect_timeout': 10,
             'application_name': 'new_york_archival_society'
         },
         

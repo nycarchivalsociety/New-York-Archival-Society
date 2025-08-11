@@ -107,6 +107,22 @@
       </div>
       <div class="product-details">
         <h1>Bond Number: {{ bond.bond_id }} - {{ bond.type }}</h1>
+        
+        <!-- Shipping Information Label -->
+        <div class="shipping-info-label">
+          <div class="info-header">
+            <span class="info-icon">ℹ️</span>
+            Shipping Information
+          </div>
+          <div class="info-content">
+            <ul>
+              <li>USA Orders: <span class="highlight-price">Bond price + $5 handling fee</span></li>
+              <li>International Orders: <span class="highlight-price">Bond price + $20 international shipping</span></li>
+              <li>In-Person Pickup <span class="usa-only">(USA only)</span>: <span class="highlight-price">Bond price only</span> - no additional fees</li>
+            </ul>
+          </div>
+        </div>
+        
         <div class="product-price">
           Purchase Price: ${{ bond.retail_price }}
           <span id="handling-text" style="display: none;">+ $5 Handling Cost</span>
