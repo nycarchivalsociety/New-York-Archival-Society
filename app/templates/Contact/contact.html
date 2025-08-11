@@ -67,15 +67,11 @@
   </div>
 </section>
 {% block script %}
-<script
-  src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"
-  type="text/javascript"
-></script>
+<!-- EmailJS SDK is now loaded in layout.html -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11" defer></script>
 <script>
-  window.onload = function () {
-    // Initialize EmailJS with the public API ID from environment variables
-    emailjs.init("{{ EMAILJS_API_ID | safe }}"); 
+  document.addEventListener('DOMContentLoaded', function () {
+    // EmailJS is already initialized in layout.html
 
     document.getElementById("email-form").addEventListener("submit", sendMail);
 

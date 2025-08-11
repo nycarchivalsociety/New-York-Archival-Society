@@ -7,7 +7,6 @@
     rel="stylesheet"
   />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
@@ -164,9 +163,18 @@
   <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Initialize EmailJS
-      emailjs.init("{{ EMAILJS_API_ID }}");
-      const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
+      // EmailJS is already initialized in layout.html
+
+      // Set recipient emails from shared config
+      const recipientEmailsJson = `{{ RECIPIENT_EMAILS | default([]) | tojson | safe }}`;
+      let recipientEmails = JSON.parse(recipientEmailsJson);
+      
+      // Handle both string and array cases
+      if (typeof recipientEmails === 'string') {
+        recipientEmails = recipientEmails.split(',').map(email => email.trim());
+      } else if (!Array.isArray(recipientEmails)) {
+        recipientEmails = [];
+      }
 
       const pickupEl = document.getElementById("pickup-checkbox");
       const handlingEl = document.getElementById("handling-text");
@@ -231,13 +239,20 @@
             total_paid: breakdown.total
           };
 
+          // Use shared config values (same pattern as working pages)
+          const serviceID = window.EMAILJS && window.EMAILJS.SERVICE_ID ? window.EMAILJS.SERVICE_ID : "{{ EMAILJS_SERVICE_ID | safe }}";
+          const templateID = window.EMAILJS && window.EMAILJS.TEMPLATE_ID_CONFIRM ? window.EMAILJS.TEMPLATE_ID_CONFIRM : "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL | safe }}";
+          
           emailjs
-            .send(
-              "{{ EMAILJS_SERVICE_ID }}",
-              "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
-              templateParams
-            )
-            .catch((error) => console.error("Email failed to send...", error));
+            .send(serviceID, templateID, templateParams)
+            .then(
+              function(response) { 
+                console.log("Bond purchase email successfully sent!", response.status, response.text); 
+              },
+              function(error) { 
+                console.error("Bond purchase email failed to send...", error); 
+              }
+            );
         });
       }
 

@@ -33,6 +33,12 @@ if env_path.exists():
         logger.info("Please ensure your .env file is properly configured.")
     else:
         logger.info("Environment configuration loaded successfully")
+        
+        # Log Flask configuration for debugging
+        flask_env = os.environ.get('FLASK_ENV', 'not set')
+        flask_debug = os.environ.get('FLASK_DEBUG', 'not set')
+        logger.info(f"Flask Environment: {flask_env}")
+        logger.info(f"Flask Debug Mode: {flask_debug}")
 else:
     logger.warning(f"No .env file found at {env_path}")
     logger.info("Using system environment variables only")
@@ -57,5 +63,11 @@ application = app
 
 if __name__ == '__main__':
     # Development server
-    debug_mode = config_name == 'production'
+    # Production mode should NEVER run in debug mode for performance and security
+    if config_name == 'production':
+        debug_mode = False  # Force debug OFF in production
+        logger.info("Production mode: Debug disabled for optimal performance")
+    else:
+        debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1', 'yes', 'on']
+    
     app.run(debug=debug_mode, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))

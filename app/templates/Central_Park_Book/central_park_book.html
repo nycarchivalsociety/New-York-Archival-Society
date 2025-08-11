@@ -2,7 +2,6 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Permissions-Policy" content="unload=()">
     <style>
         .product-template {
             display: flex;
@@ -371,7 +370,7 @@
     <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script nonce="{{ csp_nonce }}"
         src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
-    <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" async></script>
+    <!-- EmailJS SDK is now loaded in layout.html -->
     <!-- PDF.js -->
     <script nonce="{{ csp_nonce }}" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
 </head>
@@ -873,10 +872,7 @@
 
     <script nonce="{{ csp_nonce }}">
         document.addEventListener("DOMContentLoaded", function () {
-            // Initialize EmailJS
-            if (typeof emailjs !== 'undefined') {
-                emailjs.init("{{ EMAILJS_API_ID | default('YOUR_USER_ID') }}");
-            }
+            // EmailJS is already initialized in layout.html
 
             // Set recipient emails
             // prettier-ignore
@@ -1038,13 +1034,9 @@
                         const isInternationalShipping = data.shipping_address.country_code !== 'US';
                         const isPickup = document.getElementById("pickup-checkbox") ? document.getElementById("pickup-checkbox").checked : false;
                         
-                        console.log('PayPal shipping change detected:', data.shipping_address.country_code);
-                        console.log('Is pickup selected:', isPickup);
-                        
                         // VALIDATION: If in-person pickup is selected, only allow USA
                         if (isPickup && isInternationalShipping) {
                             // Reject the address and show error message
-                            console.log('Rejecting non-US address for in-person pickup');
                             
                             // Show a user-friendly error message
                             Swal.fire({

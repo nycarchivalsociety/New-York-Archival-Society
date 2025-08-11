@@ -3,6 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <!-- Permissions-Policy Configuration:
+         - payment: Allows PayPal domains to use Payment Request API for processing transactions
+         - unload: Required for PayPal to track when users leave the checkout flow (for analytics/cleanup)
+         Note: The unload permission is critical for PayPal's SDK to function properly during checkout -->
+    <meta http-equiv="Permissions-Policy" content="payment=(self 'https://www.paypal.com' 'https://*.paypal.com'), unload=(self 'https://www.paypal.com' 'https://*.paypal.com')" />
     <title>New York Archival Society</title>
 
     <!-- Libraries CSS Files -->
@@ -64,6 +69,73 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
     </style>
+
+  <!-- EmailJS SDK v4 - CRITICAL CONFIGURATION:
+       - Must be loaded ONLY ONCE in the entire application (here in layout.html)
+       - Pinned to @4 to prevent breaking changes from major version updates
+       - Using defer to ensure DOM is ready before initialization
+       WARNING: Do not load EmailJS SDK in individual pages - it will cause conflicts -->
+  <script defer src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  
+  <!-- EmailJS Configuration - CRITICAL NOTES:
+       - Configuration values are injected server-side from environment variables
+       - PUBLIC_KEY comes from EMAILJS_API_ID environment variable (EmailJS account public key)
+       - This configuration is shared across all pages via window.EMAILJS object
+       WARNING: Individual pages must NOT re-configure these values -->
+  <script>
+    // Inject EmailJS configuration safely using tojson filter
+    window.EMAILJS = {
+      SERVICE_ID: {{ EMAILJS_SERVICE_ID | tojson | safe }},
+      TEMPLATE_ID_CONFIRM: {{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL | tojson | safe }},
+      PUBLIC_KEY: {{ EMAILJS_API_ID | tojson | safe }},  // From EMAILJS_API_ID env var - the account's public key
+      RECIPIENT_EMAILS: {{ RECIPIENT_EMAILS | tojson | safe }}
+    };
+    
+    // Expose local variable used elsewhere on the page
+    var recipientEmails = window.EMAILJS.RECIPIENT_EMAILS || [];
+    
+    // Also expose the public key in a fallback variable for compatibility
+    window.EMAILJS_PUBLIC_KEY = window.EMAILJS.PUBLIC_KEY;
+  </script>
+  
+  <!-- Centralized EmailJS Initialization - ARCHITECTURE NOTES:
+       - EmailJS MUST be initialized ONLY ONCE globally (handled here in layout.html)
+       - The _emailjsInitialized flag prevents duplicate initialization attempts
+       - Individual pages (contact.html, central_park_book.html, etc.) must NOT call emailjs.init()
+       - Pages should only use emailjs.send() or emailjs.sendForm() after this global init
+       WARNING: Re-initializing EmailJS in pages will break the email functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Wait for EmailJS SDK to be available
+      if (!window.emailjs) {
+        return;
+      }
+      
+      // Use the existing config variable used by the working flows
+      const PUBLIC_KEY = (window.EMAILJS && window.EMAILJS.PUBLIC_KEY) || window.EMAILJS_PUBLIC_KEY;
+      
+      if (!PUBLIC_KEY) {
+        return;
+      }
+      
+      // Initialize EmailJS only once globally - pages must not re-initialize
+      if (!window._emailjsInitialized) {
+        try {
+          // EmailJS v4 preferred initialization format
+          emailjs.init({ publicKey: PUBLIC_KEY });
+          window._emailjsInitialized = true;
+        } catch (e) {
+          // Fallback for older init signature if needed
+          try {
+            emailjs.init(PUBLIC_KEY);
+            window._emailjsInitialized = true;
+          } catch (fallbackError) {
+            // Silent failure
+          }
+        }
+      }
+    });
+  </script>
   </head>
 
   <body>
