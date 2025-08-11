@@ -103,7 +103,8 @@ class ProductionConfig(Config):
             **Config.SQLALCHEMY_ENGINE_OPTIONS['connect_args'],
             'sslmode': 'require',  # Force SSL in production
             'connect_timeout': 5,  # Fast connection timeout
-            'server_side_cursors': True,  # Use server-side cursors for large results
+            # Note: server_side_cursors removed - not a valid PostgreSQL connection parameter
+            # Use query-level options instead when needed for large result sets
         },
         
         # Disable query logging in production for performance
