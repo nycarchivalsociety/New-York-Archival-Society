@@ -10,41 +10,63 @@
     <meta http-equiv="Permissions-Policy" content="payment=(self 'https://www.paypal.com' 'https://*.paypal.com'), unload=(self 'https://www.paypal.com' 'https://*.paypal.com')" />
     <title>New York Archival Society</title>
 
-    <!-- Libraries CSS Files -->
-    <link
-      href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/aos/aos.css') }}"
-      rel="stylesheet"
-    />
+    <!-- Critical CSS - Load immediately -->
     <link
       href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}"
       rel="stylesheet"
     />
     <link
-      href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}"
-      rel="stylesheet"
-    />
-
-    <!-- Template Main CSS File -->
-    <link
       href="{{ url_for('static', filename='css/style.css') }}"
       rel="stylesheet"
     />
+    
+    <!-- Non-critical CSS - Load with preload and async -->
+    <link
+      href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/aos/aos.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link
+      href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}"
+      rel="preload"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    
+    <!-- Fallback for browsers that don't support preload -->
+    <noscript>
+      <link href="{{ url_for('static', filename='vendor/animate.css/animate.min.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='vendor/aos/aos.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet" />
+      <link href="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet" />
+    </noscript>
 
     <link
       rel="icon"
@@ -65,10 +87,20 @@
     </script>
     <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    <!--Open Sans Font, Imported from Google Fonts-->
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
-    </style>
+    <!-- Preconnect to Google Fonts for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Load Google Fonts with display=swap for better performance -->
+    <link 
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" 
+      rel="stylesheet"
+      media="print" 
+      onload="this.media='all'"
+    >
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+    </noscript>
 
   <!-- EmailJS SDK v4 - CRITICAL CONFIGURATION:
        - Must be loaded ONLY ONCE in the entire application (here in layout.html)
@@ -366,13 +398,25 @@
       });
     </script>
 
+    <!-- Critical JavaScript - Load immediately -->
+    <script
+      defer
+      src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"
+    ></script>
+    
+    <!-- Custom lazy loading for images -->
+    <script defer src="{{ url_for('static', filename='js/lazy-loading.js') }}"></script>
+
+    <!-- Non-critical JavaScript - Load with lower priority -->
     <script
       defer
       src="{{ url_for('static', filename='vendor/aos/aos.js') }}"
+      onload="AOS && AOS.init()"
     ></script>
     <script
       defer
       src="{{ url_for('static', filename='vendor/glightbox/js/glightbox.min.js') }}"
+      onload="GLightbox && GLightbox()"
     ></script>
     <script
       defer
@@ -381,12 +425,6 @@
     <script
       defer
       src="{{ url_for('static', filename='vendor/swiper/swiper-bundle.min.js') }}"
-    ></script>
-
-    <!-- Bootstrap might be a dependency for many custom scripts, hence using defer -->
-    <script
-      defer
-      src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.bundle.min.js') }}"
     ></script>
 
     <!-- Your Custom Script -->

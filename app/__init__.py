@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 # Initialize extensions
 cache = Cache()
 
+# Removed Vercel-incompatible monitoring modules
+
 class Config:
     """Base configuration class"""
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'

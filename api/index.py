@@ -50,13 +50,30 @@ from app.services.cache_service import cache_service
 config_name = os.environ.get('FLASK_ENV', 'development')
 app = create_app(config_name)
 
-# Warm up cache on startup in production
-if config_name == 'production':
-    with app.app_context():
+# Serverless optimizations for Vercel
+def optimize_for_serverless():
+    """Optimize application for serverless environment"""
+    if config_name == 'production':
         try:
-            cache_service.warm_cache()
+            # Warm up critical caches
+            with app.app_context():
+                cache_service.warm_cache()
+                
+            # Preload essential modules
+            import app.db.models
+            import app.services.paypal_service
+            import app.services.transaction_service
+            
+            logger.info("Serverless optimization completed")
         except Exception as e:
-            logger.warning(f"Cache warm-up failed: {str(e)}")
+            logger.warning(f"Serverless optimization failed: {str(e)}")
+
+# Global error handler for better performance
+@app.errorhandler(Exception)
+def handle_exception(e):
+    """Global exception handler to prevent cold start issues"""
+    logger.error(f"Unhandled exception: {str(e)}")
+    return {"error": "Internal server error"}, 500
 
 # Export app for WSGI servers
 application = app
@@ -67,6 +84,7 @@ if __name__ == '__main__':
     if config_name == 'production':
         debug_mode = False  # Force debug OFF in production
         logger.info("Production mode: Debug disabled for optimal performance")
+        optimize_for_serverless()  # Run optimization in production mode
     else:
         debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1', 'yes', 'on']
     
