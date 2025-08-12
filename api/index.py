@@ -75,7 +75,8 @@ def handle_exception(e):
     logger.error(f"Unhandled exception: {str(e)}")
     return {"error": "Internal server error"}, 500
 
-# Export app for WSGI servers
+# Export app for WSGI servers 
+#trigger
 application = app
 
 if __name__ == '__main__':
