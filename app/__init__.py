@@ -36,9 +36,6 @@ class Config:
         
         # Connection Management  
         'pool_reset_on_return': 'commit',  # Reset connections properly
-        'connect_args': {
-            'application_name': 'new_york_archival_society'
-        },
         
         # Query Optimization
         'echo': os.environ.get('SQLALCHEMY_ECHO', 'false').lower() == 'true',
@@ -81,7 +78,10 @@ class Config:
 class DevelopmentConfig(Config):
     """Development configuration"""
     DEBUG = os.environ.get('FLASK_DEBUG', 'false').lower() in ['true', '1', 'yes', 'on']
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or 'sqlite:///dev.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI')
+    
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError("DATABASE_URI environment variable is required")
 
 class ProductionConfig(Config):
     """Production configuration optimized for speed and performance"""
@@ -102,11 +102,9 @@ class ProductionConfig(Config):
         
         # Production-specific performance optimizations
         'connect_args': {
-            **Config.SQLALCHEMY_ENGINE_OPTIONS['connect_args'],
             'sslmode': 'require',  # Force SSL in production
             'connect_timeout': 5,  # Fast connection timeout
-            # Note: server_side_cursors removed - not a valid PostgreSQL connection parameter
-            # Use query-level options instead when needed for large result sets
+            'application_name': 'new_york_archival_society'
         },
         
         # Disable query logging in production for performance
