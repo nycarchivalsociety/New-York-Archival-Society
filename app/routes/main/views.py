@@ -259,7 +259,7 @@ def get_bonds():
     # Use SQLAlchemy pagination for better performance
     pagination = Bond.query\
         .filter_by(status='available')\
-        .order_by(Bond.issue_date.desc(), Bond.bond_id)\
+        .order_by(Bond.order.asc().nulls_last(), Bond.issue_date.desc(), Bond.bond_id)\
         .paginate(
             page=page,
             per_page=per_page,

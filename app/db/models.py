@@ -91,6 +91,7 @@ class Bond(db.Model):
     type = db.Column(db.String(100), nullable=True, index=True)
     purpose_of_bond = db.Column(db.Text, nullable=True)
     vignette = db.Column(db.String(500), nullable=True)
+    order = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
     
@@ -98,6 +99,7 @@ class Bond(db.Model):
     __table_args__ = (
         Index('idx_bonds_status_type', 'status', 'type'),
         Index('idx_bonds_issue_date', 'issue_date'),
+        Index('idx_bonds_order', 'order'),
         db.CheckConstraint("status IN ('available', 'purchased', 'reserved')", name='check_valid_status'),
         db.CheckConstraint('retail_price > 0', name='check_positive_retail_price'),
     )
