@@ -91,18 +91,21 @@
     </div>
   </div>
 
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <script>
-// Initialize EmailJS
-emailjs.init("jYV8y8AwgFM2SI98x");
-
 var item = {
   name: "{{ item.name }}",
   id: "{{ item.id }}",
   fee: "{{ item.fee }}",
 };
 
-var recipientEmails = ["nycarchivalsociety@gmail.com"];
+// Use recipient emails from configuration
+var recipientEmailsJson = `{{ RECIPIENT_EMAILS | default([]) | tojson | safe }}`;
+var recipientEmails = JSON.parse(recipientEmailsJson);
+if (typeof recipientEmails === 'string') {
+  recipientEmails = recipientEmails.split(',').map(email => email.trim());
+} else if (!Array.isArray(recipientEmails)) {
+  recipientEmails = [];
+}
 
 // Function to send the purchase notification
 function sendPurchaseNotification(item, recipientEmails) {
@@ -117,7 +120,7 @@ function sendPurchaseNotification(item, recipientEmails) {
     };
 
     emailjs
-      .send("service_ogwzo2j", "template_uyo2dnr", templateParams)
+      .send("{{ EMAILJS_SERVICE_ID }}", "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}", templateParams)
       .then(
         function (response) {
           console.log("SUCCESS!", response.status, response.text);
@@ -129,12 +132,7 @@ function sendPurchaseNotification(item, recipientEmails) {
   });
 }
 
-// Define your item and recipient emails array as follows:
-var item = {
-  name: "{{ item.name }}",
-  id: "{{ item.id }}",
-  fee: "{{ item.fee }}",
-};
+// item variable already defined above
 
     // Function to render PayPal buttons
     function renderPaypalButtons() {

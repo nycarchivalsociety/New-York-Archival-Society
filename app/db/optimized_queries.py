@@ -116,7 +116,7 @@ class OptimizedQueries:
             query = query.filter(Bond.retail_price <= max_price)
         
         # Order by compound index for optimal performance
-        query = query.order_by(Bond.status, Bond.issue_date.desc(), Bond.bond_id)
+        query = query.order_by(Bond.order.asc().nulls_last(), Bond.status, Bond.issue_date.desc(), Bond.bond_id)
         
         pagination = query.paginate(
             page=page,

@@ -2,7 +2,7 @@ from . import main
 from flask import render_template, jsonify, request, current_app
 import logging
 from app.db.db import db
-from app.db.models import HistoricalRecord, Donor, Transaction, DonorItem, Bond
+from app.db.models import HistoricalRecord, Donor, Transaction, DonorItem, Bond, GeneralProduct
 from app.services.paypal_service import paypal_service, PayPalAPIError
 from app.services.transaction_service import transaction_service, TransactionError
 from app.utils.validators import (
@@ -62,9 +62,18 @@ def create_order():
     
     # Verify item exists and is available
     item_id = validated_data['item_id']
+    item_type = validated_data.get('item_type', 'historical_record')  # Default to historical_record for backward compatibility
     fee = validated_data['fee']
     
-    if validate_uuid(item_id):
+    if item_type == 'general_product':
+        # General product (UUID-based)
+        item = GeneralProduct.query.get(item_id)
+        if not item:
+            return jsonify({'error': 'General product not found'}), 404
+        if item.status != 'available' or item.quantity <= 0:
+            return jsonify({'error': 'General product not available'}), 400
+        # Fee validation for general products includes handling fee logic handled in frontend
+    elif validate_uuid(item_id):
         # Historical record
         item = HistoricalRecord.query.get(item_id)
         if not item:
@@ -126,13 +135,18 @@ def capture_order(order_id):
         shipping = purchase_units[0].get('shipping', {})
         payer_data['shipping_address'] = shipping.get('address', {})
     
+    # Debug logging for item_type
+    item_type = validated_data.get('item_type', 'historical_record')
+    logger.info(f"Capture order debug - item_id: {validated_data['item_id']}, item_type: {item_type}, validated_data: {validated_data}")
+    
     # Create transaction using service
     transaction, is_new = transaction_service.create_transaction_with_rollback(
         order_id=order_id,
         item_id=validated_data['item_id'],
         fee=validated_data['fee'],
         payer_data=payer_data,
-        is_pickup=validated_data['pickup']
+        is_pickup=validated_data['pickup'],
+        item_type=item_type
     )
     
     if is_new:
@@ -245,7 +259,7 @@ def get_bonds():
     # Use SQLAlchemy pagination for better performance
     pagination = Bond.query\
         .filter_by(status='available')\
-        .order_by(Bond.issue_date.desc(), Bond.bond_id)\
+        .order_by(Bond.order.asc().nulls_last(), Bond.issue_date.desc(), Bond.bond_id)\
         .paginate(
             page=page,
             per_page=per_page,
@@ -320,5 +334,82 @@ def koch_congressional_project():
 def contribute():
     # Render the contribute page template
     return render_template('Contribute/contribute.html')
+
+@main.route('/central-park-book')
+@handle_errors
+def central_park_book():
+    """Display Central Park Book page - finds the first available Central Park Book product"""
+    try:
+        # Find the Central Park Book regardless of quantity or availability status
+        book = GeneralProduct.query.filter(
+            GeneralProduct.name.icontains('Central Park')
+        ).first()
+        
+        if not book:
+            # If no Central Park Book found, look for any general product
+            book = GeneralProduct.query.first()
+            
+        if not book:
+            logger.warning("No general products found for Central Park Book page")
+            # Create a basic error response instead of trying to render missing template
+            return jsonify({'error': 'Central Park Book not found'}), 404
+        
+        # Configuration data for PayPal and EmailJS
+        config_data = {
+            'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID'),
+            'EMAILJS_SERVICE_ID': current_app.config.get('EMAILJS_SERVICE_ID'),
+            'EMAILJS_API_ID': current_app.config.get('EMAILJS_API_ID'),
+            'RECIPIENT_EMAILS': current_app.config.get('RECIPIENT_EMAILS'),
+            'EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL': current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL'),
+        }
+        
+        return render_template(
+            'Central_Park_Book/central_park_book.html',
+            book=book,
+            **config_data
+        )
+        
+    except OperationalError as e:
+        logger.error(f"Database error fetching Central Park Book: {str(e)}")
+        return jsonify({'error': 'Database error occurred'}), 500
+    except Exception as e:
+        logger.error(f"Unexpected error fetching Central Park Book: {str(e)}")
+        return jsonify({'error': 'An unexpected error occurred'}), 500
+
+@main.route('/general-product/<product_id>')
+@handle_errors
+def general_product_details(product_id):
+    """Display general product details page with PayPal integration"""
+    if not validate_uuid(product_id):
+        return render_template('Error_Pages/404.html'), 404
+    
+    # Get product with error handling
+    try:
+        book = GeneralProduct.query.get(product_id)
+        if not book:
+            logger.warning(f"General product not found: {product_id}")
+            return render_template('Error_Pages/404.html'), 404
+        
+        # Configuration data for PayPal and EmailJS
+        config_data = {
+            'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID'),
+            'EMAILJS_SERVICE_ID': current_app.config.get('EMAILJS_SERVICE_ID'),
+            'EMAILJS_API_ID': current_app.config.get('EMAILJS_API_ID'),
+            'RECIPIENT_EMAILS': current_app.config.get('RECIPIENT_EMAILS'),
+            'EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL': current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL'),
+        }
+        
+        return render_template(
+            'Central_Park_Book/central_park_book.html',
+            book=book,
+            **config_data
+        )
+        
+    except OperationalError as e:
+        logger.error(f"Database error fetching general product {product_id}: {str(e)}")
+        return render_template('Error_Pages/500.html'), 500
+    except Exception as e:
+        logger.error(f"Unexpected error fetching general product {product_id}: {str(e)}")
+        return render_template('Error_Pages/500.html'), 500
 
 # Note: Error handlers are now centralized in app/__init__.py
