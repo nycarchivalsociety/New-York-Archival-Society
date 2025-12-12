@@ -19,6 +19,9 @@ Flask-Migrate = "*"
 Flask-SQLAlchemy = "*"
 Flask-Caching = "*"
 psycopg2-binary = "*"
+requests = "*"
+flask-paginate = "*"
+redis = "*"
 
 
 [requires]
