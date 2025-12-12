@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from dotenv import load_dotenv
 
-# Configure logging
+# Configure logging (trigger)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
