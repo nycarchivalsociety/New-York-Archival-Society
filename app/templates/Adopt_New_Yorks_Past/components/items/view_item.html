@@ -148,7 +148,7 @@
 
             const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
 
-            function sendPurchaseNotification(item, recipientEmails) {
+            function sendPurchaseNotification(item, recipientEmails, donorInfo) {
               recipientEmails.forEach((email) => {
                 const templateParams = {
                   to_name: email,
@@ -157,6 +157,9 @@
                   item_name: item.name,
                   item_id: item.id,
                   item_fee: item.fee,
+                  donor_name: donorInfo.name,
+                  donor_email: donorInfo.email,
+                  donor_phone: donorInfo.phone || "Not provided"
                 };
 
                 emailjs
@@ -243,7 +246,12 @@
                         contentType: "application/json",
                         data: JSON.stringify(transaction),
                         success: function (response) {
-                          sendPurchaseNotification(item, recipientEmails);
+                          const donorInfo = {
+                            name: `${payer.name.given_name} ${payer.name.surname}`,
+                            email: payer.email_address,
+                            phone: payer.phone?.phone_number?.national_number || "Not provided"
+                          };
+                          sendPurchaseNotification(item, recipientEmails, donorInfo);
 
                           Swal.fire({
                             title: "Thank you for your purchase!",
