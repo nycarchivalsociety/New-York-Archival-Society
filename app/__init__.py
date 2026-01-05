@@ -128,6 +128,11 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     # Load configuration
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
+
+    # Prefer psycopg (v3) driver for PostgreSQL to avoid psycopg2 DLL issues on Windows.
+    db_uri = app.config.get('SQLALCHEMY_DATABASE_URI')
+    if isinstance(db_uri, str):
+        app.config['SQLALCHEMY_DATABASE_URI'] = _normalize_db_uri(db_uri)
     
     # Validate critical configuration
     _validate_configuration(app)
@@ -169,6 +174,15 @@ def create_app(config_name: Optional[str] = None) -> Flask:
     
     logger.info(f"Application created successfully with config: {config_name}")
     return app
+
+def _normalize_db_uri(uri: str) -> str:
+    if uri.startswith('postgres://'):
+        uri = 'postgresql://' + uri[len('postgres://'):]
+    scheme = uri.split('://', 1)[0]
+    if scheme == 'postgresql':
+        # SQLAlchemy dialect for psycopg v3
+        return 'postgresql+psycopg://' + uri[len('postgresql://'):]
+    return uri
 
 def _validate_configuration(app: Flask) -> None:
     """Validate critical application configuration"""

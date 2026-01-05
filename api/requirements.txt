@@ -5,8 +5,10 @@ Flask-Migrate==4.0.7
 Flask-Caching==2.1.0
 
 # Database
-psycopg2-binary==2.9.10
-SQLAlchemy==2.0.36
+# psycopg2-binary can fail to load DLLs on Windows; psycopg v3 binary wheels are self-contained.
+psycopg[binary]==3.2.13
+# SQLAlchemy >=2.0.41 adds Python 3.14 support.
+SQLAlchemy==2.0.45
 alembic==1.13.3
 
 # Pagination
@@ -33,9 +35,11 @@ click==8.1.7
 
 # Background tasks and utilities
 blinker==1.8.2
-greenlet==3.1.1
+# Python 3.14 on Windows needs a newer greenlet wheel; 3.1.1 fails to build.
+greenlet==3.3.0
 Mako==1.3.6
-typing_extensions==4.12.2
+# Keep compatible with other modern deps (e.g., pydantic on Python 3.14).
+typing_extensions==4.15.0
 colorama==0.4.6
 
 # Optional: Performance monitoring
