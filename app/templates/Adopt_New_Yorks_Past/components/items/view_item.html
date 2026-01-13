@@ -1,7 +1,6 @@
 {% extends "layout.html" %} {% block content %}
 <head>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <link
     href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css"
     rel="stylesheet"
@@ -109,7 +108,7 @@
         />
         {% else %}
         <img
-          src="{{ url_for('static', filename='images/no_image.jpg') }}"
+          src="{{ url_for('static', filename='img/shared/no_image.jpg') }}"
           class="card-img-top"
           alt="{{ item.name }}"
         />
@@ -143,8 +142,7 @@
             };
             document.head.appendChild(script);
 
-            // Initialize EmailJS
-            emailjs.init("{{ EMAILJS_API_ID }}");
+            // EmailJS is already initialized in layout.html
 
             const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
 

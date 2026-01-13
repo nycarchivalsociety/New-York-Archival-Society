@@ -92,13 +92,20 @@ def validate_capture_order_data(data: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(pickup, bool):
         errors['pickup'] = 'Pickup must be a boolean value'
     
+    # Validate item_type (optional, defaults to 'historical_record')
+    item_type = data.get('item_type', 'historical_record')
+    valid_item_types = ['historical_record', 'bond', 'general_product']
+    if item_type not in valid_item_types:
+        errors['item_type'] = f'Item type must be one of: {valid_item_types}'
+    
     if errors:
         raise ValidationError(f"Validation errors: {errors}")
     
     return {
         'item_id': str(item_id).strip(),
         'fee': float(fee),
-        'pickup': pickup
+        'pickup': pickup,
+        'item_type': item_type
     }
 
 def validate_pagination_params(page: Any, per_page: Any, max_per_page: int = 100) -> Dict[str, int]:

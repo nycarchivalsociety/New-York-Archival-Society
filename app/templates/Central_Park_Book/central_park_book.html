@@ -1,0 +1,1177 @@
+{% extends "layout.html" %} {% block content %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .product-template {
+            display: flex;
+            flex-direction: column;
+            /* Align items vertically */
+            align-items: center;
+            /* Center items horizontally */
+            padding-top: 2rem;
+        }
+
+        .product-title {
+            /* New class for the title */
+            text-align: center;
+            margin-bottom: 1rem;
+            /* Space below the title */
+            width: 100%;
+            /* Ensure title section takes full width */
+        }
+
+        .product-title h1.section-heading {
+            /* Target the h1 for book name */
+            font-size: 4rem;
+            /* MODIFIED - Was 3rem */
+            /* Increased font size for the book name, adjust as needed */
+            /* The existing fw-bold and display-3 will also apply */
+        }
+
+        .product-title .lc-block div p {
+            /* Target the subtitle paragraphs */
+            font-size: 18px;
+            /* Font Size 18px */
+            line-height: 27px;
+            /* Line Height 27px */
+            font-weight: 400;
+            /* Font Weight Regular (400) */
+            letter-spacing: normal;
+            /* Letter Spacing normal */
+            margin-bottom: 0.5rem;
+            /* Optional: adjust spacing between subtitle lines */
+        }
+
+        .product-title .lc-block.mb-4.col-xxl-6.mx-auto {
+            /* Target the container of the subtitle */
+            max-width: 80%;
+            /* Increase max-width to take more horizontal space */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1.section-heading {
+            /* Added to increase cover space for selected h1 and similar headings */
+            padding: 2rem;
+            /* Adjust as needed for desired "cover space" */
+        }
+
+        /* NEW STYLES FOR SUBTITLES AND AUTHOR INFO */
+        .book-author p.mb-1 {
+            font-size: 1.5rem !important;
+            /* Overrides inline 1rem */
+        }
+
+        .book-author p.mb-0 {
+            font-size: 1.2rem !important;
+            /* Overrides inline 0.9rem */
+        }
+
+        .book-author>p:last-child {
+            /* Assuming this is the 'NEW YORK CITY MUNICIPAL ARCHIVES' line */
+            font-size: 1.2rem !important;
+            /* Overrides inline 0.9rem */
+        }
+
+        /* END NEW STYLES */
+
+        .product-image {
+            max-width: 800px;
+            /* Increased max-width for a larger image */
+            width: 90%;
+            /* Make image responsive */
+            margin-bottom: 2rem;
+            /* Space below the image */
+        }
+
+        .product-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        .product-details {
+            max-width: 600px;
+            /* Adjusted max-width for details section */
+            width: 90%;
+            /* Make details section responsive */
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-price .old-price {
+            text-decoration: line-through;
+            margin-right: 1rem;
+        }
+
+        .user-info {
+            margin-bottom: 2rem;
+        }
+
+        .form-control {
+            color: black;
+        }
+
+        /* PDF Viewer Styles from preloaded-flipbook.html */
+        /* Initial View - Document Card */
+        .document-card {
+            background: transparent;
+            /* Removed white background */
+            border-radius: 10px;
+            /* box-shadow: 0 4px 20px rgba(0,0,0,0.1); */
+            /* Removed box-shadow */
+            padding: 20px 40px;
+            /* Reduced top/bottom padding */
+            text-align: center;
+            max-width: 400px;
+            transition: all 0.3s ease;
+            /* Reduced margin for spacing within the product template */
+            margin-top: 0.5rem;
+            /* Reduced from 2rem */
+            margin-bottom: 2rem;
+        }
+
+        /* .document-card:hover removed as it was empty */
+
+        .pdf-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            /* Added color for visibility on transparent background */
+        }
+
+        .document-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .document-info {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .view-btn {
+            background-color: #EC994B;
+            color: black;
+            border: none;
+            padding: 14px 39px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .view-btn:hover {
+            background-color: #d38336;
+            color: black;
+            transform: translateY(-2px);
+        }
+
+        .view-btn:active {
+            transform: translateY(0);
+        }
+
+        .loading-text {
+            color: #7f8c8d;
+            font-size: 14px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* Flipbook Viewer - Hidden by default */
+        .flipbook-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .viewer-header {
+            background: #2d2d2d;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .close-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #c0392b;
+        }
+
+        .viewer-info {
+            color: #ecf0f1;
+            font-size: 16px;
+        }
+
+        .viewer-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .pdf-page-container {
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .pdf-page-container canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .page-number {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        .loading-page {
+            background: #2d2d2d;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ecf0f1;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .page-transition {
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Side navigation arrows */
+        .side-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 50px;
+            color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            padding: 20px;
+            user-select: none;
+            transition: all 0.3s;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+        }
+
+        .side-nav:hover {
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .side-nav.prev {
+            left: 20px;
+        }
+
+        .side-nav.next {
+            right: 20px;
+        }
+
+        .side-nav.disabled {
+            display: none;
+        }
+
+        /* Keyboard shortcuts hint */
+        .shortcuts-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ecf0f1;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            animation: fadeInOut 4s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            20%,
+            80% {
+                opacity: 1;
+            }
+        }
+
+        /* Error state */
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            padding: 20px;
+            background: rgba(231, 76, 60, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+    <script nonce="{{ csp_nonce }}" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script nonce="{{ csp_nonce }}" src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script nonce="{{ csp_nonce }}"
+        src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
+    <!-- EmailJS SDK is now loaded in layout.html -->
+    <!-- PDF.js -->
+    <script nonce="{{ csp_nonce }}" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+</head>
+
+<body>
+    <div class="container-full">
+        <div class="product-template">
+            <div class="d-flex align-items-center min-vh-50">
+                <div class="container text-center mb-md-5">
+                    <div class="lc-block">
+                        <div class="lc-block mb-3">
+                            <div editable="rich">
+                                <h1 class="fw-bold display-3 section-heading">
+                                    {{ book.name }}
+                                </h1>
+                                <hr class="my-4">
+                            </div>
+                        </div>
+                        <div class="lc-block">
+                            <div editable="rich">
+                                <div class="book-author">
+                                    <p class="mb-1"
+                                        style="font-weight: bold; text-transform: uppercase; font-size: 1rem;">ORIGINAL
+                                        DESIGNS FOR</p>
+                                    <p class="mb-1"
+                                        style="font-weight: bold; text-transform: uppercase; font-size: 1rem;">NEW
+                                        YORK'S GREATEST TREASURE
+                                    </p>
+                                    <p class="mb-0" style="font-size: 0.9rem; color: #b8b8b8;">AUTHOR: CYNTHIA BRENWALL
+                                    </p>
+                                    <p style="font-size: 0.9rem; color: #b8b8b8;">NEW YORK CITY MUNICIPAL ARCHIVES</p>
+                                </div>
+
+                                <p class="description-text" style="margin-bottom: 0.5rem;">
+                                    {{ book.description }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- PDF Viewer HTML from preloaded-flipbook.html -->
+            <!-- Initial Document Card View -->
+            <div class="document-card" id="pdfDocumentCard"> <!-- Renamed id to avoid conflict -->
+                <!-- <div class="pdf-icon">📄</div> --> <!-- Icon removed as per request -->
+                <!-- <h2 class="document-title">The Central Park - Original Designs</h2> -->
+                <!-- Text removed as per request -->
+                <!-- <p class="document-info">
+                    <span id="pdfPageCount">Loading...</span> pages • PDF Document
+                </p> --> <!-- Text removed as per request -->
+                <button class="view-btn" id="pdfViewButton" disabled>
+                    <!-- Renamed id and function -->
+                    Book Preview
+                </button>
+                <p class="loading-text" id="pdfLoadingText">Loading PDF...</p> <!-- Renamed id -->
+                <div class="error-message" id="pdfErrorMessage"></div> <!-- Renamed id -->
+            </div>
+
+            <!-- Flipbook Viewer (Hidden) -->
+            <div class="flipbook-viewer" id="pdfFlipbookViewer"> <!-- Renamed id -->
+                <div class="viewer-header">
+                    <div class="viewer-info">
+                        PDF Document - <span id="pdfTotalPages">0</span> pages
+                    </div>
+                    <button class="close-btn" id="pdfCloseButton">✕ Close</button> <!-- Renamed function -->
+                </div>
+
+                <div class="viewer-body" id="pdfViewerBody">
+                    <!-- PDF pages will be dynamically inserted here -->
+                </div>
+            </div>
+            <!-- End PDF Viewer HTML -->
+
+            <!-- Hidden span to store PDF URL for JavaScript -->
+            <span id="pdfData" data-url="{{ url_for('static', filename='files/central_park_book.pdf') }}"
+                style="display: none;"></span>
+
+            <div class="product-image">
+                {% if book.photo %}
+                <!-- If the book has a photo, display it -->
+                <img src="https://res.cloudinary.com/djozxyart/image/upload/v1748624736/New%20York%20Archival%20Society/General%20Products/Central%20Park%20Book/central_park_book_ub2znx.jpg"
+                    class="card-img-top" alt="{{ book.name }}" />
+                {% else %}
+                <!-- If the book does not have a photo, display a default image -->
+                <img src="https://res.cloudinary.com/djozxyart/image/upload/v1712109859/New%20York%20Archival%20Society/Items/no_image_w0tjhw.jpg"
+                    class="card-img-top" alt="{{ book.name }}" />
+                {% endif %}
+            </div>
+            <div class="product-details">
+                <!-- Title was here, now removed -->
+                <div
+                    style="color: #EC994B; font-weight: bold; margin-top: 1rem; margin-bottom: 3rem; text-align: center; font-size: 2.5rem;">
+                    Support the Archives by purchasing this unique book
+                </div>
+                {% if book.status == 'available' and book.quantity > 0 %}
+                <!-- Shipping Information Label -->
+                <div class="shipping-info-label">
+                    <div class="info-header">
+                        <span class="info-icon">ℹ️</span>
+                        Shipping Information
+                    </div>
+                    <div class="info-content">
+                        <ul>
+                            <li>USA Orders: <span class="highlight-price">${{ book.fee }} + $12 handling fee = ${{ book.fee + 12 }} total</span></li>
+                            <li>International Orders: <span class="highlight-price">${{ book.fee }} + $20 international shipping = ${{ book.fee + 20 }} total</span></li>
+                            <li>In-Person Pickup <span class="usa-only">(USA only)</span>: <span class="highlight-price">${{ book.fee }}</span> - no additional fees</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Show price when available -->
+                <div class="product-price">
+                    <span class="new-price">${{ book.fee }}</span>
+                    <span id="handling-text" style="display: none;">+ $12 Handling Cost</span>
+                    <span id="international-text" style="display: none; color: #EC994B;">+ $20 International Shipping</span>
+                </div>
+
+                
+                <div id="payment-status"></div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="pickup-checkbox" />
+                    <label class="form-check-label" for="pickup-checkbox">
+                        In-person pickup <small style="color: #6c757d; font-style: italic;">(USA addresses only)</small>
+                    </label>
+                </div>
+                <div id="paypal-button-container"></div>
+                
+                {% else %}
+                <!-- Out of stock display - matches project's general style -->
+                <div class="out-of-stock-notice" style="
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                    border: 1px solid #dee2e6;
+                    border-left: 4px solid #EC994B;
+                    border-radius: 5px;
+                    padding: 30px 25px;
+                    text-align: center;
+                    margin: 30px 0;
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                ">
+                    <div style="color: #EC994B; font-size: 48px; margin-bottom: 20px;">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <h3 style="color: #2c3e50; margin-bottom: 15px; font-weight: 600; font-size: 24px;">
+                        Currently Unavailable
+                    </h3>
+                    <p style="color: #6c757d; margin-bottom: 25px; line-height: 1.6; font-size: 16px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        This archival treasure is temporarily out of stock. We're working to replenish our collection. Thank you for your interest in preserving New York's history.
+                    </p>
+                    <div style="border-top: 1px solid #dee2e6; padding-top: 20px; margin-top: 20px;">
+                        <a href="/adopt-new-yorks-past" class="btn" style="
+                            background-color: #EC994B; 
+                            color: white; 
+                            border: none; 
+                            padding: 12px 30px; 
+                            font-size: 16px; 
+                            border-radius: 5px; 
+                            text-decoration: none; 
+                            margin-right: 15px;
+                            font-weight: 500;
+                            transition: background-color 0.3s ease;
+                        " onmouseover="this.style.backgroundColor='#d38336'" onmouseout="this.style.backgroundColor='#EC994B'">
+                            Explore Historical Records
+                        </a>
+                        <a href="/contact" class="btn" style="
+                            background-color: transparent; 
+                            color: #6c757d; 
+                            border: 1px solid #6c757d; 
+                            padding: 12px 30px; 
+                            font-size: 16px; 
+                            border-radius: 5px; 
+                            text-decoration: none;
+                            font-weight: 500;
+                            transition: all 0.3s ease;
+                        " onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d'">
+                            Contact Us
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Script - CSP Compliant Version -->
+    <script nonce="{{ csp_nonce }}">
+        // PDF.js Worker Configuration for CSP Compliance
+        function configurePDFWorker() {
+            if (typeof pdfjsLib === 'undefined') {
+                console.error('PDF.js library not loaded');
+                return false;
+            }
+            
+            try {
+                // For CSP compliance, PDF.js will automatically use createCDNWrapper 
+                // which creates blob: URLs when needed for strict CSP
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+                return true;
+            } catch (error) {
+                console.error('Failed to configure PDF.js worker:', error);
+                return false;
+            }
+        }
+        
+        // PDF Viewer State Management
+        let pdfViewerDoc = null;
+        let pdfViewerScale = 1.5;
+        const renderedPages = new Set();
+        let renderingInProgress = new Set();
+        
+        // Check if PDF.js is loaded and configure worker
+        const pdfWorkerConfigured = configurePDFWorker();
+        
+        if (pdfWorkerConfigured) {
+            // PDF loading function
+            async function preloadPdfDocument(url) {
+                const loadingText = document.getElementById('pdfLoadingText');
+                const viewButton = document.getElementById('pdfViewButton');
+                
+                if (loadingText) loadingText.style.display = 'block';
+                if (viewButton) viewButton.disabled = true;
+
+                try {
+                    const loadingTask = pdfjsLib.getDocument(url);
+                    pdfViewerDoc = await loadingTask.promise;
+
+                    // Update page count
+                    const pageCount = pdfViewerDoc.numPages;
+                    const totalPagesEl = document.getElementById('pdfTotalPages');
+                    if (totalPagesEl) totalPagesEl.textContent = pageCount;
+
+                    // Enable view button
+                    if (viewButton) viewButton.disabled = false;
+                    if (loadingText) loadingText.style.display = 'none';
+
+                } catch (error) {
+                    console.error('Error loading PDF:', error);
+                    if (loadingText) loadingText.style.display = 'none';
+                    showPdfError('Failed to load PDF. Please ensure the file exists at the specified path and try again.');
+                }
+            }
+
+            // Open PDF viewer function
+            function openPdfViewer() {
+                if (!pdfViewerDoc) return;
+
+                const documentCard = document.getElementById('pdfDocumentCard');
+                const flipbookViewer = document.getElementById('pdfFlipbookViewer');
+                const viewerBody = document.getElementById('pdfViewerBody');
+                
+                if (documentCard) documentCard.style.display = 'none';
+                if (flipbookViewer) flipbookViewer.style.display = 'flex';
+
+                if (viewerBody) {
+                    // Clear viewer body and rendered pages tracking
+                    viewerBody.innerHTML = '';
+                    renderedPages.clear();
+                    renderingInProgress.clear();
+
+                    // Add loading indicators for all pages
+                    for (let i = 1; i <= pdfViewerDoc.numPages; i++) {
+                        const loadingDiv = document.createElement('div');
+                        loadingDiv.className = 'loading-page';
+                        loadingDiv.style.maxWidth = '800px';
+                        loadingDiv.style.width = '100%';
+                        loadingDiv.style.height = '1000px';
+                        loadingDiv.setAttribute('data-page', i);
+                        loadingDiv.innerHTML = `Loading page ${i}...`;
+                        viewerBody.appendChild(loadingDiv);
+                    }
+
+                    // Set up scroll-based lazy loading
+                    viewerBody.addEventListener('scroll', handleScrollForLazyLoad);
+
+                    // Initially render first few pages
+                    renderVisiblePages();
+                }
+            }
+
+            // Close PDF viewer function
+            function closePdfViewer() {
+                const flipbookViewer = document.getElementById('pdfFlipbookViewer');
+                const documentCard = document.getElementById('pdfDocumentCard');
+                const viewerBody = document.getElementById('pdfViewerBody');
+                
+                if (flipbookViewer) flipbookViewer.style.display = 'none';
+                if (documentCard) documentCard.style.display = 'block';
+
+                if (viewerBody) {
+                    // Remove scroll event listener
+                    viewerBody.removeEventListener('scroll', handleScrollForLazyLoad);
+                    // Clear the viewer body to free memory
+                    viewerBody.innerHTML = '';
+                }
+
+                // Clear tracking sets
+                renderedPages.clear();
+                renderingInProgress.clear();
+            }
+
+            // Scroll handler for lazy loading
+            function handleScrollForLazyLoad() {
+                // Debounce scroll events for better performance
+                clearTimeout(window.scrollTimeout);
+                window.scrollTimeout = setTimeout(() => {
+                    renderVisiblePages();
+                }, 100);
+            }
+
+            // Render visible pages function
+            function renderVisiblePages() {
+                const viewerBody = document.getElementById('pdfViewerBody');
+                if (!viewerBody) return;
+                
+                const loadingElements = viewerBody.getElementsByClassName('loading-page');
+
+                // Calculate which pages are visible or near the viewport
+                const viewerRect = viewerBody.getBoundingClientRect();
+                const buffer = 500; // Render pages 500px before they come into view
+
+                for (let element of loadingElements) {
+                    const pageNum = parseInt(element.getAttribute('data-page'));
+                    const elementRect = element.getBoundingClientRect();
+
+                    // Check if element is in or near the viewport
+                    const isVisible = elementRect.bottom >= viewerRect.top - buffer &&
+                        elementRect.top <= viewerRect.bottom + buffer;
+
+                    if (isVisible && !renderedPages.has(pageNum) && !renderingInProgress.has(pageNum)) {
+                        renderingInProgress.add(pageNum);
+                        renderPdfPage(pageNum);
+                    }
+                }
+            }
+
+            // Render individual PDF page
+            async function renderPdfPage(pageNum) {
+                try {
+                    const page = await pdfViewerDoc.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: pdfViewerScale });
+
+                    // Create container for this page
+                    const pageContainer = document.createElement('div');
+                    pageContainer.className = 'pdf-page-container';
+
+                    // Create canvas
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    // Create page number label
+                    const pageNumber = document.createElement('div');
+                    pageNumber.className = 'page-number';
+                    pageNumber.textContent = `Page ${pageNum}`;
+
+                    // Append canvas and page number to container
+                    pageContainer.appendChild(canvas);
+                    pageContainer.appendChild(pageNumber);
+
+                    // Replace loading indicator with rendered page
+                    const viewerBody = document.getElementById('pdfViewerBody');
+                    if (viewerBody) {
+                        const placeholderDiv = viewerBody.querySelector(`.loading-page[data-page="${pageNum}"]`);
+                        if (placeholderDiv) {
+                            viewerBody.replaceChild(pageContainer, placeholderDiv);
+                        } else {
+                            console.warn(`Placeholder for page ${pageNum} not found. Appending page container.`);
+                            viewerBody.appendChild(pageContainer);
+                        }
+                    }
+
+                    // Render PDF page to canvas
+                    const renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+
+                    await page.render(renderContext).promise;
+
+                    // Mark page as rendered and remove from rendering in progress
+                    renderedPages.add(pageNum);
+                    renderingInProgress.delete(pageNum);
+
+                } catch (error) {
+                    console.error(`Error rendering page ${pageNum}:`, error);
+                    renderingInProgress.delete(pageNum);
+
+                    // Show error for this page
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'pdf-page-container';
+                    errorDiv.style.padding = '20px';
+                    errorDiv.style.textAlign = 'center';
+                    errorDiv.innerHTML = `<p style="color: #e74c3c;">Error loading page ${pageNum}. Please try refreshing.</p>`;
+
+                    const viewerBody = document.getElementById('pdfViewerBody');
+                    if (viewerBody) {
+                        const placeholderDiv = viewerBody.querySelector(`.loading-page[data-page="${pageNum}"]`);
+                        if (placeholderDiv) {
+                            viewerBody.replaceChild(errorDiv, placeholderDiv);
+                        }
+                    }
+                }
+            }
+
+            // Show PDF error function
+            function showPdfError(message) {
+                const errorEl = document.getElementById('pdfErrorMessage');
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                }
+            }
+
+            // Initialize PDF viewer with event listeners
+            function initializePDFViewer() {
+                // Add click event listeners
+                const viewButton = document.getElementById('pdfViewButton');
+                const closeButton = document.getElementById('pdfCloseButton');
+                
+                if (viewButton) {
+                    viewButton.addEventListener('click', openPdfViewer);
+                }
+                
+                if (closeButton) {
+                    closeButton.addEventListener('click', closePdfViewer);
+                }
+                
+                // Keyboard navigation for closing
+                document.addEventListener('keydown', function (e) {
+                    const flipbookViewer = document.getElementById('pdfFlipbookViewer');
+                    if (flipbookViewer && flipbookViewer.style.display === 'flex') {
+                        if (e.key === 'Escape') {
+                            closePdfViewer();
+                        }
+                    }
+                });
+                
+                // Preload the PDF
+                const pdfDataEl = document.getElementById('pdfData');
+                if (pdfDataEl) {
+                    const pdfUrl = pdfDataEl.getAttribute('data-url');
+                    if (pdfUrl) {
+                        preloadPdfDocument(pdfUrl);
+                    }
+                }
+            }
+            
+            // Make functions globally accessible for compatibility
+            window.openPdfViewer = openPdfViewer;
+            window.closePdfViewer = closePdfViewer;
+            
+            // Initialize when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializePDFViewer);
+            } else {
+                initializePDFViewer();
+            }
+
+        } else {
+            // Fallback when PDF.js fails to load or configure
+            console.error('PDF.js not loaded or worker configuration failed');
+            
+            function showPDFError() {
+                const pdfButton = document.getElementById('pdfViewButton');
+                const pdfLoadingText = document.getElementById('pdfLoadingText');
+                if (pdfButton) {
+                    pdfButton.disabled = true;
+                    pdfButton.textContent = 'PDF Viewer Unavailable';
+                }
+                if (pdfLoadingText) {
+                    pdfLoadingText.textContent = 'PDF.js failed to load';
+                    pdfLoadingText.style.display = 'block';
+                }
+            }
+            
+            // Provide dummy functions for global access
+            function openPdfViewer() {
+                alert('PDF viewer is not available. Please refresh the page.');
+            }
+            
+            function closePdfViewer() {
+                // Do nothing
+            }
+            
+            // Make functions globally accessible
+            window.openPdfViewer = openPdfViewer;
+            window.closePdfViewer = closePdfViewer;
+            
+            // Initialize error state
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', showPDFError);
+            } else {
+                showPDFError();
+            }
+        }
+    </script>
+
+    <script nonce="{{ csp_nonce }}">
+        document.addEventListener("DOMContentLoaded", function () {
+            // EmailJS is already initialized in layout.html
+
+            // Set recipient emails
+            // prettier-ignore
+            const recipientEmailsJson = `{{ RECIPIENT_EMAILS | default([]) | tojson | safe }}`;
+            let recipientEmails = JSON.parse(recipientEmailsJson);
+            
+            // Handle both string and array cases
+            if (typeof recipientEmails === 'string') {
+                recipientEmails = recipientEmails.split(',').map(email => email.trim());
+            } else if (!Array.isArray(recipientEmails)) {
+                recipientEmails = [];
+            }
+
+            const pickupCheckbox = document.getElementById("pickup-checkbox");
+            const handlingText = document.getElementById("handling-text");
+            const internationalText = document.getElementById("international-text");
+            
+            // Track if international shipping is needed
+            let isInternational = false;
+            
+            // Fee constants - accessible to all functions
+            const handlingFee = 12; // Fixed $12 handling fee
+            const internationalFee = 20; // Fixed $20 international shipping fee
+
+            if (pickupCheckbox && handlingText) {
+                // Show handling fee text by default (shipping mode)
+                handlingText.style.display = "inline";
+                
+                // Event listener for checkbox to toggle handling fee display
+                pickupCheckbox.addEventListener("change", function () {
+                    if (pickupCheckbox.checked) {
+                        // In-person pickup: hide all shipping fees
+                        handlingText.style.display = "none";
+                        if (internationalText) internationalText.style.display = "none";
+                    } else {
+                        // Shipping: show appropriate fee based on international status
+                        if (isInternational) {
+                            // International: show only international fee
+                            handlingText.style.display = "none";
+                            if (internationalText) internationalText.style.display = "inline";
+                        } else {
+                            // USA: show only handling fee
+                            handlingText.style.display = "inline";
+                            if (internationalText) internationalText.style.display = "none";
+                        }
+                    }
+                });
+            }
+            
+            // Function to update international fee display
+            function updateInternationalFeeDisplay(isInternationalShipping) {
+                isInternational = isInternationalShipping;
+                
+                if (!pickupCheckbox.checked) {
+                    if (isInternational) {
+                        // International shipping: show only international fee, hide USA handling
+                        if (internationalText) internationalText.style.display = "inline";
+                        if (handlingText) handlingText.style.display = "none";
+                    } else {
+                        // USA shipping: show only USA handling, hide international
+                        if (handlingText) handlingText.style.display = "inline";
+                        if (internationalText) internationalText.style.display = "none";
+                    }
+                }
+            }
+            
+            // Centralized function to calculate total with all fees
+            function calculateTotalWithFees(isInternationalShipping, isPickupSelected) {
+                let totalAmount = bookFeeOriginal;
+                
+                if (!isPickupSelected) {
+                    if (isInternationalShipping) {
+                        // International shipping: just add $20 international fee (no handling fee)
+                        totalAmount += internationalFee; // Add $20 international fee
+                    } else {
+                        // USA shipping: add $12 handling fee
+                        totalAmount += handlingFee; // Add $12 handling fee for USA only
+                    }
+                }
+                
+                return totalAmount;
+            }
+
+            // Email notification function
+            function sendPurchaseNotification(bookData, emails, shippingAddress, donorInfo, isPickup) {
+                emails.forEach(function (email) {
+                    var templateParams = {
+                        to_name: email,
+                        from_name: "NYAS SITE - General Product Sale",
+                        subject: "General Product Purchase - " + bookData.name,
+                        item_name: bookData.name,
+                        item_id: bookData.id,
+                        item_fee: bookData.fee, // This is total fee including handling
+                        donor_name: donorInfo.name,
+                        donor_email: donorInfo.email,
+                        donor_phone: donorInfo.phone || "Not provided",
+                        pickup_status: isPickup ? "IN-PERSON PICKUP" : "SHIPPING REQUIRED",
+                        pickup: isPickup ? "Yes - In-person pickup" : "No - Ship to address",
+                        street: shippingAddress.street || "N/A",
+                        apartment: shippingAddress.apartment || "N/A",
+                        city: shippingAddress.city || "N/A",
+                        state: shippingAddress.state || "N/A",
+                        zip_code: shippingAddress.zip_code || "N/A",
+                    };
+                    emailjs
+                        .send("{{ EMAILJS_SERVICE_ID | default('YOUR_SERVICE_ID') }}", "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL | default('YOUR_TEMPLATE_ID') }}", templateParams)
+                        .then(
+                            function (response) { console.log("Book purchase email successfully sent!", response.status, response.text); },
+                            function (error) { console.error("Book purchase email failed to send...", error); }
+                        );
+                });
+            }
+
+            // Check if PayPal button container exists and book has stock available
+            const bookQuantity = parseInt("{{ book.quantity | default('0') }}");
+            const bookStatus = "{{ book.status | default('') }}";
+            
+            if (document.getElementById("paypal-button-container") && 
+                typeof paypal !== 'undefined' && 
+                bookQuantity > 0 && 
+                bookStatus === 'available') {
+                var bookId = "{{ book.id | default('') }}"; // Passed from Flask
+                var bookName = "{{ book.name | default('') }}"; // Passed from Flask
+                var bookFeeOriginal = parseFloat("{{ book.fee | default('0.00') }}"); // Passed from Flask
+                const handlingFee = 12; // Fixed $12 handling fee
+                const internationalFee = 20; // Fixed $20 international shipping fee
+
+                paypal.Buttons({
+                    createOrder: function (data, actions) {
+                        const isPickup = document.getElementById("pickup-checkbox") ? document.getElementById("pickup-checkbox").checked : false;
+                        
+                        // Calculate initial total (assuming US shipping for initial order)
+                        const totalAmount = calculateTotalWithFees(false, isPickup);
+
+                        // Build the order with appropriate shipping configuration
+                        // IMPORTANT: Always collect shipping address to validate country for pickup orders
+                        const orderConfig = {
+                            purchase_units: [
+                                {
+                                    reference_id: bookId,
+                                    amount: {
+                                        value: totalAmount.toFixed(2),
+                                    },
+                                },
+                            ],
+                            application_context: {
+                                // Always get shipping address so we can validate the country
+                                shipping_preference: "GET_FROM_FILE",
+                            }
+                        };
+
+                        // Store the pickup state for validation
+                        window.isPickupOrder = isPickup;
+
+                        return actions.order.create(orderConfig);
+                    },
+                    onShippingChange: function(data, actions) {
+                        // Check if country is not US
+                        const isInternationalShipping = data.shipping_address.country_code !== 'US';
+                        const isPickup = document.getElementById("pickup-checkbox") ? document.getElementById("pickup-checkbox").checked : false;
+                        
+                        // VALIDATION: If in-person pickup is selected, only allow USA
+                        if (isPickup && isInternationalShipping) {
+                            // Reject the address and show error message
+                            
+                            // Show a user-friendly error message
+                            Swal.fire({
+                                title: "Invalid Shipping Country",
+                                text: "In-person pickup is only available for USA addresses. Please uncheck 'In-person pickup' to ship internationally, or change your shipping address to a USA location.",
+                                icon: "warning",
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#EC994B"
+                            });
+                            
+                            // Reject the shipping address change
+                            return actions.reject();
+                        }
+                        
+                        // Update the international fee display on the page
+                        updateInternationalFeeDisplay(isInternationalShipping);
+                        
+                        // Calculate new total with international fee if applicable
+                        const newTotal = calculateTotalWithFees(isInternationalShipping, isPickup);
+                        
+                        // Update PayPal's order amount using patch operation
+                        return actions.order.patch([{
+                            op: 'replace',
+                            path: '/purchase_units/@reference_id==\'' + bookId + '\'/amount',
+                            value: {
+                                currency_code: 'USD',
+                                value: newTotal.toFixed(2)
+                            }
+                        }]);
+                    },
+                    onApprove: function (data, actions) {
+                        return actions.order.capture().then(function (details) {
+                            const payer = details.payer;
+                            const shipping = details.purchase_units[0].shipping || {};
+                            const isPickup = document.getElementById("pickup-checkbox") ? document.getElementById("pickup-checkbox").checked : false;
+
+                            // Determine if this is international shipping from the shipping address
+                            const shippingCountry = shipping.address ? shipping.address.country_code : 'US';
+                            const isInternationalShipping = shippingCountry !== 'US';
+                            
+                            // Calculate total fee using centralized function
+                            const totalFeeWithShipping = calculateTotalWithFees(isInternationalShipping, isPickup);
+
+                            const phoneNumber = payer.phone ? payer.phone.phone_number.national_number : null;
+
+                            const shippingAddress = shipping.address ? {
+                                street: shipping.address.address_line_1 || "N/A",
+                                apartment: shipping.address.address_line_2 || "N/A",
+                                city: shipping.address.admin_area_2 || "N/A",
+                                state: shipping.address.admin_area_1 || "N/A",
+                                zip_code: shipping.address.postal_code || "N/A",
+                            } : { // For pickup or if no address provided by PayPal
+                                street: "N/A (In-person pickup)",
+                                apartment: "N/A",
+                                city: "N/A",
+                                state: "N/A",
+                                zip_code: "N/A",
+                            };
+
+                            const transaction = {
+                                paypal_transaction_id: details.id,
+                                item_id: bookId,
+                                donor_name: `${payer.name.given_name} ${payer.name.surname}`,
+                                donor_email: payer.email_address,
+                                donor_phone: phoneNumber,
+                                fee: totalFeeWithShipping.toFixed(2), // Send total fee including international
+                                payment_status: details.status,
+                                shipping_address: shippingAddress,
+                                pickup: isPickup,
+                                item_type: "general_product" // Crucial for backend processing
+                            };
+
+                            // Fetch API call to capture order on server
+                            fetch(`/capture-order/${details.id}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(transaction)
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Network response was not ok');
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                    const donorInfo = {
+                                        name: `${payer.name.given_name} ${payer.name.surname}`,
+                                        email: payer.email_address,
+                                        phone: phoneNumber || "Not provided",
+                                    };
+                                    // Data for email notification
+                                    const bookDataForEmail = {
+                                        name: bookName,
+                                        id: bookId,
+                                        fee: totalFeeWithShipping.toFixed(2), // Email should show total paid including international
+                                    };
+                                    sendPurchaseNotification(bookDataForEmail, recipientEmails, shippingAddress, donorInfo, isPickup);
+
+                                    Swal.fire({
+                                        title: "Thank you for your purchase!",
+                                        text: "The book has been successfully purchased.",
+                                        icon: "success",
+                                        confirmButtonText: "OK",
+                                    });
+                            })
+                            .catch(error => {
+                                console.error('Transaction error:', error);
+                                Swal.fire({
+                                    title: "Transaction Error",
+                                    text: "An error occurred while processing your transaction. Please try again.",
+                                    icon: "error",
+                                    confirmButtonText: "OK",
+                                });
+                            });
+                        });
+                    },
+                    onError: function (err) {
+                        Swal.fire({
+                            title: "Payment Error",
+                            text: "An error occurred during the payment process. Please try again.",
+                            icon: "error",
+                            confirmButtonText: "OK",
+                        });
+                        console.error("Payment error: ", err);
+                    },
+                }).render("#paypal-button-container");
+            } else if (document.getElementById("paypal-button-container")) {
+                // PayPal not loaded but container exists
+                console.error('PayPal SDK not loaded');
+                document.getElementById("paypal-button-container").innerHTML = 
+                    '<p style="color: red; text-align: center;">PayPal is loading... Please refresh if this message persists.</p>';
+            }
+        });
+    </script>
+</body>
+{% endblock %}
