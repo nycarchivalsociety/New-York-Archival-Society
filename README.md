@@ -89,6 +89,7 @@ PAYPAL_API_BASE_URL=https://api-m.sandbox.paypal.com
 # EmailJS Configuration
 EMAILJS_SERVICE_ID=your_emailjs_service_id
 EMAILJS_API_ID=your_emailjs_api_key
+EMAILJS_PRIVATE_KEY=your_emailjs_private_key
 EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM=your_contact_template_id
 EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL=your_confirmation_template_id
 RECIPIENT_EMAILS=admin@yourdomain.com
@@ -131,6 +132,7 @@ The application will be available at `http://localhost:5000`
 | `PAYPAL_API_BASE_URL`                               | PayPal API endpoint           | Yes      | Sandbox: `https://api-m.sandbox.paypal.com`<br>Live: `https://api-m.paypal.com` |
 | `EMAILJS_SERVICE_ID`                                | EmailJS service identifier    | Yes      | `your_emailjs_service_id`                                                       |
 | `EMAILJS_API_ID`                                    | EmailJS public key            | Yes      | `your_emailjs_api_key`                                                          |
+| `EMAILJS_PRIVATE_KEY`                               | EmailJS private key for server-side API requests | Yes | `your_emailjs_private_key`                                      |
 | `EMAILJS_TEMPLATE_ID_FOR_CONTACT_FORM`              | Contact form template         | Yes      | `your_contact_template_id`                                                      |
 | `EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL` | Payment confirmation template | Yes      | `your_confirmation_template_id`                                                 |
 | `RECIPIENT_EMAILS`                                  | Admin notification emails     | Yes      | `admin@example.com`                                                             |
@@ -146,8 +148,12 @@ The application will be available at `http://localhost:5000`
 
 1. Sign up at [EmailJS](https://www.emailjs.com/)
 2. Create email service and templates
-3. Get your service ID, public key, and template IDs
-4. Configure email templates for contact forms and payment confirmations
+3. In **Account > Security**, enable the EmailJS API for non-browser applications and enable **Use Private Key**
+4. Copy the service ID, public key, private key, and template IDs into `.env`
+5. Configure email templates for contact forms and payment confirmations
+6. If you use Gmail, connect or reconnect the Gmail service and grant all requested sending scopes
+
+`EMAILJS_PRIVATE_KEY` is required because purchase notifications are sent from the Flask server. Never commit the real private key or expose it to browser-side code.
 
 ### Database Configuration
 

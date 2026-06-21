@@ -5,6 +5,8 @@ from app.db.db import db
 from app.db.models import HistoricalRecord, Donor, Transaction, DonorItem, Bond
 from app.services.paypal_service import paypal_service, PayPalAPIError
 from app.services.transaction_service import transaction_service, TransactionError
+from app.services.notification_service import notification_service
+from app.services.payment_verification_service import payment_verification_service
 from app.utils.validators import (
     validate_paypal_order_data, validate_capture_order_data, 
     validate_pagination_params, require_json, validate_request_size,
@@ -24,6 +26,24 @@ logger = logging.getLogger(__name__)
 PER_PAGE = 20
 MAX_PER_PAGE = 100
 CACHE_TIMEOUT = 300  # 5 minutes
+
+
+def _get_available_item(item_id):
+    """Load the authoritative item and reject inventory that cannot be sold."""
+    if validate_uuid(item_id):
+        item = HistoricalRecord.query.get(item_id)
+        if not item:
+            raise ValidationError("Historical record not found")
+        if item.adopted:
+            raise ValidationError("Historical record not available")
+        return item
+
+    item = Bond.query.get(item_id)
+    if not item:
+        raise ValidationError("Bond not found")
+    if item.status != "available":
+        raise ValidationError("Bond not available")
+    return item
 
 def handle_errors(f):
     """Decorator for consistent error handling"""
@@ -60,31 +80,19 @@ def create_order():
     # Validate input data
     validated_data = validate_paypal_order_data(data)
     
-    # Verify item exists and is available
     item_id = validated_data['item_id']
-    fee = validated_data['fee']
-    
-    if validate_uuid(item_id):
-        # Historical record
-        item = HistoricalRecord.query.get(item_id)
-        if not item:
-            return jsonify({'error': 'Historical record not found'}), 404
-        if item.adopted:
-            return jsonify({'error': 'Historical record already adopted'}), 400
-        if float(item.fee) != fee:
-            return jsonify({'error': 'Fee mismatch'}), 400
-    else:
-        # Bond
-        item = Bond.query.get(item_id)
-        if not item:
-            return jsonify({'error': 'Bond not found'}), 404
-        if item.status != 'available':
-            return jsonify({'error': 'Bond not available'}), 400
-        if item.retail_price and float(item.retail_price) != fee:
-            return jsonify({'error': 'Fee mismatch'}), 400
+    item = _get_available_item(item_id)
+    fee = payment_verification_service.get_total(item)
+    shipping_preference = (
+        "NO_SHIPPING"
+        if validate_uuid(item_id) or validated_data['pickup']
+        else "GET_FROM_FILE"
+    )
     
     # Create PayPal order
-    order_data = paypal_service.create_order(item_id, fee)
+    order_data = paypal_service.create_order(
+        item_id, fee, shipping_preference
+    )
     
     logger.info(f"PayPal order created: {order_data.get('id')} for item {item_id}")
     return jsonify(order_data)
@@ -112,10 +120,10 @@ def capture_order(order_id):
     # Get order details from PayPal
     order_details = paypal_service.get_order_details(order_id)
     
-    # Verify order is completed
-    if order_details.get('status') != 'COMPLETED':
-        logger.warning(f"Order {order_id} not completed, status: {order_details.get('status')}")
-        return jsonify({'error': 'Order not completed'}), 400
+    item_id = validated_data['item_id']
+    item = _get_available_item(item_id)
+    fee = payment_verification_service.get_total(item)
+    payment_verification_service.verify_order(order_details, item_id, fee)
     
     # Extract payer information
     payer_data = order_details.get('payer', {})
@@ -129,14 +137,21 @@ def capture_order(order_id):
     # Create transaction using service
     transaction, is_new = transaction_service.create_transaction_with_rollback(
         order_id=order_id,
-        item_id=validated_data['item_id'],
-        fee=validated_data['fee'],
+        item_id=item_id,
+        fee=fee,
         payer_data=payer_data,
         is_pickup=validated_data['pickup']
     )
     
     if is_new:
         logger.info(f"Transaction created successfully: {transaction.transaction_id}")
+        try:
+            notification_service.send_purchase_notification(transaction, payer_data)
+        except Exception:
+            logger.exception(
+                "Transaction committed, but purchase notification failed for %s",
+                transaction.transaction_id,
+            )
     else:
         logger.info(f"Existing transaction returned: {transaction.transaction_id}")
     
@@ -211,11 +226,7 @@ def new_yorks_past_view_item(item_id):
     
     # Get configuration securely (no secrets exposed to template)
     config_data = {
-        'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID'),
-        'EMAILJS_SERVICE_ID': current_app.config.get('EMAILJS_SERVICE_ID'),
-        'EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL': current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL'),
-        'EMAILJS_API_ID': current_app.config.get('EMAILJS_API_ID'),
-        'RECIPIENT_EMAILS': current_app.config.get('RECIPIENT_EMAILS')
+        'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID')
     }
     
     logger.info(f"Displaying historical record {item_id}: {item.name}")
@@ -279,11 +290,7 @@ def view_bond_details(bond_id):
     
     # Get configuration securely
     config_data = {
-        'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID'),
-        'EMAILJS_SERVICE_ID': current_app.config.get('EMAILJS_SERVICE_ID'),
-        'EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL': current_app.config.get('EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL'),
-        'EMAILJS_API_ID': current_app.config.get('EMAILJS_API_ID'),
-        'RECIPIENT_EMAILS': current_app.config.get('RECIPIENT_EMAILS')
+        'PAYPAL_CLIENT_ID': current_app.config.get('PAYPAL_CLIENT_ID')
     }
     
     logger.info(f"Displaying bond details for {bond_id}")

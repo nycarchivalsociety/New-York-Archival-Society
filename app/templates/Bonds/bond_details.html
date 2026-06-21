@@ -7,7 +7,6 @@
     rel="stylesheet"
   />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js" async></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <style>
     body {
@@ -147,92 +146,21 @@
   <script src="https://www.paypal.com/sdk/js?client-id={{ PAYPAL_CLIENT_ID }}&currency=USD&disable-funding=credit"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      // Initialize EmailJS
-      emailjs.init("{{ EMAILJS_API_ID }}");
-
-      // Set recipient emails
-      const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
-
       // Remove the event listener that changes the shipping text display
       // as handling cost applies regardless of pickup option
-
-      // Email notification function - Updated to include pickup option
-      function sendPurchaseNotification(
-        item,
-        recipientEmails,
-        shippingAddress,
-        donorInfo,
-        isPickup
-      ) {
-        recipientEmails.forEach((email) => {
-          const templateParams = {
-            to_name: email,
-            from_name: "NYAS SITE",
-            subject: "Bond Purchase!",
-            item_name: item.name,
-            item_id: item.id,
-            item_fee: item.fee,
-            // Include donor info
-            donor_name: donorInfo.name,
-            donor_email: donorInfo.email,
-            donor_phone: donorInfo.phone || "Not provided",
-            // Make pickup status more prominent
-            pickup_status: isPickup ? "IN-PERSON PICKUP" : "SHIPPING REQUIRED",
-            pickup: isPickup
-              ? "Yes - In-person pickup"
-              : "No - Ship to address",
-            // Ensure address values are never undefined
-            street: shippingAddress.street || "N/A",
-            apartment: shippingAddress.apartment || "N/A",
-            city: shippingAddress.city || "N/A",
-            state: shippingAddress.state || "N/A",
-            zip_code: shippingAddress.zip_code || "N/A",
-          };
-
-          console.log("Sending email with params:", templateParams);
-          emailjs
-            .send(
-              "{{ EMAILJS_SERVICE_ID }}",
-              "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
-              templateParams
-            )
-            .then((response) => {
-              console.log(
-                "Email successfully sent!",
-                response.status,
-                response.text
-              );
-            })
-            .catch((error) => {
-              console.error("Email failed to send...", error);
-            });
-        });
-      }
 
       if ("{{ bond.status }}" === "available") {
         paypal
           .Buttons({
-            createOrder: (data, actions) => {
+            createOrder: () => {
               const isPickup =
                 document.getElementById("pickup-checkbox").checked;
-              // Always add $5 handling fee regardless of pickup status
-              const totalAmount = parseFloat("{{ bond.retail_price }}") + 5;
-
-              return actions.order.create({
-                purchase_units: [
-                  {
-                    reference_id: "{{ bond.bond_id }}",
-                    amount: {
-                      value: totalAmount.toFixed(2),
-                    },
-                  },
-                ],
-                application_context: {
-                  shipping_preference: isPickup
-                    ? "NO_SHIPPING"
-                    : "GET_FROM_FILE",
-                },
-              });
+              return $.ajax({
+                type: "POST",
+                url: "/create-order",
+                contentType: "application/json",
+                data: JSON.stringify({ item_id: "{{ bond.bond_id }}", pickup: isPickup }),
+              }).then((order) => order.id);
             },
             onApprove: (data, actions) => {
               return actions.order.capture().then((details) => {
@@ -273,7 +201,6 @@
                   donor_name: `${payer.name.given_name} ${payer.name.surname}`,
                   donor_email: payer.email_address,
                   donor_phone: phoneNumber, // Send phone number to server
-                  fee: fee.toFixed(2),
                   payment_status: details.status,
                   shipping_address: shippingAddress,
                   pickup: isPickup,
@@ -285,31 +212,6 @@
                   contentType: "application/json",
                   data: JSON.stringify(transaction),
                   success: function () {
-                    // Send email with complete information
-                    const donorInfo = {
-                      name: `${payer.name.given_name} ${payer.name.surname}`,
-                      email: payer.email_address,
-                      phone:
-                        payer.phone?.phone_number?.national_number ||
-                        "Not provided",
-                    };
-
-                    // Define the item object with bond information
-                    const item = {
-                      name: "{{ bond.type }}",
-                      id: "{{ bond.bond_id }}",
-                      fee: fee.toFixed(2),
-                    };
-
-                    // Send email notification with shipping address and pickup status
-                    sendPurchaseNotification(
-                      item,
-                      recipientEmails,
-                      shippingAddress,
-                      donorInfo,
-                      isPickup
-                    );
-
                     Swal.fire({
                       title: "Thank you for your purchase!",
                       text: "The bond has been successfully purchased.",

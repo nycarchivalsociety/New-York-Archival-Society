@@ -1,7 +1,6 @@
 {% extends "layout.html" %} {% block content %}
 <head>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
   <link
     href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css"
     rel="stylesheet"
@@ -143,61 +142,16 @@
             };
             document.head.appendChild(script);
 
-            // Initialize EmailJS
-            emailjs.init("{{ EMAILJS_API_ID }}");
-
-            const recipientEmails = ["{{ RECIPIENT_EMAILS }}"];
-
-            function sendPurchaseNotification(item, recipientEmails, donorInfo) {
-              recipientEmails.forEach((email) => {
-                const templateParams = {
-                  to_name: email,
-                  from_name: "NYAS SITE",
-                  subject: "Historical Record Purchase!",
-                  item_name: item.name,
-                  item_id: item.id,
-                  item_fee: item.fee,
-                  donor_name: donorInfo.name,
-                  donor_email: donorInfo.email,
-                  donor_phone: donorInfo.phone || "Not provided"
-                };
-
-                emailjs
-                  .send(
-                    "{{ EMAILJS_SERVICE_ID }}",
-                    "{{ EMAILJS_TEMPLATE_ID_FOR_PAYPAL_CONFIRMATION_EMAIL }}",
-                    templateParams
-                  )
-                  .then((response) => {
-                    console.log(
-                      "Email successfully sent!",
-                      response.status,
-                      response.text
-                    );
-                  })
-                  .catch((error) => {
-                    console.error("Email failed to send...", error);
-                  });
-              });
-            }
-
             function renderPaypalButtons(item) {
               paypal
                 .Buttons({
-                  createOrder: (data, actions) => {
-                    return actions.order.create({
-                      purchase_units: [
-                        {
-                          reference_id: item.id, // Set item id as reference
-                          amount: {
-                            value: item.fee
-                          }
-                        }
-                      ],
-                      application_context: {
-                        shipping_preference: "NO_SHIPPING"
-                      }
-                    });
+                  createOrder: () => {
+                    return $.ajax({
+                      type: "POST",
+                      url: "/create-order",
+                      contentType: "application/json",
+                      data: JSON.stringify({ item_id: item.id })
+                    }).then((order) => order.id);
                   },
                   onApprove: (data, actions) => {
                     return actions.order.capture().then((details) => {
@@ -230,7 +184,6 @@
 
                       const transaction = {
                         item_id: item.id,
-                        fee: parseFloat(item.fee), // Ensure fee is a number
                         payer_id: payer.payer_id,
                         payer_email: payer.email_address,
                         payer_name: `${payer.name.given_name} ${payer.name.surname}`,
@@ -246,13 +199,6 @@
                         contentType: "application/json",
                         data: JSON.stringify(transaction),
                         success: function (response) {
-                          const donorInfo = {
-                            name: `${payer.name.given_name} ${payer.name.surname}`,
-                            email: payer.email_address,
-                            phone: payer.phone?.phone_number?.national_number || "Not provided"
-                          };
-                          sendPurchaseNotification(item, recipientEmails, donorInfo);
-
                           Swal.fire({
                             title: "Thank you for your purchase!",
                             text: "The item has been successfully adopted.",

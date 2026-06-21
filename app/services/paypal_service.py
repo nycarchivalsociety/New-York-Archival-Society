@@ -159,13 +159,16 @@ class PayPalService:
             logger.error(f"Unexpected error retrieving PayPal token: {str(e)}")
             raise PayPalAPIError(f"Unexpected error: {str(e)}")
     
-    def create_order(self, item_id: str, fee: float) -> Dict[str, Any]:
+    def create_order(
+        self, item_id: str, fee: float, shipping_preference: str
+    ) -> Dict[str, Any]:
         """
         Create PayPal order with proper validation
         
         Args:
             item_id: Unique identifier for the item
             fee: Purchase amount
+            shipping_preference: Server-selected PayPal shipping behavior
             
         Returns:
             Dict containing PayPal order response
@@ -178,6 +181,10 @@ class PayPalService:
         
         if fee <= 0:
             raise PayPalAPIError("Fee must be positive")
+
+        allowed_shipping_preferences = {"NO_SHIPPING", "GET_FROM_FILE"}
+        if shipping_preference not in allowed_shipping_preferences:
+            raise PayPalAPIError("Invalid shipping preference")
         
         try:
             access_token = self.get_access_token()
@@ -185,6 +192,9 @@ class PayPalService:
             
             order_payload = {
                 'intent': 'CAPTURE',
+                'application_context': {
+                    'shipping_preference': shipping_preference
+                },
                 'purchase_units': [{
                     'reference_id': str(item_id),
                     'amount': {

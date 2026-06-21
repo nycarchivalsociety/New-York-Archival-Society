@@ -53,6 +53,9 @@ class TransactionService:
             if existing_transaction:
                 logger.info(f"Transaction already exists for order {order_id}")
                 return existing_transaction, False
+
+            # Lock and claim inventory before creating any transaction records.
+            TransactionService._update_item_status(item_id)
             
             # Extract payer information
             payer_email = payer_data.get('email_address')
@@ -91,9 +94,6 @@ class TransactionService:
                     fee=fee
                 )
                 db.session.add(donor_item)
-            
-            # Update item status
-            TransactionService._update_item_status(item_id)
             
             # Commit all changes
             db.session.commit()
@@ -177,21 +177,23 @@ class TransactionService:
     
     @staticmethod
     def _update_item_status(item_id: str) -> None:
-        """Update item status based on item type"""
+        """Atomically claim available inventory for this transaction."""
         if Transaction.is_uuid(item_id):
-            # Historical record
-            item = HistoricalRecord.query.get(item_id)
-            if item:
-                item.adopted = True
-            else:
+            item = HistoricalRecord.query.with_for_update().get(item_id)
+            if not item:
                 raise TransactionError(f"Historical record {item_id} not found")
+            if item.adopted:
+                raise TransactionError(
+                    f"Historical record {item_id} not available"
+                )
+            item.adopted = True
         else:
-            # Bond
-            item = Bond.query.get(item_id)
-            if item:
-                item.status = 'purchased'
-            else:
+            item = Bond.query.with_for_update().get(item_id)
+            if not item:
                 raise TransactionError(f"Bond {item_id} not found")
+            if item.status != 'available':
+                raise TransactionError(f"Bond {item_id} not available")
+            item.status = 'purchased'
     
     @staticmethod
     def get_transaction_by_paypal_id(paypal_transaction_id: str) -> Optional[Transaction]:
