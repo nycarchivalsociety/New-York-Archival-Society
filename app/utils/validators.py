@@ -50,20 +50,17 @@ def validate_paypal_order_data(data: Dict[str, Any]) -> Dict[str, Any]:
         errors['item_id'] = 'Item ID is required'
     elif not isinstance(item_id, str) or len(item_id.strip()) == 0:
         errors['item_id'] = 'Item ID must be a non-empty string'
-    
-    # Validate fee
-    fee = data.get('fee')
-    if fee is None:
-        errors['fee'] = 'Fee is required'
-    elif not validate_fee(fee):
-        errors['fee'] = 'Fee must be a positive number'
+
+    pickup = data.get('pickup', False)
+    if not isinstance(pickup, bool):
+        errors['pickup'] = 'Pickup must be a boolean value'
     
     if errors:
         raise ValidationError(f"Validation errors: {errors}")
     
     return {
         'item_id': str(item_id).strip(),
-        'fee': float(fee)
+        'pickup': pickup
     }
 
 def validate_capture_order_data(data: Dict[str, Any]) -> Dict[str, Any]:
@@ -80,13 +77,6 @@ def validate_capture_order_data(data: Dict[str, Any]) -> Dict[str, Any]:
     elif not isinstance(item_id, str) or len(item_id.strip()) == 0:
         errors['item_id'] = 'Item ID must be a non-empty string'
     
-    # Validate fee
-    fee = data.get('fee')
-    if fee is None:
-        errors['fee'] = 'Fee is required'
-    elif not validate_fee(fee):
-        errors['fee'] = 'Fee must be a positive number'
-    
     # Validate pickup (optional)
     pickup = data.get('pickup', False)
     if not isinstance(pickup, bool):
@@ -97,7 +87,6 @@ def validate_capture_order_data(data: Dict[str, Any]) -> Dict[str, Any]:
     
     return {
         'item_id': str(item_id).strip(),
-        'fee': float(fee),
         'pickup': pickup
     }
 

@@ -65,7 +65,7 @@ class DonorItem(db.Model):
 
     id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     donor_id = db.Column(UUID(as_uuid=True), db.ForeignKey('donors.donor_id', ondelete='CASCADE'), nullable=False)
-    item_id = db.Column(UUID(as_uuid=True), db.ForeignKey('historical_records.id', ondelete='CASCADE'), nullable=False)
+    item_id = db.Column(UUID(as_uuid=True), db.ForeignKey('historical_records.id', ondelete='CASCADE'), nullable=False, unique=True)
     fee = db.Column(db.Numeric(10, 2), nullable=False)
 
     donor = db.relationship('Donor', back_populates='items')
@@ -110,7 +110,7 @@ class Transaction(db.Model):
 
     transaction_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     paypal_transaction_id = db.Column(db.String(255), nullable=False, unique=True, index=True)
-    item_id = db.Column(db.String(255), nullable=False, index=True) # Can be either bond_id or historical_record_id
+    item_id = db.Column(db.String(255), nullable=False, unique=True, index=True) # Can be either bond_id or historical_record_id
     donor_id = db.Column(UUID(as_uuid=True), db.ForeignKey('donors.donor_id', ondelete='SET NULL'), nullable=False, index=True)
     timestamp = db.Column(db.DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     fee = db.Column(db.Numeric(10, 2), nullable=False)
